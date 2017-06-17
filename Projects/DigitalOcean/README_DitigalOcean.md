@@ -2,6 +2,8 @@
 
 ### Setup new user [DONE]
 
-### Setup NGINX [TO DO]
+### Setup second user [TO DO]
+
+### Setup NGINX [DONE]
 
 ### Work web pages with Javascript [TO DO]
