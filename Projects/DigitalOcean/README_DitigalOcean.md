@@ -13,6 +13,8 @@ $ usermod -aG sudo newuser_name  // add new user to the sudo group
 $ sudo visudo // edit sudoers file
               // remove password requirement for sudoers group
 
+$ su - newuser_name              
+
 $ mkdir .ssh // make a .ssh directory for keys
 
 $ chmod 700 .ssh // change permissions on .ssh directory
@@ -27,7 +29,9 @@ $ chmod 600 authorized_keys // change permissions on authorized_keys file
 
 
 
-### Setup second user [TO DO]
+### Setup second user [DONE]
+
+// use the setup new user steps above
 
 ### Setup NGINX [DONE]
 
