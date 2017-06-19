@@ -62,6 +62,16 @@ $ sudo ufw enable
 // check to make sure you can ssh into the machine from
 // one of the other open terminal sessions.
 
+### Set up domain name and DNS records [DONE]
+
+// used Cheap-Domain Registration for two names
+// -- conceptsystem.us
+// -- conceptsystems.info
+
+// Set up name servers at registration site
+// Set up A record and CNAME record at Digital Ocean
+// www.conceptsystem.us now works ..
+
 
 
 ### Work web pages with Javascript [TO DO]
