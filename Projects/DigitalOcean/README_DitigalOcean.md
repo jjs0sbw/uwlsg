@@ -35,4 +35,33 @@ $ chmod 600 authorized_keys // change permissions on authorized_keys file
 
 ### Setup NGINX [DONE]
 
+$ sudo apt-get update
+
+$ sudo apt-get install nginx
+
+// open at least three termainal sessions to the server
+// use both user accounts ..
+
+$ sudo ufw app list // check firewall
+
+$ sudo ufw allow 'Nginx HTTP'
+
+$ sudo ufw status // check firewall status
+
+// if the firewall is inactive it will need to be activated
+// it is important to make sure that you also allow ssh
+// on port 22 over tcp along with HTTP on port 80
+
+$ sudo ufw allow ssh // or sudo ufw allow 22/tcp
+
+// make sure you can ssh into the machine
+// if necessary enable ufw
+
+$ sudo ufw enable
+
+// check to make sure you can ssh into the machine from
+// one of the other open terminal sessions.
+
+
+
 ### Work web pages with Javascript [TO DO]
