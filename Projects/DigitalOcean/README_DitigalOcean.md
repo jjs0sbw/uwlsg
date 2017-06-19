@@ -72,6 +72,8 @@ $ sudo ufw enable
 // Set up A record and CNAME record at Digital Ocean
 // www.conceptsystem.us now works ..
 
+### Add Security Certificate to nginx server [TO DO]
+
 
 
 ### Work web pages with Javascript [TO DO]
