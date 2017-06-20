@@ -73,6 +73,89 @@ $ sudo ufw enable
 // www.conceptsystem.us now works ..
 
 ### Add Security Certificate to nginx server [TO DO]
+// install certbot
+// first add the repository
+
+$ sudo add-apt-repository ppa:certbot/certbot
+
+$ sudo apt-get update
+
+$ sudo apt-get install certbot
+
+// now use webroot to obtain a SSL certificate
+// webroot places a special file /.well-known
+// in web document root
+
+// now edit /etc/nginx/sites-available/default
+
+sudo vi /etc/nginx/sites-available/default
+
+// inside the SSL server block -- add a location block
+
+  location ~ /.well-known {
+           allow all;
+  }
+
+ // check document root location
+
+  /var/www/html
+
+// check nginx configuration for syntax errors
+
+$ sudo nginx -t
+
+// restart nginx
+
+sudo systemctl restart nginx
+
+// now request a SSL Certificate
+
+$ sudo certbot certonly --webroot --webroot-path=/var/www/html -d conceptsystem.us -d www.conceptsystem.us
+
+// first time -- enter email and accept terms of service
+
+Output
+IMPORTANT NOTES:
+ - Congratulations! Your certificate and chain have been saved at
+   /etc/letsencrypt/live/example.com/fullchain.pem. Your cert
+   will expire on 2017-07-26. To obtain a new or tweaked version of
+   this certificate in the future, simply run certbot again. To
+   non-interactively renew *all* of your certificates, run "certbot
+   renew"
+ - If you lose your account credentials, you can recover through
+   e-mails sent to sammy@example.com.
+ - Your account credentials have been saved in your Certbot
+   configuration directory at /etc/letsencrypt. You should make a
+   secure backup of this folder now. This configuration directory will
+   also contain certificates and private keys obtained by Certbot so
+   making regular backups of this folder is ideal.
+ - If you like Certbot, please consider supporting our work by:
+
+   Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+   Donating to EFF:                    https://eff.org/donate-le
+
+   // check files exist
+
+   $ sudo ls -l /etc/letsencrypt/live/conceptsystem.us
+
+   // generate a strong Diffie-Hellman group
+
+   $ sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+
+   // check at
+
+   /etc/ssl/certs/dhparam.pem
+
+   // configure nginx
+
+   // 1- create a configuration snippet containing SSL key and file locations
+
+   // 2- create a configuration snippet containing strong SSL settings that can be used with any certificate in the future
+
+   // 3-adjust nginx server block to handle SSL requests and use the two snippets above.
+
+
+
 
 
 
