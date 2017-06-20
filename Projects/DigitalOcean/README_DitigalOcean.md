@@ -150,9 +150,49 @@ IMPORTANT NOTES:
 
    // 1- create a configuration snippet containing SSL key and file locations
 
+   $ sudo vi /etc/nginx/snippets/ssl-conceptsystem.us.configuration
+
+   // file content
+
+   ssl_certificate /etc/letsencrypt/live/conceptsystem.us/fulchain.pem
+   ssl_certificate_key /etc/letsencrypt/live/conceptsystem.us/privkey.pem
+
+
    // 2- create a configuration snippet containing strong SSL settings that can be used with any certificate in the future
 
+   $ sudo vi /etc/nginx/snippets/ssl-params.conf
+
+   // file content
+
+   # from https://cipherli.st/
+# and https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
+
+ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+ssl_prefer_server_ciphers on;
+ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+ssl_ecdh_curve secp384r1;
+ssl_session_cache shared:SSL:10m;
+ssl_session_tickets off;
+ssl_stapling on;
+ssl_stapling_verify on;
+resolver 8.8.8.8 8.8.4.4 valid=300s;
+resolver_timeout 5s;
+# disable HSTS header for now
+#add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+add_header X-Frame-Options DENY;
+add_header X-Content-Type-Options nosniff;
+
+ssl_dhparam /etc/ssl/certs/dhparam.pem;
+
+
    // 3-adjust nginx server block to handle SSL requests and use the two snippets above.
+
+   // this configuration assumes the use of the default server block in the
+   // /etc/nginx/sites-available directory
+
+   // backup existing server block file
+
+  
 
 
 
