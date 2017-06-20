@@ -177,8 +177,8 @@ ssl_stapling on;
 ssl_stapling_verify on;
 resolver 8.8.8.8 8.8.4.4 valid=300s;
 resolver_timeout 5s;
-// # disable HSTS header for now
-// #add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+// (comment out) disable HSTS header for now
+// (comment out) add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
 add_header X-Frame-Options DENY;
 add_header X-Content-Type-Options nosniff;
 
