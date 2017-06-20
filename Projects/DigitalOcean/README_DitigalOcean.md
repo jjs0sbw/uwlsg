@@ -164,8 +164,8 @@ IMPORTANT NOTES:
 
    // file content
 
-   # from https://cipherli.st/
-# and https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
+   (comment out) from https://cipherli.st/
+   (comment out) https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
 
 ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
 ssl_prefer_server_ciphers on;
