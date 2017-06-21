@@ -76,21 +76,26 @@ $ sudo ufw enable
 // install certbot
 // first add the repository
 
-$ sudo add-apt-repository ppa:certbot/certbot
+$ sudo add-apt-repository ppa:certbot/certbot [done]
 
-$ sudo apt-get update
+$ sudo apt-get update [done]
 
-$ sudo apt-get install certbot
+$ sudo apt-get install certbot [done]
 
 // now use webroot to obtain a SSL certificate
 // webroot places a special file /.well-known
 // in web document root
 
+// backup /etc/nginx/sites-available/default
+
+sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.06202017_01 [done]
+
+
 // now edit /etc/nginx/sites-available/default
 
-sudo vi /etc/nginx/sites-available/default
+sudo vi /etc/nginx/sites-available/default [done]
 
-// inside the SSL server block -- add a location block
+// inside the SSL server block -- add a location block [done]
 
   location ~ /.well-known {
            allow all;
@@ -98,19 +103,19 @@ sudo vi /etc/nginx/sites-available/default
 
  // check document root location
 
-  /var/www/html
+  /var/www/html [done]
 
 // check nginx configuration for syntax errors
 
-$ sudo nginx -t
+$ sudo nginx -t  [done]
 
 // restart nginx
 
-sudo systemctl restart nginx
+sudo systemctl restart nginx [done]
 
 // now request a SSL Certificate
 
-$ sudo certbot certonly --webroot --webroot-path=/var/www/html -d conceptsystem.us -d www.conceptsystem.us
+$ sudo certbot certonly --webroot --webroot-path=/var/www/html -d conceptsystem.us -d www.conceptsystem.us [done]
 
 // first time -- enter email and accept terms of service
 
@@ -136,26 +141,26 @@ IMPORTANT NOTES:
 
    // check files exist
 
-   $ sudo ls -l /etc/letsencrypt/live/conceptsystem.us
+   $ sudo ls -l /etc/letsencrypt/live/conceptsystem.us [done]
 
    // generate a strong Diffie-Hellman group
 
-   $ sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+   $ sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048 [done]
 
    // check at
 
-   /etc/ssl/certs/dhparam.pem
+   /etc/ssl/certs/dhparam.pem [done]
 
    // configure nginx
 
    // 1- create a configuration snippet containing SSL key and file locations
 
-   $ sudo vi /etc/nginx/snippets/ssl-conceptsystem.us.configuration
+   $ sudo vi /etc/nginx/snippets/ssl-conceptsystem.us.conf[done]
 
    // file content
 
-   ssl_certificate /etc/letsencrypt/live/conceptsystem.us/fulchain.pem
-   ssl_certificate_key /etc/letsencrypt/live/conceptsystem.us/privkey.pem
+   ssl_certificate /etc/letsencrypt/live/conceptsystem.us/fullchain.pem;
+   ssl_certificate_key /etc/letsencrypt/live/conceptsystem.us/privkey.pem;
 
 
    // 2- create a configuration snippet containing strong SSL settings that can be used with any certificate in the future
@@ -167,22 +172,22 @@ IMPORTANT NOTES:
    (comment out) from https://cipherli.st/                            
    (comment out) https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
 
-ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-ssl_prefer_server_ciphers on;
-ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
-ssl_ecdh_curve secp384r1;
-ssl_session_cache shared:SSL:10m;
-ssl_session_tickets off;
-ssl_stapling on;
-ssl_stapling_verify on;
-resolver 8.8.8.8 8.8.4.4 valid=300s;
-resolver_timeout 5s;
-// (comment out) disable HSTS header for now
-// (comment out) add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
-add_header X-Frame-Options DENY;
-add_header X-Content-Type-Options nosniff;
+   ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+   ssl_prefer_server_ciphers on;
+   ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+   ssl_ecdh_curve secp384r1;
+   ssl_session_cache shared:SSL:10m;
+   ssl_session_tickets off;
+   ssl_stapling on;
+   ssl_stapling_verify on;
+   resolver 8.8.8.8 8.8.4.4 valid=300s;
+   resolver_timeout 5s;
+   // (comment out) disable HSTS header for now
+   // (comment out) add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+   add_header X-Frame-Options DENY;
+   add_header X-Content-Type-Options nosniff;
 
-ssl_dhparam /etc/ssl/certs/dhparam.pem;
+   ssl_dhparam /etc/ssl/certs/dhparam.pem;
 
 
    // 3-adjust nginx server block to handle SSL requests and use the two snippets above.
@@ -191,6 +196,71 @@ ssl_dhparam /etc/ssl/certs/dhparam.pem;
    // /etc/nginx/sites-available directory
 
    // backup existing server block file
+
+   $ sudo cp /etc/nginx/sites-available/default  /etc/nginx/sites-available/default.06202017_02 [done]
+
+   // edit /etc/nginx/sites-available/default file
+
+   server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name example.com www.example.com;
+    return 301 https://$server_name$request_uri;
+} [done]
+
+    # SSL configuration
+
+    # listen 443 ssl default_server;
+    # listen [::]:443 ssl default_server;
+
+  // add new server block ..
+
+  server {
+
+    # SSL configuration
+
+    listen 443 ssl http2 default_server;
+    listen [::]:443 ssl http2 default_server;
+    include snippets/ssl-example.com.conf;
+    include snippets/ssl-params.conf;
+  }
+[done]
+  // save and close file
+
+  // now adjust firewall
+
+  $ sudo ufw status  
+
+  // adjust firewall rules ..
+
+
+  $ sudo ufw allow 'Nginx Full' [done]
+
+  $ sudo ufw delete allow 'Nginx HTTP' [done]
+
+  $ sudo ufw status  [done]
+
+  // check for errors
+
+  $ sudo nginx -t
+
+  // restart nginx
+
+  $ sudo systemctl restart nginx
+
+  // check config from a web browser
+
+  https://www.ssllabs.com/ssltest/analyze.html?d=example.com
+
+  // set up auto renewal
+
+  $ sudo crontab -e
+
+  // place this line at the bottom of the file
+
+  15 3 * * * /usr/bin/certbot renew --quiet --renew-hook "/bin/systemctl reload nginx"
+
+[DONE]
 
 
 
