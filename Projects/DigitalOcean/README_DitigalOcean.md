@@ -183,7 +183,8 @@ IMPORTANT NOTES:
    resolver 8.8.8.8 8.8.4.4 valid=300s;
    resolver_timeout 5s;
    // (comment out) disable HSTS header for now
-   // (comment out) add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+   // add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+   add_header Strict-Transport-Security "max-age=31536000";
    add_header X-Frame-Options DENY;
    add_header X-Content-Type-Options nosniff;
 
@@ -202,6 +203,9 @@ IMPORTANT NOTES:
    // edit /etc/nginx/sites-available/default file
 
    server {
+    add_header Referrer-Policy "no-referrer";
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Content-Security-Policy "default-src 'self';";
     listen 80 default_server;
     listen [::]:80 default_server;
     server_name example.com www.example.com;
@@ -218,7 +222,10 @@ IMPORTANT NOTES:
   server {
 
     # SSL configuration
-
+    add_header Strict-Transport-Security "max-age=31536000;";
+    add_header Referrer-Policy "no-referrer";
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Content-Security-Policy "default-src 'self';";
     listen 443 ssl http2 default_server;
     listen [::]:443 ssl http2 default_server;
     include snippets/ssl-example.com.conf;
