@@ -268,6 +268,10 @@ IMPORTANT NOTES:
   15 3 * * * /usr/bin/certbot renew --quiet --renew-hook "/bin/systemctl reload nginx"
 
 [DONE]
+// Checked web site with:
+// https://observatory.mozilla.org/
+// https://securityheaders.io
+// A+ rating
 
 
 
