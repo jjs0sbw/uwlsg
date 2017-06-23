@@ -275,7 +275,9 @@ IMPORTANT NOTES:
 
 
 
+### Work web page layout with css [IN WORK]
 
+// Copied in stupid.css and started to work the style themes
 
 
 
