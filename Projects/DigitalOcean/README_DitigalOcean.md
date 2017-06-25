@@ -271,7 +271,7 @@ IMPORTANT NOTES:
 // Checked web site with:
 // https://observatory.mozilla.org/
 // https://securityheaders.io
-// A+ rating
+// A- rating
 
 
 
