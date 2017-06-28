@@ -1,11 +1,11 @@
 header {
-  padding-top: 15px;
-  padding-bottom: 15px;
+  padding-top: 19px;
+  padding-bottom: 19px;
 }
 
 h1, h2, h3, h4 {text-transform:none }
 
-#jumbotron, #jumbotron-bottom { text-shadow: 2px 2px 3px rgba(0,0,0,0.6); }
+/*  #jumbotron, #jumbotron-bottom { text-shadow: 2px 2px 3px rgba(0,0,0,0.6); }*/
 
 p, li {
   font-family:"HelveticaNeue-Light", "Helvetica Neue Light", "Helvet\
@@ -14,32 +14,50 @@ ica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-siz: 1.3em;
 }
 
-#jumbotron {
-  height: 600px;
-  background-color: #0d9ba5 ;
+#displaywrap {
+
+ /*  height: 600px;*/
+  background-color: #C2DFFF;
 }
 
-#jumbotron div {
+#displaytron {
+  margin-left: 20px;
+  /* height: 600px; */
+  background-color: #C2DFFF;
+}
+
+/* #jumbotron {
+  height: 600px;
+  background-color: #0d9ba5 ;
+} */
+
+/* #displaytron div {
+  height: 600px;
+  background-color: #0d9ba5;
+} */
+
+
+/* #jumbotron div {
   left: 50%;
   color: white;
   width: 600px;
   top: 100px;
   margin-left:-300px;
   text-align:center;
-}
+} */
 
-#jumbotron-bottom {
+/* #jumbotron-bottom {
   height: 300px;
   background: url(landing-page/banner-bg.jpg);
-}
+} */
 
-#jumbotron-bottom div {
+/* #jumbotron-bottom div {
   left: 50%;
   color: white;
   width: 600px;
   top: 50px;
   margin-left:-300px;
   text-align:center;
-}
+} */
 
-img {max-width:100% !important;}
+// img {max-width:100% !important;}
