@@ -1,0 +1,401 @@
+
+Lab 10b - HaProxy
+
+    Due No Due Date Points 0
+
+In this lab we will be using haproxy to act as an http load balancer across the 2 VMs we used in the keepalived/VRRP lab.
+
+
+
+You will need to make sure your VM's and hypervisor(e.g.: laptop) can all communicate on:
+
+tcp/8080
+tcp/8000
+icmp protocol
+
+First we need to make sure we are running a web server with unique content on each host so we know which host behind our load balancer our actual request is going to.
+
+For this lab I will be using the same network information that I did in lab10a (https://canvas.uw.edu/courses/1105226/assignments/3577547Links to an external site.) so make sure you use the info for your setup and substitute accordingly.
+
+    Server1 - ip: 192.168.6.132/24 MAC: 00:0c:29:5e:bd:a6
+    Server2 - ip: 192.168.6.133/24 MAC: 00:0c:29:48:54:9c
+    VIP - ip: 192.168.6.200/24
+    Hypervisor - ip: 192.168.6.1/24
+
+
+
+SERVER1:
+
+    Lets make sure apache2 is installed and running.  On my host it already was from a pervious lab:
+
+    chenry@server1:~$ sudo apt-get install apache2
+    Reading package lists... Done
+    Building dependency tree
+    Reading state information... Done
+    apache2 is already the newest version.
+    0 upgraded, 0 newly installed, 0 to remove and 56 not upgraded.
+    chenry@server1:~$ sudo service apache2 start
+     * Starting web server apache2 *
+    chenry@server1:~$
+
+    Lets customize the index.html page to output the string "server1" so when we make requests to apache we know server1 handled the request
+
+    chenry@server1:~$ cd /var/www/html
+    chenry@server1:/var/www/html$ ls
+    index.html
+    chenry@server1:/var/www/html$ sudo mv index.html index.html.orig
+    chenry@server1:/var/www/html$ echo server1 |sudo tee index.html
+    server1
+    chenry@server1:/var/www/html$ curl localhost
+    server1
+
+    Lets configure server2 the same way we configured server1 - install/start apache2 and customize the html output
+
+    chenry@server2:~$ sudo apt-get install apache2
+    Reading package lists... Done
+    Building dependency tree
+    Reading state information... Done
+    The following additional packages will be installed:
+     apache2-bin apache2-data
+    Suggested packages:
+     www-browser apache2-doc apache2-suexec-pristine | apache2-suexec-custom
+    The following packages will be upgraded:
+     apache2 apache2-bin apache2-data
+    3 upgraded, 0 newly installed, 0 to remove and 91 not upgraded.
+    Need to get 1,174 kB of archives.
+    After this operation, 14.3 kB of additional disk space will be used.
+    Do you want to continue? [Y/n] y
+    Get:1 http://us.archive.ubuntu.com/ubuntu xenial-updates/main amd64 apache2 amd64 2.4.18-2ubuntu3.2 [86.7 kB]
+    Get:2 http://us.archive.ubuntu.com/ubuntu xenial-updates/main amd64 apache2-bin amd64 2.4.18-2ubuntu3.2 [926 kB]
+    Get:3 http://us.archive.ubuntu.com/ubuntu xenial-updates/main amd64 apache2-data all 2.4.18-2ubuntu3.2 [162 kB]
+    Fetched 1,174 kB in 2s (564 kB/s)
+    (Reading database ... 66952 files and directories currently installed.)
+    Preparing to unpack .../apache2_2.4.18-2ubuntu3.2_amd64.deb ...
+    Unpacking apache2 (2.4.18-2ubuntu3.2) over (2.4.18-2ubuntu3.1) ...
+    Preparing to unpack .../apache2-bin_2.4.18-2ubuntu3.2_amd64.deb ...
+    Unpacking apache2-bin (2.4.18-2ubuntu3.2) over (2.4.18-2ubuntu3.1) ...
+    Preparing to unpack .../apache2-data_2.4.18-2ubuntu3.2_all.deb ...
+    Unpacking apache2-data (2.4.18-2ubuntu3.2) over (2.4.18-2ubuntu3.1) ...
+    Processing triggers for man-db (2.7.5-1) ...
+    Processing triggers for systemd (229-4ubuntu16) ...
+    Processing triggers for ureadahead (0.100.0-19) ...
+    Processing triggers for ufw (0.35-0ubuntu2) ...
+    Setting up apache2-bin (2.4.18-2ubuntu3.2) ...
+    Setting up apache2-data (2.4.18-2ubuntu3.2) ...
+    Setting up apache2 (2.4.18-2ubuntu3.2) ...
+    chenry@server2:~$ sudo service apache2 start
+    chenry@server2:~$ cd /var/www/html
+    chenry@server2:/var/www/html$ sudo mv index.html index.html.orig
+    chenry@server2:/var/www/html$ echo server2 |sudo tee index.html
+    server2
+    chenry@server2:/var/www/html$ curl localhost
+    server2
+    chenry@server2:/var/www/html$
+
+    Now we have
+        2 web servers listening on port 80
+        each web server outputs the servers host when '/' is requested
+
+---
+
+
+
+SERVER1:
+
+    Lets install haproxy and setup our load balancer on server1
+
+    chenry@server1:/var/www/html$ sudo apt-get install haproxy
+    Reading package lists... Done
+    Building dependency tree
+    Reading state information... Done
+    The following additional packages will be installed:
+     liblua5.3-0
+    Suggested packages:
+     vim-haproxy haproxy-doc
+    The following NEW packages will be installed:
+     haproxy liblua5.3-0
+    0 upgraded, 2 newly installed, 0 to remove and 98 not upgraded.
+    Need to get 872 kB of archives.
+    After this operation, 1,997 kB of additional disk space will be used.
+    Do you want to continue? [Y/n] y
+    Get:1 http://us.archive.ubuntu.com/ubuntu xenial/main amd64 liblua5.3-0 amd64 5.3.1-1ubuntu2 [116 kB]
+    Get:2 http://us.archive.ubuntu.com/ubuntu xenial-updates/main amd64 haproxy amd64 1.6.3-1ubuntu0.1 [756 kB]
+    Fetched 872 kB in 1s (683 kB/s)
+    Selecting previously unselected package liblua5.3-0:amd64.
+    (Reading database ... 100220 files and directories currently installed.)
+    Preparing to unpack .../liblua5.3-0_5.3.1-1ubuntu2_amd64.deb ...
+    Unpacking liblua5.3-0:amd64 (5.3.1-1ubuntu2) ...
+    Selecting previously unselected package haproxy.
+    Preparing to unpack .../haproxy_1.6.3-1ubuntu0.1_amd64.deb ...
+    Unpacking haproxy (1.6.3-1ubuntu0.1) ...
+    Processing triggers for libc-bin (2.23-0ubuntu5) ...
+    Processing triggers for systemd (229-4ubuntu16) ...
+    Processing triggers for ureadahead (0.100.0-19) ...
+    Processing triggers for man-db (2.7.5-1) ...
+    Setting up liblua5.3-0:amd64 (5.3.1-1ubuntu2) ...
+    Setting up haproxy (1.6.3-1ubuntu0.1) ...
+    Processing triggers for libc-bin (2.23-0ubuntu5) ...
+    Processing triggers for systemd (229-4ubuntu16) ...
+    Processing triggers for ureadahead (0.100.0-19) ...
+
+
+    Lets configure HAProxy to setup a "backend pool" that round robins requests to server1 and server2 both on port 80 (eg: the apache instance we just set up)
+
+    chenry@server1:/var/www/html$ cat << EOF |sudo tee /etc/haproxy/haproxy.cfg
+    global
+     log /dev/log local0
+     log /dev/log local1 notice
+     chroot /var/lib/haproxy
+     user haproxy
+     group haproxy
+     daemon
+     # setup our unix socket listener for admin/management
+     stats socket /var/run/haproxy.sock user haproxy group haproxy mode 0777 level admin
+
+    # configure authentication for stats web access
+    userlist stats-auth
+     group admin users admin
+     user admin insecure-password XJsXMFgsr2doAEUg0mCf0
+     group readonly users guest
+     user guest insecure-password guest
+
+    defaults
+     log global
+     mode http
+     balance roundrobin
+     option httplog
+     option dontlognull
+     timeout connect 5000
+     timeout client 50000
+     timeout server 50000
+     errorfile 400 /etc/haproxy/errors/400.http
+     errorfile 403 /etc/haproxy/errors/403.http
+     errorfile 408 /etc/haproxy/errors/408.http
+     errorfile 500 /etc/haproxy/errors/500.http
+     errorfile 502 /etc/haproxy/errors/502.http
+     errorfile 503 /etc/haproxy/errors/503.http
+     errorfile 504 /etc/haproxy/errors/504.http
+
+    # configure a listener for our stats page
+    listen stats
+     bind :8000
+     mode http
+     stats enable
+     stats uri /haproxy
+     acl AUTH http_auth(stats-auth)
+     acl AUTH_ADMIN http_auth_group(stats-auth) admin
+     stats http-request auth unless AUTH
+     stats admin if AUTH_ADMIN
+
+    # setup our frontend on port 8080
+    frontend servers
+     bind :8080
+     default_backend servers
+
+    # setup our backend server pool
+    backend servers
+     # perform health checks on servers in the pool
+     option httpchk GET /
+     # "healthy" servers return an HTTP 200 to healthcheck requests
+     http-check expect status 200
+     server server1 192.168.6.132:80 weight 1 check
+     server server2 192.168.6.133:80 weight 1 check
+    EOF
+
+    Validate the haproxy config and restart the service
+
+    chenry@server1:/var/www/html$ /usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg -c
+    Configuration file is valid
+    chenry@server1:/var/www/html$ sudo service haproxy restart
+
+    Lets use curl to hit our haproxy instance and see how it round robins between the 2 servers.  Remember our frontend is listening on port 8080 and then load balancing connections to server1 and server2 on port 80
+
+    ho-mbp-713:~ chenry$ curl 192.168.6.132:8080
+    server1
+    ho-mbp-713:~ chenry$ curl 192.168.6.132:8080
+    server2
+    ho-mbp-713:~ chenry$ curl 192.168.6.132:8080
+    server1
+    ho-mbp-713:~ chenry$ curl 192.168.6.132:8080
+    server2
+    ho-mbp-713:~ chenry$ curl 192.168.6.132:8080
+    server1
+    ho-mbp-713:~ chenry$ curl 192.168.6.132:8080
+    server2
+    ho-mbp-713:~ chenry$ curl 192.168.6.132:8080
+    server1
+    ho-mbp-713:~ chenry$ curl 192.168.6.132:8080
+    server2
+    ho-mbp-713:~ chenry$ curl 192.168.6.132:8080
+    server1
+    Lets connect using our VIP address to see how haproxy can failover with VRRP
+
+    # restart keepalived just in case it was stopped from lab10a and lets hit haproxy via our VIP IP
+    chenry@server1:/var/www/html$ sudo service keepalived restart
+     * Restarting keepalived keepalived... [ OK ]
+    chenry@server1:/var/www/html$ curl http://192.168.6.200:8080
+    server1
+    chenry@server1:/var/www/html$ curl http://192.168.6.200:8080
+    server2
+    chenry@server1:/var/www/html$ curl http://192.168.6.200:8080
+    server1
+    chenry@server1:/var/www/html$
+
+---
+
+SERVER2
+
+Repeat these steps on server2 so you have 2 hosts running haproxy
+
+    Lets install haproxy and setup our load balancer on server1
+
+    chenry@server2:/var/www/html$ sudo apt-get install haproxy
+    Reading package lists... Done
+    Building dependency tree
+    Reading state information... Done
+    The following additional packages will be installed:
+     liblua5.3-0
+    Suggested packages:
+     vim-haproxy haproxy-doc
+    The following NEW packages will be installed:
+     haproxy liblua5.3-0
+    0 upgraded, 2 newly installed, 0 to remove and 91 not upgraded.
+    Need to get 872 kB of archives.
+    After this operation, 1,997 kB of additional disk space will be used.
+    Do you want to continue? [Y/n] y
+    Get:1 http://us.archive.ubuntu.com/ubuntu xenial/main amd64 liblua5.3-0 amd64 5.3.1-1ubuntu2 [116 kB]
+    Get:2 http://us.archive.ubuntu.com/ubuntu xenial-updates/main amd64 haproxy amd64 1.6.3-1ubuntu0.1 [756 kB]
+    Fetched 872 kB in 1s (568 kB/s)
+    Selecting previously unselected package liblua5.3-0:amd64.
+    (Reading database ... 66952 files and directories currently installed.)
+    Preparing to unpack .../liblua5.3-0_5.3.1-1ubuntu2_amd64.deb ...
+    Unpacking liblua5.3-0:amd64 (5.3.1-1ubuntu2) ...
+    Selecting previously unselected package haproxy.
+    Preparing to unpack .../haproxy_1.6.3-1ubuntu0.1_amd64.deb ...
+    Unpacking haproxy (1.6.3-1ubuntu0.1) ...
+    Processing triggers for libc-bin (2.23-0ubuntu5) ...
+    Processing triggers for systemd (229-4ubuntu16) ...
+    Processing triggers for ureadahead (0.100.0-19) ...
+    Processing triggers for man-db (2.7.5-1) ...
+    Setting up liblua5.3-0:amd64 (5.3.1-1ubuntu2) ...
+    Setting up haproxy (1.6.3-1ubuntu0.1) ...
+    Processing triggers for libc-bin (2.23-0ubuntu5) ...
+    Processing triggers for systemd (229-4ubuntu16) ...
+    Processing triggers for ureadahead (0.100.0-19) ...
+
+
+    Lets configure HAProxy to setup a "backend pool" that round robins requests to server1 and server2 both on port 80 (eg: the apache instance we just set up)
+
+    chenry@server1:/var/www/html$ cat << EOF |sudo tee /etc/haproxy/haproxy.cfg
+    global
+     log /dev/log local0
+     log /dev/log local1 notice
+     chroot /var/lib/haproxy
+     user haproxy
+     group haproxy
+     daemon
+     # setup our unix socket listener for admin/management
+     stats socket /var/run/haproxy.sock user haproxy group haproxy mode 0777 level admin
+
+    # configure authentication for stats web access
+    userlist stats-auth
+     group admin users admin
+     user admin insecure-password XJsXMFgsr2doAEUg0mCf0
+     group readonly users guest
+     user guest insecure-password guest
+
+    defaults
+     log global
+     mode http
+     balance roundrobin
+     option httplog
+     option dontlognull
+     timeout connect 5000
+     timeout client 50000
+     timeout server 50000
+     errorfile 400 /etc/haproxy/errors/400.http
+     errorfile 403 /etc/haproxy/errors/403.http
+     errorfile 408 /etc/haproxy/errors/408.http
+     errorfile 500 /etc/haproxy/errors/500.http
+     errorfile 502 /etc/haproxy/errors/502.http
+     errorfile 503 /etc/haproxy/errors/503.http
+     errorfile 504 /etc/haproxy/errors/504.http
+
+    # configure a listener for our stats page
+    listen stats
+     bind :8000
+     mode http
+     stats enable
+     stats uri /haproxy
+     acl AUTH http_auth(stats-auth)
+     acl AUTH_ADMIN http_auth_group(stats-auth) admin
+     stats http-request auth unless AUTH
+     stats admin if AUTH_ADMIN
+
+    # setup our frontend on port 8080
+    frontend servers
+     bind :8080
+     default_backend servers
+
+    # setup our backend server pool
+    backend servers
+     # perform health checks on servers in the pool
+     option httpchk GET /
+     # "healthy" servers return an HTTP 200 to healthcheck requests
+     http-check expect status 200
+     server server1 192.168.6.132:80 weight 1 check
+     server server2 192.168.6.133:80 weight 1 check
+    EOF
+
+    Validate the config and restart haproxy
+
+    chenry@server2:/var/www/html$ /usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg -c
+    Configuration file is valid
+    chenry@server2:/var/www/html$ sudo service haproxy restart
+    chenry@server2:/var/www/html$
+
+    Test server2 to make sure haproxy is working properly
+
+    chenry@server2:/var/www/html$ curl http://192.168.6.133:8080
+    server1
+    chenry@server2:/var/www/html$ curl http://192.168.6.133:8080
+    server2
+    chenry@server2:/var/www/html$ curl http://192.168.6.133:8080
+    server1
+    chenry@server2:/var/www/html$ curl http://192.168.6.133:8080
+    server2
+    chenry@server2:/var/www/html$ curl http://192.168.6.133:8080
+    server1
+    chenry@server2:/var/www/html$ curl http://192.168.6.133:8080
+    server2
+    chenry@server2:/var/www/html$ curl http://192.168.6.133:8080
+    server1
+    chenry@server2:/var/www/html$ curl http://192.168.6.133:8080
+    server2
+
+---
+
+Testing VRRP and haproxy together
+
+We will be using the haproxy stats page to watch incoming requests.  This interface can be found at:
+
+Server1: http://guest:guest@192.168.6.132:8000/haproxy (Links to an external site.)Links to an external site.
+Server2: http://guest:guest@192.168.6.133:8000/haproxy (Links to an external site.)Links to an external site.
+
+
+
+Lets run a looping curl test on our hypervisor host, watch the metrics of both interfaces, and then watch what happens as we flip vrrpd off and on.  The curl loop below will hit the VIP address on port 8080.  As we stop/start keepavlied on server1 the request will flip between hosts to provide a highly redundant web service:
+
+
+
+# on my hypervisor (desktop/laptop) run (ctrl+c to break):
+while true; do
+    curl http://192.168.6.200:8080 (Links to an external site.)Links to an external site.
+    sleep 0.2
+done
+
+Watch the 2 metric pages as you stop/start vrrpd on server1.  Connections automatically flip over to server2.  Feel free to even reboot server1... what is the impact of a failover?
+
+
+
+With these 2 technologies you now have a platform for making sure haproxy is hosted across multiple servers and always available.  Since HAProxy is a Load Balancer/Proxy, you can also make sure that any server behind it is also highly available in a redundant manner
