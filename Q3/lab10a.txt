@@ -1,0 +1,403 @@
+Lab 10a - KeepAlive
+Due No Due Date  Points 0
+In this lab we will be setting up and testing some high availability and failover methods using a combination of VRRPD for netowork failover, and haproxy for load balancing.
+
+You will need a second VM for this exercise.  If you still have your centos7 vm from last quarter you may use that - otherwise please install a second ubuntu 14.04 vm on your host the same as lab1: (https://canvas.uw.edu/courses/1105226/assignments/3577548)
+
+For the rest of the lab I will refer to the VM you installed in week 1 of Q3 as "server1" and the second VM (either your centos7 from Q2 or one you installed tonight) as "server2"
+
+For this lab you will need to make sure both of your VM's and your hypervisor (e.g.: laptop) can communicate via:
+
+icmp protocol (iptables .... -p icmp -j ACCEPT)
+vrrp protocol (iptables ... -j vrrp -j ACCEPT)
+
+---
+
+First we need to determine what ip address we can use for our failover virtual IP.   We want to pick something in the same subnet that does not conflict with anything already in use.
+
+The following is how I determined the ip to use for my VIP - but it may differ for your hypervisor setup
+
+SERVER1: ens33 ip 192.168.6.132/24
+
+chenry@server1:~$ ip addr show ens33
+2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+ link/ether 00:0c:29:5e:bd:a6 brd ff:ff:ff:ff:ff:ff
+ inet 192.168.6.132/24 brd 192.168.6.255 scope global ens33
+ valid_lft forever preferred_lft forever
+ inet6 fe80::20c:29ff:fe5e:bda6/64 scope link
+ valid_lft forever preferred_lft forever
+SERVER2: ens33 ip 192.168.6.133/24
+
+chenry@server2:~$ ip addr show ens33
+2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+ link/ether 00:0c:29:48:54:9c brd ff:ff:ff:ff:ff:ff
+ inet 192.168.6.133/24 brd 192.168.6.255 scope global ens33
+ valid_lft forever preferred_lft forever
+ inet6 fe80::20c:29ff:fe48:549c/64 scope link
+ valid_lft forever preferred_lft forever
+
+
+Hypervisor Host: ip 192.168.6.1/24
+
+ho-mbp-713:~ chenry$ ifconfig vmnet8
+vmnet8: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+ ether 00:50:56:c0:00:08
+ inet 192.168.6.1 netmask 0xffffff00 broadcast 192.168.6.255
+
+
+Given the above I chose IP 192.168.6.200 for the keepalived VIP as it is in the same subnet and not in use.  Please note that yours *may* vary!
+
+--
+
+SERVER1
+
+Lets get started by installing keepalived on server1 using apt
+chenry@server1:~$ sudo apt-get install keepalived
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+ ipvsadm libsensors4 libsnmp-base libsnmp30
+Suggested packages:
+ heartbeat ldirectord lm-sensors snmp-mibs-downloader
+The following NEW packages will be installed:
+ ipvsadm keepalived libsensors4 libsnmp-base libsnmp30
+0 upgraded, 5 newly installed, 0 to remove and 101 not upgraded.
+Need to get 1,251 kB of archives.
+After this operation, 4,902 kB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://us.archive.ubuntu.com/ubuntu xenial/main amd64 libsensors4 amd64 1:3.4.0-2 [28.4 kB]
+Get:2 http://us.archive.ubuntu.com/ubuntu xenial/main amd64 libsnmp-base all 5.7.3+dfsg-1ubuntu4 [224 kB]
+Get:3 http://us.archive.ubuntu.com/ubuntu xenial/main amd64 libsnmp30 amd64 5.7.3+dfsg-1ubuntu4 [813 kB]
+Get:4 http://us.archive.ubuntu.com/ubuntu xenial-updates/main amd64 keepalived amd64 1:1.2.19-1ubuntu0.2 [150 kB]
+Get:5 http://us.archive.ubuntu.com/ubuntu xenial/main amd64 ipvsadm amd64 1:1.28-3 [35.5 kB]
+Fetched 1,251 kB in 1s (783 kB/s)
+Selecting previously unselected package libsensors4:amd64.
+(Reading database ... 100018 files and directories currently installed.)
+Preparing to unpack .../libsensors4_1%3a3.4.0-2_amd64.deb ...
+Unpacking libsensors4:amd64 (1:3.4.0-2) ...
+Selecting previously unselected package libsnmp-base.
+Preparing to unpack .../libsnmp-base_5.7.3+dfsg-1ubuntu4_all.deb ...
+Unpacking libsnmp-base (5.7.3+dfsg-1ubuntu4) ...
+Selecting previously unselected package libsnmp30:amd64.
+Preparing to unpack .../libsnmp30_5.7.3+dfsg-1ubuntu4_amd64.deb ...
+Unpacking libsnmp30:amd64 (5.7.3+dfsg-1ubuntu4) ...
+Selecting previously unselected package keepalived.
+Preparing to unpack .../keepalived_1%3a1.2.19-1ubuntu0.2_amd64.deb ...
+Unpacking keepalived (1:1.2.19-1ubuntu0.2) ...
+Selecting previously unselected package ipvsadm.
+Preparing to unpack .../ipvsadm_1%3a1.28-3_amd64.deb ...
+Unpacking ipvsadm (1:1.28-3) ...
+Processing triggers for man-db (2.7.5-1) ...
+Processing triggers for libc-bin (2.23-0ubuntu5) ...
+Processing triggers for systemd (229-4ubuntu16) ...
+Processing triggers for ureadahead (0.100.0-19) ...
+Setting up libsensors4:amd64 (1:3.4.0-2) ...
+Setting up libsnmp-base (5.7.3+dfsg-1ubuntu4) ...
+Setting up libsnmp30:amd64 (5.7.3+dfsg-1ubuntu4) ...
+Setting up keepalived (1:1.2.19-1ubuntu0.2) ...
+Setting up ipvsadm (1:1.28-3) ...
+Processing triggers for libc-bin (2.23-0ubuntu5) ...
+Processing triggers for systemd (229-4ubuntu16) ...
+Processing triggers for ureadahead (0.100.0-19) ...
+We need to configure keepalived to use our interface (ens33 in my example) with VIP 192.168.6.200 by writing a keepalived.conf file.
+Lets make sure that we set server1 to be our master/primary host with a higher priority so it will take ownership of the VIP address
+chenry@server1:~$ cat << EOF |sudo tee /etc/keepalived/keepalived.conf
+# enp0s8 interface failover definition
+vrrp_instance VI_1 {
+ state MASTER
+ priority 100
+ # state SLAVE
+ #priority 50
+ interface enp0s8
+ virtual_router_id 1
+ authentication {
+  auth_type PASS
+  auth_pass super_secret_password_here
+ }
+ virtual_ipaddress {
+  192.168.0.20/24 dev enp0s8
+ }
+
+ # optional, monitor these as well and go to FAULT state if any of these go down.
+ track_interface {
+  # not necessary here - but what if we wanted to failover multiple interfaces at once?
+  enp0s8
+ }
+}
+EOF
+We are also only using the VRRP features of keepalived so lets configure the daemon with the -P or --vrrp switches so it only runs the vrrp subsystem. see (man keepalived)
+chenry@server1:~$ cat << EOF | sudo tee /etc/default/keepalived
+# Options to pass to keepalived
+
+# DAEMON_ARGS are appended to the keepalived command-line
+DAEMON_ARGS="--vrrp"
+EOF
+Now that we've written a new keepalived configuration we need to restart the service and check for our new ip being in use
+chenry@server1:~$ sudo service keepalived restart
+chenry@server1:~$ ip addr show ens33
+2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+ link/ether 00:0c:29:5e:bd:a6 brd ff:ff:ff:ff:ff:ff
+ inet 192.168.6.132/24 brd 192.168.6.255 scope global ens33
+ valid_lft forever preferred_lft forever
+ inet 192.168.6.200/24 scope global secondary ens33
+ valid_lft forever preferred_lft forever
+ inet6 fe80::20c:29ff:fe5e:bda6/64 scope link
+ valid_lft forever preferred_lft forever
+In step 3 we can see that our host now also has ipaddress 192.168.6.200/24 on interface ens33
+Lets look at the log entries to see what keepalived has done
+chenry@server1:~$ sudo grep Keepalived /var/log/syslog
+Jun 5 21:39:31 ubuntu1 Keepalived[18536]: Starting Keepalived v1.2.19 (03/13,2017)
+Jun 5 21:39:31 ubuntu1 Keepalived[18538]: Starting VRRP child process, pid=18539
+Jun 5 21:39:31 ubuntu1 Keepalived_vrrp[18539]: Registering Kernel netlink reflector
+Jun 5 21:39:31 ubuntu1 Keepalived_vrrp[18539]: Registering Kernel netlink command channel
+Jun 5 21:39:31 ubuntu1 Keepalived_vrrp[18539]: Registering gratuitous ARP shared channel
+Jun 5 21:39:31 ubuntu1 Keepalived_vrrp[18539]: Opening file '/etc/keepalived/keepalived.conf'.
+Jun 5 21:39:31 ubuntu1 Keepalived_vrrp[18539]: Truncating auth_pass to 8 characters
+Jun 5 21:39:31 ubuntu1 Keepalived_vrrp[18539]: Configuration is using : 64843 Bytes
+Jun 5 21:39:31 ubuntu1 Keepalived_vrrp[18539]: Using LinkWatch kernel netlink reflector...
+Jun 5 21:39:32 ubuntu1 Keepalived_vrrp[18539]: VRRP_Instance(VI_1) Transition to MASTER STATE
+Jun 5 21:39:33 ubuntu1 Keepalived_vrrp[18539]: VRRP_Instance(VI_1) Entering MASTER STATE
+In step 5 we can see that our configured VI_1 instance has entered "MASTER" state which means it is active for 192.168.6.200
+----
+
+SERVER2
+
+Lets get started by installing keepalived on server2 using apt (or yum if you're using Centos7 from Q2)
+chenry@server2:~$ sudo apt-get install keepalived
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+ ipvsadm libsensors4 libsnmp-base libsnmp30
+Suggested packages:
+ heartbeat ldirectord lm-sensors snmp-mibs-downloader
+The following NEW packages will be installed:
+ ipvsadm keepalived libsensors4 libsnmp-base libsnmp30
+0 upgraded, 5 newly installed, 0 to remove and 94 not upgraded.
+Need to get 1,251 kB of archives.
+After this operation, 4,902 kB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://us.archive.ubuntu.com/ubuntu xenial/main amd64 libsensors4 amd64 1:3.4.0-2 [28.4 kB]
+Get:2 http://us.archive.ubuntu.com/ubuntu xenial/main amd64 libsnmp-base all 5.7.3+dfsg-1ubuntu4 [224 kB]
+Get:3 http://us.archive.ubuntu.com/ubuntu xenial/main amd64 libsnmp30 amd64 5.7.3+dfsg-1ubuntu4 [813 kB]
+Get:4 http://us.archive.ubuntu.com/ubuntu xenial-updates/main amd64 keepalived amd64 1:1.2.19-1ubuntu0.2 [150 kB]
+Get:5 http://us.archive.ubuntu.com/ubuntu xenial/main amd64 ipvsadm amd64 1:1.28-3 [35.5 kB]
+Fetched 1,251 kB in 2s (557 kB/s)
+Selecting previously unselected package libsensors4:amd64.
+(Reading database ... 66750 files and directories currently installed.)
+Preparing to unpack .../libsensors4_1%3a3.4.0-2_amd64.deb ...
+Unpacking libsensors4:amd64 (1:3.4.0-2) ...
+Selecting previously unselected package libsnmp-base.
+Preparing to unpack .../libsnmp-base_5.7.3+dfsg-1ubuntu4_all.deb ...
+Unpacking libsnmp-base (5.7.3+dfsg-1ubuntu4) ...
+Selecting previously unselected package libsnmp30:amd64.
+Preparing to unpack .../libsnmp30_5.7.3+dfsg-1ubuntu4_amd64.deb ...
+Unpacking libsnmp30:amd64 (5.7.3+dfsg-1ubuntu4) ...
+Selecting previously unselected package keepalived.
+Preparing to unpack .../keepalived_1%3a1.2.19-1ubuntu0.2_amd64.deb ...
+Unpacking keepalived (1:1.2.19-1ubuntu0.2) ...
+Selecting previously unselected package ipvsadm.
+Preparing to unpack .../ipvsadm_1%3a1.28-3_amd64.deb ...
+Unpacking ipvsadm (1:1.28-3) ...
+Processing triggers for man-db (2.7.5-1) ...
+Processing triggers for libc-bin (2.23-0ubuntu5) ...
+Processing triggers for systemd (229-4ubuntu16) ...
+Processing triggers for ureadahead (0.100.0-19) ...
+Setting up libsensors4:amd64 (1:3.4.0-2) ...
+Setting up libsnmp-base (5.7.3+dfsg-1ubuntu4) ...
+Setting up libsnmp30:amd64 (5.7.3+dfsg-1ubuntu4) ...
+Setting up keepalived (1:1.2.19-1ubuntu0.2) ...
+Setting up ipvsadm (1:1.28-3) ...
+Processing triggers for libc-bin (2.23-0ubuntu5) ...
+Processing triggers for systemd (229-4ubuntu16) ...
+Processing triggers for ureadahead (0.100.0-19) ...
+We need to configure server2 for VIP address 192.168.6.200.
+Don't forget to set the state and priority for this host to be a slave as server1 is our primary
+chenry@server2:~$ cat << EOF |sudo tee /etc/keepalived/keepalived.conf
+# enp0s9 interface failover definition
+vrrp_instance VI_1 {
+ #state MASTER
+ #priority 100
+ state SLAVE
+ priority 50
+ interface enp0s9
+ virtual_router_id 1
+ authentication {
+ auth_type PASS
+ auth_pass super_secret_password_here
+ }
+ virtual_ipaddress {
+ 192.168.0.20/24 dev enp0s9
+ }
+ # optional, monitor these as well and go to FAULT state if any of these go down. track_interface
+ track_interface {
+ # not necessary here - but what if we wanted to failover multiple interfaces at once?
+ enp0s9
+ }
+}
+EOF
+We are also only using the VRRP features of keepalived so lets configure the daemon with the -P or --vrrp switches so it only runs the vrrp subsystem
+chenry@server:~$ cat << EOF | sudo tee /etc/default/keepalived
+# Options to pass to keepalived
+
+# DAEMON_ARGS are appended to the keepalived command-line
+DAEMON_ARGS="--vrrp"
+EOF
+Now that we've written a new keepalived configuration we need to restart the service
+chenry@server2:~$ sudo /etc/init.d/keepalived restart
+ * Restarting keepalived keepalived... [ OK ]
+Lets look at the logs to see what our server2 host did.  Remember it is a slave so we shouldn't see the ip address in use until a failover from server1 happens
+chenry@server2:~$ sudo grep Keepalive /var/log/syslog
+Jun 5 21:52:46 ubuntu2 systemd[1]: Started Keepalive Daemon (LVS and VRRP).
+Jun 5 21:52:46 ubuntu2 Keepalived_vrrp[3144]: Registering Kernel netlink command channel
+Jun 5 21:52:46 ubuntu2 Keepalived_vrrp[3144]: Registering gratuitous ARP shared channel
+Jun 5 21:52:46 ubuntu2 Keepalived_vrrp[3144]: Opening file '/etc/keepalived/keepalived.conf'.
+Jun 5 21:52:46 ubuntu2 Keepalived_vrrp[3144]: Truncating auth_pass to 8 characters
+Jun 5 21:52:46 ubuntu2 Keepalived_vrrp[3144]: Configuration is using : 64455 Bytes
+Jun 5 21:52:46 ubuntu2 Keepalived_vrrp[3144]: Using LinkWatch kernel netlink reflector...
+Jun 5 21:52:46 ubuntu2 Keepalived_vrrp[3144]: VRRP_Instance(VI_1) Entering BACKUP STATE
+Here we can see that our configured VRRP instance VI_1 is in a backup state and if we look at our ip info we can see server2 is not using ip 192.168.6.200 on ens33
+chenry@server2:~$ ip addr show ens33
+2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+ link/ether 00:0c:29:48:54:9c brd ff:ff:ff:ff:ff:ff
+ inet 192.168.6.133/24 brd 192.168.6.255 scope global ens33
+ valid_lft forever preferred_lft forever
+ inet6 fe80::20c:29ff:fe48:549c/64 scope link
+ valid_lft forever preferred_lft forever
+
+----
+
+
+
+Testing Failover
+
+Remember how Layer2 networking works with regards to MAC address and ARP?  We now have 3 hosts on the same subnet consisting of our 2 VM's running VRRP and our hypervisor (desktop/laptop) running vmware, virtualbox, etc. which allows us to test VRRP from our hypervisor host.
+
+Again my ip space may differ from yours but for me I have:
+
+Server1 - ip: 192.168.6.132/24 MAC: 00:0c:29:5e:bd:a6
+Server2 - ip: 192.168.6.133/24 MAC: 00:0c:29:48:54:9c
+VIP - ip: 192.168.6.200/24
+Hypervisor - ip: 192.168.6.1/24
+Again - your network space may differ and you will need to use whatever values your systems have.
+
+We will be using ping and arp to validate the failover of our VIP ip address from our hypervisor
+
+
+
+Lets ping our VIP ip (From our hypervisor) and see what MAC address that ip is using
+ho-mbp-713:~ chenry$ ping -c 1 192.168.6.200 # ping our VIP to populate our arp table
+PING 192.168.6.200 (192.168.6.200): 56 data bytes
+64 bytes from 192.168.6.200: icmp_seq=0 ttl=64 time=0.365 ms
+
+--- 192.168.6.200 ping statistics ---
+1 packets transmitted, 1 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.365/0.365/0.365/0.000 ms
+ho-mbp-713:~ chenry$ sudo arp -n -a |grep 192.168.6.200
+? (192.168.6.200) at 0:c:29:5e:bd:a6 on vmnet8 ifscope [ethernet]
+
+In step 1 we can see that mac address 0:c:29:5e:bd:a6 (server1) is responding for ip address 192.168.6.200
+Now lets force a failover of our VIP address over to server2 by shutting down keepalived on server1 and verifying it is no longer using our VIP ip:
+chenry@server1:~$ sudo service keepalived stop
+chenry@server1:~$ ip addr show ens33
+2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+ link/ether 00:0c:29:5e:bd:a6 brd ff:ff:ff:ff:ff:ff
+ inet 192.168.6.132/24 brd 192.168.6.255 scope global ens33
+ valid_lft forever preferred_lft forever
+ inet6 fe80::20c:29ff:fe5e:bda6/64 scope link
+ valid_lft forever preferred_lft forever
+Lets check out the keepalived logs on server2 to make sure it became the master for VI_1
+chenry@server2:~$ sudo grep Keepalive /var/log/syslog
+...
+Jun 5 21:52:46 ubuntu2 Keepalived_vrrp[3144]: VRRP_Instance(VI_1) Entering BACKUP STATE
+Jun 5 21:57:08 ubuntu2 Keepalived_vrrp[3144]: VRRP_Instance(VI_1) Transition to MASTER STATE
+Jun 5 21:57:09 ubuntu2 Keepalived_vrrp[3144]: VRRP_Instance(VI_1) Entering MASTER STATE
+We can see avove that at 05:38:11 SERVER2 transitioned VI_1 to the MASTER STATE - meaning it took over the vip ip address
+Lets see what mac address is now handling IP 192.168.6.200
+ho-mbp-713:~ chenry$ sudo arp -d 192.168.6.200 # delete arp entry for our VIP address in case it's stale
+192.168.6.200 (192.168.6.200) deleted
+ho-mbp-713:~ chenry$ ping -c 1 192.168.6.200 # ping VIP ip to repopulate ARP entry
+PING 192.168.6.200 (192.168.6.200): 56 data bytes
+64 bytes from 192.168.6.200: icmp_seq=0 ttl=64 time=0.360 ms
+
+--- 192.168.6.200 ping statistics ---
+1 packets transmitted, 1 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.360/0.360/0.360/0.000 ms
+ho-mbp-713:~ chenry$ sudo arp -n -a |grep 192.168.6.200
+? (192.168.6.200) at 0:c:29:48:54:9c on vmnet8 ifscope [ethernet]
+
+After failing over the VIP address to the secondary we can see that mac address 0:c:29:48:54:9c (server2) is responding for 192.168.6.200!
+
+
+ ---
+
+
+
+Now lets test the failover / failback timing of VRRPD.
+
+In one terminal lets start a constant ping to our VIP address and stop/start cycle keepalived on server1 (which causes server2 to take over the address) so we can see how it affects our traffic:
+
+Hypervisor (ping):
+
+ho-mbp-713:~ chenry$ ping 192.168.6.200
+PING 192.168.6.200 (192.168.6.200): 56 data bytes
+64 bytes from 192.168.6.200: icmp_seq=0 ttl=64 time=0.403 ms
+64 bytes from 192.168.6.200: icmp_seq=1 ttl=64 time=0.382 ms
+64 bytes from 192.168.6.200: icmp_seq=2 ttl=64 time=0.354 ms
+92 bytes from 192.168.6.132: Redirect Host(New addr: 192.168.6.200)
+Vr HL TOS Len ID Flg off TTL Pro cks Src Dst
+ 4 5 00 0054 3800 0 0000 3f 01 b58f 192.168.6.1 192.168.6.200
+
+Request timeout for icmp_seq 3
+92 bytes from 192.168.6.132: Redirect Host(New addr: 192.168.6.200)
+Vr HL TOS Len ID Flg off TTL Pro cks Src Dst
+ 4 5 00 0054 3fb9 0 0000 3f 01 add6 192.168.6.1 192.168.6.200
+
+Request timeout for icmp_seq 4
+64 bytes from 192.168.6.200: icmp_seq=5 ttl=64 time=0.427 ms
+64 bytes from 192.168.6.200: icmp_seq=6 ttl=64 time=0.427 ms
+64 bytes from 192.168.6.200: icmp_seq=7 ttl=64 time=0.456 ms
+64 bytes from 192.168.6.200: icmp_seq=8 ttl=64 time=0.417 ms
+64 bytes from 192.168.6.200: icmp_seq=9 ttl=64 time=0.426 ms
+64 bytes from 192.168.6.200: icmp_seq=10 ttl=64 time=0.695 ms
+64 bytes from 192.168.6.200: icmp_seq=11 ttl=64 time=0.450 ms
+64 bytes from 192.168.6.200: icmp_seq=12 ttl=64 time=0.371 ms
+64 bytes from 192.168.6.200: icmp_seq=13 ttl=64 time=0.407 ms
+64 bytes from 192.168.6.200: icmp_seq=14 ttl=64 time=0.520 ms
+64 bytes from 192.168.6.200: icmp_seq=15 ttl=64 time=0.371 ms
+64 bytes from 192.168.6.200: icmp_seq=16 ttl=64 time=0.378 ms
+92 bytes from 192.168.6.133: Redirect Host(New addr: 192.168.6.200)
+Vr HL TOS Len ID Flg off TTL Pro cks Src Dst
+ 4 5 00 0054 4682 0 0000 3f 01 a70d 192.168.6.1 192.168.6.200
+
+Request timeout for icmp_seq 17
+64 bytes from 192.168.6.200: icmp_seq=18 ttl=64 time=0.536 ms
+64 bytes from 192.168.6.200: icmp_seq=19 ttl=64 time=0.368 ms
+64 bytes from 192.168.6.200: icmp_seq=20 ttl=64 time=0.369 ms
+64 bytes from 192.168.6.200: icmp_seq=21 ttl=64 time=0.432 ms
+64 bytes from 192.168.6.200: icmp_seq=22 ttl=64 time=0.404 ms
+64 bytes from 192.168.6.200: icmp_seq=23 ttl=64 time=0.445 ms
+64 bytes from 192.168.6.200: icmp_seq=24 ttl=64 time=0.431 ms
+64 bytes from 192.168.6.200: icmp_seq=25 ttl=64 time=0.284 ms
+64 bytes from 192.168.6.200: icmp_seq=26 ttl=64 time=0.377 ms
+64 bytes from 192.168.6.200: icmp_seq=27 ttl=64 time=0.404 ms
+64 bytes from 192.168.6.200: icmp_seq=28 ttl=64 time=0.363 ms
+64 bytes from 192.168.6.200: icmp_seq=29 ttl=64 time=0.271 ms
+64 bytes from 192.168.6.200: icmp_seq=30 ttl=64 time=0.510 ms
+^C
+--- 192.168.6.200 ping statistics ---
+31 packets transmitted, 28 packets received, 9.7% packet loss
+round-trip min/avg/max/stddev = 0.271/0.417/0.695/0.079 ms
+ho-mbp-713:~ chenry$
+
+
+
+
+We can see above for me I stopped keepalived on server1 at ICMP request 3 which impacted ICMP requests 3 and 4.  By ICMP request 5 server2 had taken over.
+
+You can see I started keepalived again on server1 at ICMP request 17 and by ICMP request 18 server1 had taken over the VIP ip again
+
+In total we dropped 3 packets during the failover simulation
+
+Previous Next
