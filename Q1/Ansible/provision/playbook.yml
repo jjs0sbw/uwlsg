@@ -25,12 +25,24 @@
 - name: Q1 CentOS 6.6 setup
   hosts: default
   tasks:
+  # Make sure the ansible.cnf file exists and set to prompt for sudo
+  # password -- vagrant in this case.
   - name: Print message
     debug: msg="Beginning of CentOS 6.6 configuration Ansible script."
-  - name: Print Lab 1a message
-    debug: msg="Add two new users to the system -- q1u1, q2u2."
-  - name: Add user q1u1
-    command: /usr/sbin/useradd
+
+  - name: Print Lab 1a group add message
+    debug: msg="Add a new group, admin, to the system."
+
+  - name: Add group admin
+    command: /usr/sbin/groupadd admin
     become: true
     become_method: su
-    become_user: root  
+    become_user: root
+
+  - name: Print Lab 1a users add message
+    debug: msg="Add two new users to the system -- q1u1, q2u2."
+  - name: Add user q1u1
+    command: /usr/sbin/useradd -c "Q1C6 User1" -G admin q1u1
+    become: true
+    become_method: su
+    become_user: root
