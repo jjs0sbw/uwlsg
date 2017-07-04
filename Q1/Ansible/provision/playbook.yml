@@ -41,8 +41,15 @@
 
   - name: Print Lab 1a users add message
     debug: msg="Add two new users to the system -- q1u1, q2u2."
+
   - name: Add user q1u1
     command: /usr/sbin/useradd -c "Q1C6 User1" -G admin q1u1
+    become: true
+    become_method: su
+    become_user: root
+
+  - name: Add user q1u2
+    command: /usr/sbin/useradd -c "Q1C6 User2" -G admin q1u2
     become: true
     become_method: su
     become_user: root
