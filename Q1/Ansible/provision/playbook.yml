@@ -36,20 +36,35 @@
   - name: Add group admin
     command: /usr/sbin/groupadd admin
     become: true
-    become_method: su
+    become_method: sudo
     become_user: root
 
   - name: Print Lab 1a users add message
-    debug: msg="Add two new users to the system -- q1u1, q2u2."
+    debug: msg="Add two new users to the system; q1u1, q2u2."
 
   - name: Add user q1u1
     command: /usr/sbin/useradd -c "Q1C6 User1" -G admin q1u1
     become: true
-    become_method: su
+    become_method: sudo
     become_user: root
 
   - name: Add user q1u2
     command: /usr/sbin/useradd -c "Q1C6 User2" -G admin q1u2
     become: true
-    become_method: su
+    become_method: sudo
+    become_user: root
+
+  - name: Add ssh public key to q1u1 and q1u2, no password
+    debug: msg="Add public key to the  q1u1, q2u2 accounts."
+
+  - name: Make .ssh directory for user q1u1
+    file: path=/home/q1u1/.ssh state=directory owner=q1u1 group=q1u1 mode=0700
+    become: true
+    become_method: sudo
+    become_user: root
+    
+  - name: Make .ssh directory for user q1u2
+    copy: src=authorized_keys dest=/home/q1u2/.ssh owner=q1u2 group=q1u2 mode=0600
+    become: true
+    become_method: sudo
     become_user: root
