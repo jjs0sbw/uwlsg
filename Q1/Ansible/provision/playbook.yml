@@ -54,6 +54,18 @@
     become_method: sudo
     become_user: root
 
+  - name: Update yum cashe
+    yum: name='*' state=latest
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Install libselinux-python
+    yum: name='libselinux-python' state=latest
+    become: true
+    become_method: sudo
+    become_user: root
+
   - name: Add ssh public key to q1u1 and q1u2, no password
     debug: msg="Add public key to the  q1u1, q2u2 accounts."
 
@@ -62,9 +74,69 @@
     become: true
     become_method: sudo
     become_user: root
-    
+
+  - name: Copy pubilic key into ssh/authorized keys file for q1u1
+    debug: msg="Need to work this. Do by hand for now!"
+
   - name: Make .ssh directory for user q1u2
     copy: src=authorized_keys dest=/home/q1u2/.ssh owner=q1u2 group=q1u2 mode=0600
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Copy pubilic key into .ssh/authorized_keys file for q1u2
+    debug: msg="Need to work this. Do by hand for now!"
+
+  - name: Install man pages
+    yum: name=man state=latest
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Install vim
+    yum: name=vim state=latest
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Install vim-enhanced
+    yum: name=vim-enhanced state=latest
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Install lsscsi.i686
+    yum: name=lsscsi.i686 state=latest
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Install dstat
+    yum: name=dstat state=latest
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Install wget
+    yum: name=wget state=latest
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Install mlocate
+    yum: name=mlocate.i686 state=latest
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Install bind-utils
+    yum: name=bind-utils state=latest
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Install group install Web Server
+    yum: name="@Web Server" state=present
     become: true
     become_method: sudo
     become_user: root
