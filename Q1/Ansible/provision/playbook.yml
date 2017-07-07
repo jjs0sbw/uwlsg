@@ -146,3 +146,13 @@
     become: true
     become_method: sudo
     become_user: root
+
+  - name: Install telnet
+    yum: name=telnet state=latest
+    become: true
+    become_method: sudo
+    become_user: root
+
+    # Be sure to 'Update ssd config to remove root login'
+    # cd /etc/ssh/
+    # cp sshd_config sshd_config_bu
