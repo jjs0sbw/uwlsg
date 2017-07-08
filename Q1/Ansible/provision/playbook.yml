@@ -153,6 +153,21 @@
     become_method: sudo
     become_user: root
 
+  - name: Save a copy of iptables current configuration
+    debug: msg="Make a copy of the current iptable configuration."
+
+  - name: Create new ftp user ula-vsftp
+    debug: msg="Create new ftp user ula-vsftp."
+
+  - name: Change ula-vsftp user shell to /bin/noshell
+    debug: msg="Change ula-vsftp user shell to /bin/noshell."
+
+  - name: Backup existing iptables configuration file.
+    debug: msg="Backup existing iptables configuration file."
+
+  - name: Check iptables status.
+    debug: msg="Check iptables status."
+
     # Be sure to 'Update ssd config to remove root login'
     # cd /etc/ssh/
     # cp sshd_config sshd_config_bu

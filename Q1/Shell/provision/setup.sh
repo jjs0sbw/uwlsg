@@ -147,7 +147,7 @@ echo "Create new ftp user ula-vsftp"
 
 sudo /usr/sbin/useradd -c "VSFTP User" -G wheel ula-vsftp
 
-echo "Change user shell to /bin/noshell"
+echo "Change ula-vsftp user shell to /bin/noshell"
 
 sudo /usr/sbin/usermod -s /sbin/nologin ula-vsftp
 
