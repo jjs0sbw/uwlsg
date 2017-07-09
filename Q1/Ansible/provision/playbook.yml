@@ -169,7 +169,52 @@
     debug: msg="Check iptables status."
 
   - name: Edit telnet config under /etc/xinetd.d/
-    debug: msg="Edit telnet config under /etc/xinetd.d/."  
+    debug: msg="Edit telnet config under /etc/xinetd.d/."
+
+  - name: Install ftp -- vsftpd
+    debug: msg="Install ftp -- vsftpd."
+
+  - name: Check /etc/vsftpd/vsftp.conf
+    debug: msg="Check /etc/vsftpd/vsftp.conf."
+
+  - name: Create /etc/vsftpd/vsftpd-userlist.txt
+    debug: msg="Create /etc/vsftpd/vsftpd-userlist.txt."
+
+  - name: Start the vsftpd service
+    debug: msg="Start the vsftpd service."
+
+  - name: Open Port 21 for FTP request
+    debug: msg="Open Port 21 for FTP request."
+
+  - name: Backup named.conf file
+    debug: msg="Backup named.conf file."
+
+  - name: Replace original named.conf with contents of cach_named.txt
+    debug: msg="Replace original named.conf with contents of cach_named.txt."
+
+  - name: Update named.conf and restart named
+    debug: msg="Update named.conf and restart named."
+
+  - name: Add firewall rules for named
+    debug: msg="Add firewall rules for named."
+
+  - name: Update host DNS nameserver
+    debug: msg="Update host DNS nameserver."
+
+  - name:   Backup /etc/resolv.conf
+    debug: msg="Backup /etc/resolv.conf."
+
+  - name: Add a nameserver 127.0.0.1 line to the resolv.conf file.
+    debug: msg="Add a nameserver 127.0.0.1 line to the resolv.conf file.."
+
+  - name: Restart network service when done updating
+    debug: msg="Restart network service when done updating."
+
+  - name: Check for access to files under /var/named
+      debug: msg="Check for access to files under /var/named."
+
+  - name: Add Development Tools to the machine
+    debug: msg="Add Development Tools to the machine."
 
     # Be sure to 'Update ssd config to remove root login'
     # cd /etc/ssh/
