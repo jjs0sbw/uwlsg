@@ -168,6 +168,9 @@
   - name: Check iptables status.
     debug: msg="Check iptables status."
 
+  - name: Edit telnet config under /etc/xinetd.d/
+    debug: msg="Edit telnet config under /etc/xinetd.d/."  
+
     # Be sure to 'Update ssd config to remove root login'
     # cd /etc/ssh/
     # cp sshd_config sshd_config_bu
