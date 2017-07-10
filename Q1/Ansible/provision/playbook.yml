@@ -27,6 +27,7 @@
   tasks:
   # Make sure the ansible.cnf file exists and set to prompt for sudo
   # password -- vagrant in this case.
+  # Find the directory path to ansibl.cnf and place here...
   - name: Print message
     debug: msg="Beginning of CentOS 6.6 configuration Ansible script."
 
