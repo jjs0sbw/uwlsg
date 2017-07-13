@@ -28,6 +28,7 @@
   # Make sure the ansible.cnf file exists and set to prompt for sudo
   # password -- vagrant in this case.
   # Find the directory path to ansibl.cnf and place here...
+  # Changed to Ansible 2.4 to support iptables and iptables_raw
   - name: Print message
     debug: msg="Beginning of CentOS 6.6 configuration Ansible script."
 
@@ -154,6 +155,7 @@
     become_method: sudo
     become_user: root
 
+    # use iptables module here
   - name: Save a copy of iptables current configuration
     debug: msg="Make a copy of the current iptable configuration."
 
