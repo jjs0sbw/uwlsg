@@ -156,8 +156,9 @@
     become_user: root
 
     # use iptables module here
-  - name: Save a copy of iptables current configuration
-    debug: msg="Make a copy of the current iptable configuration."
+    # wait for iptables code from Robert
+  # - name: Save a copy of iptables current configuration
+    # debug: msg="Make a copy of the current iptable configuration."
 
   - name: Create new ftp user ula-vsftp
     debug: msg="Create new ftp user ula-vsftp."
@@ -165,11 +166,11 @@
   - name: Change ula-vsftp user shell to /bin/noshell
     debug: msg="Change ula-vsftp user shell to /bin/noshell."
 
-  - name: Backup existing iptables configuration file.
-    debug: msg="Backup existing iptables configuration file."
+  # - name: Backup existing iptables configuration file.
+    # debug: msg="Backup existing iptables configuration file."
 
-  - name: Check iptables status.
-    debug: msg="Check iptables status."
+  # - name: Check iptables status.
+    # debug: msg="Check iptables status."
 
   - name: Edit telnet config under /etc/xinetd.d/
     debug: msg="Edit telnet config under /etc/xinetd.d/."
@@ -198,8 +199,8 @@
   - name: Update named.conf and restart named
     debug: msg="Update named.conf and restart named."
 
-  - name: Add firewall rules for named
-    debug: msg="Add firewall rules for named."
+  # - name: Add firewall rules for named
+    # debug: msg="Add firewall rules for named."
 
   - name: Update host DNS nameserver
     debug: msg="Update host DNS nameserver."
