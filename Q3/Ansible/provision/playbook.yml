@@ -1,0 +1,107 @@
+# Title: playbook.yml
+# Date: 07/09/2017
+# Author: Tom Gillot
+# Purpose: Ubuntu Server LTS 16.04.2 Q3 host setup using Ansible
+# Version 0.1.0
+# License:
+#   playbook.yml Provision an Ubuntu Server LTS 16.04.2 machine
+#   Copyright (C) 2017  Tom Gillot
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+#
+
+---
+- name: Q3 Ubuntu 16.04.2 setup
+  hosts: default
+  tasks:
+  # Make sure the ansible.cnf file exists and set to prompt for sudo
+  # password -- vagrant in this case.
+  - name: Print message
+    debug: msg="Beginning of Ubuntu 16.04.2 configuration Ansible script."
+
+  - name: Print Lab 2 Setup
+    debug: msg="Install Puppet, Puppetmaster, and Facter"
+    
+  - name: Install Puppet
+    apt:
+      name:  puppet
+      state: present
+    
+  - name: Install Puppermaster
+    apt:
+      name: puppetmaster
+      state: present
+    
+  - name: Install Facter
+    apt:
+      name: facter
+      state: present
+
+  - name: Print Lab 3 Setup
+    debug: msg="Remove old Docker packages and install Docker"
+  
+  - name: Remove 'docker-engine'
+    apt: 
+      name: docker-engine
+      state: absent
+  
+  - name: Remove 'docker-ce'
+    apt: 
+      name: docker-ce
+      state: absent
+    
+  - name: Remove 'docker.io'
+    apt: 
+      name: docker.io
+      state: absent
+    
+  - name: update apt packages
+    become: true
+    become_method: sudo
+    become_user: root
+    apt:
+      update_cache: yes
+      cache_valid_time: 3600
+    
+  - name: Install packages to to allow apt to use repo over HTTPS
+    action: apt pkg={{item}} state=present
+    with_items: 
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+  
+  - name: Add Docker official DPG key
+    apt_key: 
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+  
+  - name: Add stable Docker repository
+    command: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: update apt packages
+    become: true
+    become_method: sudo
+    become_user: root
+    apt:
+      update_cache: yes
+      cache_valid_time: 3600
+    
+  - name: Install 'docker-ce'
+    apt: 
+      name: docker-ce
+      state: present
