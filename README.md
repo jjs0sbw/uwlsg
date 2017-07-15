@@ -26,6 +26,6 @@ Vagrant Ubuntu 16.04 configuration files:
 
   Vagrant shell provider [To Do]
 
-  Vagrant Ansible provider [To Do]
+  Vagrant Ansible provider [In Work]
 
   Vagrant Docker provider [To Do]
