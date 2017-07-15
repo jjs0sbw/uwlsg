@@ -6,7 +6,7 @@ Vagrant CentOS 6.6 configuration files:
 
   Vagrant shell provider [DONE]
 
-  Vagrant Ansible provider [To Do]
+  Vagrant Ansible provider [In Work]
 
   Vagrant Docker provider [To Do]
 
