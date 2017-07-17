@@ -1,0 +1,3 @@
+# Start kitchen.ci work ..
+gem install kitchen-ansible
+gem install kitchen-vagrant

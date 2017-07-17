@@ -1,10 +1,10 @@
 # Title: playbook.yml
-# Date: 07/03/2017
+# Date: 07/16/2017
 # Author: Joseph J. Simpson
-# Purpose: Set up a Centos 6.6 Box
+# Purpose: Set up a Centos 7 Box
 # Version 0.1.0
 # License:
-#   playbook.yml Provision a CentOS 6.6 Q1 machine
+#   playbook.yml Provision a CentOS 7 Q2 machine
 #   Copyright (C) 2017  Joseph J. Simpson
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #
 
 ---
-- name: Q1 CentOS 6.6 setup
+- name: Q2 CentOS 7 setup
   hosts: default
   tasks:
   # Make sure the ansible.cnf file exists and set to prompt for sudo
@@ -30,7 +30,7 @@
   # Find the directory path to ansibl.cnf and place here...
   # Changed to Ansible 2.4 to support iptables and iptables_raw
   - name: Print message
-    debug: msg="Beginning of CentOS 6.6 configuration Ansible script."
+    debug: msg="Beginning of CentOS 7 configuration Ansible script."
 
   - name: Print Lab 1a group add message
     debug: msg="Add a new group, admin, to the system."
@@ -42,16 +42,16 @@
     become_user: root
 
   - name: Print Lab 1a users add message
-    debug: msg="Add two new users to the system; q1u1, q1u2."
+    debug: msg="Add two new users to the system; q2u1, q2u2."
 
-  - name: Add user q1u1
-    command: /usr/sbin/useradd -c "Q1C6 User1" -G admin q1u1
+  - name: Add user q2u1
+    command: /usr/sbin/useradd -c "Q2C7 User1" -G admin q2u1
     become: true
     become_method: sudo
     become_user: root
 
-  - name: Add user q1u2
-    command: /usr/sbin/useradd -c "Q1C6 User2" -G admin q1u2
+  - name: Add user q2u2
+    command: /usr/sbin/useradd -c "Q2C7 User2" -G admin q2u2
     become: true
     become_method: sudo
     become_user: root
@@ -68,29 +68,29 @@
     become_method: sudo
     become_user: root
 
-  - name: Add ssh public key to q1u1 and q1u2, no password
-    debug: msg="Add public key to the  q1u1, q2u2 accounts."
+  - name: Add ssh public key to q2u1 and q2u2, no password
+    debug: msg="Add public key to the  q2u1, q2u2 accounts."
 
   - name: Make .ssh directory for user q1u1
-    file: path=/home/q1u1/.ssh state=directory owner=q1u1 group=q1u1 mode=0700
+    file: path=/home/q2u1/.ssh state=directory owner=q2u1 group=q2u1 mode=0700
     become: true
     become_method: sudo
     become_user: root
 
   - name: Copy pubilic key into ssh/authorized keys file for q1u1
-    copy: src=authorized_keys dest=/home/q1u1/.ssh/authorized_keys owner=q1u1 group=q1u1 mode=0600
+    copy: src=authorized_keys dest=/home/q2u1/.ssh/authorized_keys owner=q2u1 group=q2u1 mode=0600
     become: true
     become_method: sudo
     become_user: root
 
-  - name: Make .ssh directory for user q1u2
-    copy: src=authorized_keys dest=/home/q1u2/.ssh owner=q1u2 group=q1u2 mode=0600
+  - name: Make .ssh directory for user q2u2
+    copy: src=authorized_keys dest=/home/q2u2/.ssh owner=q2u2 group=q2u2 mode=0600
     become: true
     become_method: sudo
     become_user: root
 
-  - name: Copy pubilic key into .ssh/authorized_keys file for q1u2
-    copy: src=authorized_keys dest=/home/q1u2/.ssh/authorized_keys owner=q1u2 group=q1u2 mode=0600
+  - name: Copy pubilic key into .ssh/authorized_keys file for q2u2
+    copy: src=authorized_keys dest=/home/q2u2/.ssh/authorized_keys owner=q2u2 group=q2u2 mode=0600
     become: true
     become_method: sudo
     become_user: root
@@ -160,11 +160,11 @@
   # - name: Save a copy of iptables current configuration
     # debug: msg="Make a copy of the current iptable configuration."
 
-  - name: Create new ftp user ula-vsftp
-    debug: msg="Create new ftp user ula-vsftp."
+  # - name: Create new ftp user ula-vsftp
+    # debug: msg="Create new ftp user ula-vsftp."
 
-  - name: Change ula-vsftp user shell to /bin/noshell
-    debug: msg="Change ula-vsftp user shell to /bin/noshell."
+  # - name: Change ula-vsftp user shell to /bin/noshell
+    # debug: msg="Change ula-vsftp user shell to /bin/noshell."
 
   # - name: Backup existing iptables configuration file.
     # debug: msg="Backup existing iptables configuration file."
@@ -172,53 +172,53 @@
   # - name: Check iptables status.
     # debug: msg="Check iptables status."
 
-  - name: Edit telnet config under /etc/xinetd.d/
-    debug: msg="Edit telnet config under /etc/xinetd.d/."
+  # - name: Edit telnet config under /etc/xinetd.d/
+    # debug: msg="Edit telnet config under /etc/xinetd.d/."
 
-  - name: Install ftp -- vsftpd
-    debug: msg="Install ftp -- vsftpd."
+  # - name: Install ftp -- vsftpd
+    # debug: msg="Install ftp -- vsftpd."
 
-  - name: Check /etc/vsftpd/vsftp.conf
-    debug: msg="Check /etc/vsftpd/vsftp.conf."
+  # - name: Check /etc/vsftpd/vsftp.conf
+    # debug: msg="Check /etc/vsftpd/vsftp.conf."
 
-  - name: Create /etc/vsftpd/vsftpd-userlist.txt
-    debug: msg="Create /etc/vsftpd/vsftpd-userlist.txt."
+  # - name: Create /etc/vsftpd/vsftpd-userlist.txt
+    # debug: msg="Create /etc/vsftpd/vsftpd-userlist.txt."
 
-  - name: Start the vsftpd service
-    debug: msg="Start the vsftpd service."
+  # - name: Start the vsftpd service
+    # debug: msg="Start the vsftpd service."
 
-  - name: Open Port 21 for FTP request
-    debug: msg="Open Port 21 for FTP request."
+  # - name: Open Port 21 for FTP request
+    # debug: msg="Open Port 21 for FTP request."
 
-  - name: Backup named.conf file
-    debug: msg="Backup named.conf file."
+  # - name: Backup named.conf file
+    # debug: msg="Backup named.conf file."
 
-  - name: Replace original named.conf with contents of cach_named.txt
-    debug: msg="Replace original named.conf with contents of cach_named.txt."
+  # - name: Replace original named.conf with contents of cach_named.txt
+    # debug: msg="Replace original named.conf with contents of cach_named.txt."
 
-  - name: Update named.conf and restart named
-    debug: msg="Update named.conf and restart named."
+  # - name: Update named.conf and restart named
+    # debug: msg="Update named.conf and restart named."
 
   # - name: Add firewall rules for named
     # debug: msg="Add firewall rules for named."
 
-  - name: Update host DNS nameserver
-    debug: msg="Update host DNS nameserver."
+  # - name: Update host DNS nameserver
+    # debug: msg="Update host DNS nameserver."
 
-  - name:   Backup /etc/resolv.conf
-    debug: msg="Backup /etc/resolv.conf."
+  # - name:   Backup /etc/resolv.conf
+    # debug: msg="Backup /etc/resolv.conf."
 
-  - name: Add a nameserver 127.0.0.1 line to the resolv.conf file.
-    debug: msg="Add a nameserver 127.0.0.1 line to the resolv.conf file.."
+  # - name: Add a nameserver 127.0.0.1 line to the resolv.conf file.
+    # debug: msg="Add a nameserver 127.0.0.1 line to the resolv.conf file.."
 
-  - name: Restart network service when done updating
-    debug: msg="Restart network service when done updating."
+  # - name: Restart network service when done updating
+    # debug: msg="Restart network service when done updating."
 
-  - name: Check for access to files under /var/named
-      debug: msg="Check for access to files under /var/named."
+  # - name: Check for access to files under /var/named
+      # debug: msg="Check for access to files under /var/named."
 
-  - name: Add Development Tools to the machine
-    debug: msg="Add Development Tools to the machine."
+  # - name: Add Development Tools to the machine
+    # debug: msg="Add Development Tools to the machine."
 
     # Be sure to 'Update ssd config to remove root login'
     # cd /etc/ssh/
