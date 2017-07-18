@@ -1,3 +1,110 @@
 # Start kitchen.ci work ..
-gem install kitchen-ansible
-gem install kitchen-vagrant
+# Make sure Ruby 2.2.2 is installed
+
+gem install kitchen-ansible [DONE]
+Fetching: kitchen-ansible-0.47.2.gem (100%)
+Successfully installed kitchen-ansible-0.47.2
+Parsing documentation for kitchen-ansible-0.47.2
+Installing ri documentation for kitchen-ansible-0.47.2
+Done installing documentation for kitchen-ansible after 0 seconds
+
+gem install kitchen-vagrant [DONE]
+Successfully installed kitchen-vagrant-1.1.0
+Parsing documentation for kitchen-vagrant-1.1.0
+Done installing documentation for kitchen-vagrant after 0 seconds
+
+gem install serverspec [DONE]
+Fetching: serverspec-2.39.1.gem (100%)
+Successfully installed serverspec-2.39.1
+Parsing documentation for serverspec-2.39.1
+Installing ri documentation for serverspec-2.39.1
+Done installing documentation for serverspec after 0 seconds
+
+gem install test-kitchen
+Fetching: test-kitchen-1.16.0.gem (100%)
+Successfully installed test-kitchen-1.16.0
+Parsing documentation for test-kitchen-1.16.0
+Installing ri documentation for test-kitchen-1.16.0
+Done installing documentation for test-kitchen after 2 seconds
+
+gem install pry
+Fetching: method_source-0.8.2.gem (100%)
+Successfully installed method_source-0.8.2
+Fetching: slop-3.6.0.gem (100%)
+Successfully installed slop-3.6.0
+Fetching: coderay-1.1.1.gem (100%)
+Successfully installed coderay-1.1.1
+Fetching: pry-0.10.4.gem (100%)
+Successfully installed pry-0.10.4
+Parsing documentation for method_source-0.8.2
+Installing ri documentation for method_source-0.8.2
+Parsing documentation for slop-3.6.0
+Installing ri documentation for slop-3.6.0
+invalid options: -SNw2
+(invalid options are ignored)
+Parsing documentation for coderay-1.1.1
+Installing ri documentation for coderay-1.1.1
+Parsing documentation for pry-0.10.4
+Installing ri documentation for pry-0.10.4
+Done installing documentation for method_source, slop, coderay, pry after 5 seconds
+
+
+# check VirturalBox Version
+VBoxmanage --version
+5.1.22r115126
+
+# Check VAgrant Version
+vagrant --version
+Vagrant 1.9.6
+
+
+# Check kitchen command
+kitchen help
+Commands:
+  kitchen console                                 # Kitchen Console!
+  kitchen converge [INSTANCE|REGEXP|all]          # Change instance state to ...
+  kitchen create [INSTANCE|REGEXP|all]            # Change instance state to ...
+  kitchen destroy [INSTANCE|REGEXP|all]           # Change instance state to ...
+  kitchen diagnose [INSTANCE|REGEXP|all]          # Show computed diagnostic ...
+  kitchen driver                                  # Driver subcommands
+  kitchen driver create [NAME]                    # Create a new Kitchen Driv...
+  kitchen driver discover                         # Discover Test Kitchen dri...
+  kitchen driver help [COMMAND]                   # Describe subcommands or o...
+  kitchen exec INSTANCE|REGEXP -c REMOTE_COMMAND  # Execute command on one or...
+  kitchen help [COMMAND]                          # Describe available comman...
+  kitchen init                                    # Adds some configuration t...
+  kitchen list [INSTANCE|REGEXP|all]              # Lists one or more instances
+  kitchen login INSTANCE|REGEXP                   # Log in to one instance
+  kitchen package INSTANCE|REGEXP                 # package an instance
+  kitchen setup [INSTANCE|REGEXP|all]             # Change instance state to ...
+  kitchen test [INSTANCE|REGEXP|all]              # Test (destroy, create, co...
+  kitchen verify [INSTANCE|REGEXP|all]            # Change instance state to ...
+  kitchen version                                 # Print Kitchen's version i..
+
+# Now run kitchen init
+kitchen init
+      create  .kitchen.yml
+      create  chefignore
+      create  test/integration/default
+Fetching: kitchen-vagrant-1.1.0.gem (100%)
+Successfully installed kitchen-vagrant-1.1.0
+Parsing documentation for kitchen-vagrant-1.1.0
+Installing ri documentation for kitchen-vagrant-1.1.0
+Done installing documentation for kitchen-vagrant after 0 seconds
+1 gem installed
+
+# Now edit the .kitchen.yml file to address the Q1 configuration with bash
+ ---
+ driver:
+   name: vagrant
+
+ provisioner:
+   name: ansible_playbook
+
+ platforms:
+   - name: centos-6.9
+
+ suites:
+   - name: default
+      run_list:
+      attributes:
