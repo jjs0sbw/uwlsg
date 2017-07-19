@@ -1,0 +1,9 @@
+Q1 Ansible Test Kitchen Notes
+
+The following software must be installed:
+ - 1 Vagrant
+ - 2 VirturalBox
+ - 3 Ruby (version 2.2.2)
+ - 4 Ansible
+
+ The software versions and required gem packages are listed in Notes.txt.

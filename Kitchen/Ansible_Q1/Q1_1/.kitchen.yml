@@ -1,0 +1,26 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: ansible_playbook
+  hosts: default
+
+platforms:
+  - name: schmots/centos-6.6-i386
+    driver_plugin: vagrant
+    driver_config:
+      box: schmots/centos-6.6-i386
+      box_url: https://app.vagrantup.com/puppetlabs/boxes/centos-6.6-32-nocm
+      network:
+      - [ 'forwarded_port', {guest: 8080, host: 8080} ]
+      - [ 'private_network', { ip: '192.168.57.10' } ]
+      - [ 'public_network', { bridge: 'en0: Wi-Fi (AirPort)' } ]
+
+ verifier:
+   ruby_bindir: '/usr/bin'
+
+suites:
+  - name: default
+    run_list:
+    attributes:
