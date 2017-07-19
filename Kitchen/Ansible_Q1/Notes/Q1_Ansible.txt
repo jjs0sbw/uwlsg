@@ -1,4 +1,6 @@
 Q1 Ansible Test Kitchen Notes
+#### These Are DRAFT NOTES ####
+#### Please document and report issues in this file. ####
 
 The following software must be installed:
  - 1 Vagrant
@@ -7,3 +9,48 @@ The following software must be installed:
  - 4 Ansible
 
  The software versions and required gem packages are listed in Notes.txt.
+
+ First create a new directory for this specific test code:
+
+ /Q1_1
+
+ Then cd into Q1_1 and run the following command:
+
+ kitchen init
+
+ This command will set up the required basic directory structure.
+
+ Q1_1/.kitchen
+ Q1_1/test
+ chefignore
+
+ Next the following .kitchen.yml file is placed in the Q1_1 directory.
+
+ .kitchen.yml
+
+ ---
+ driver:
+   name: vagrant
+
+ provisioner:
+   name: ansible_playbook
+   hosts: default
+
+ platforms:
+   - name: schmots/centos-6.6-i386
+     driver_plugin: vagrant
+     driver_config:
+       box: schmots/centos-6.6-i386
+       box_url: https://app.vagrantup.com/puppetlabs/boxes/centos-6.6-32-nocm
+       network:
+       - [ 'forwarded_port', {guest: 8080, host: 8080} ]
+       - [ 'private_network', { ip: '192.168.57.10' } ]
+       - [ 'public_network', { bridge: 'en0: Wi-Fi (AirPort)' } ]
+
+ verifier:
+    ruby_bindir: '/usr/bin'
+
+ suites:
+   - name: default
+     run_list:
+     attributes:
