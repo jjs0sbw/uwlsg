@@ -33,4 +33,10 @@
     yum: name='*' state=latest
     become: true
     become_method: sudo
+    become_user: root
+
+  - name: Install libselinux-python
+    yum: name='libselinux-python' state=latest
+    become: true
+    become_method: sudo
     become_user: root  
