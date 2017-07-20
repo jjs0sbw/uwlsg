@@ -52,5 +52,8 @@ The following software must be installed:
 
  suites:
    - name: default
+     provisioner:
+     name: ansible_playbook
+     playbook: default.yml
      run_list:
      attributes:
