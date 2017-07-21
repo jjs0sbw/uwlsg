@@ -39,4 +39,13 @@
     yum: name='libselinux-python' state=latest
     become: true
     become_method: sudo
-    become_user: root  
+    become_user: root
+
+  - name: Add ssh public key to q1u1 and q1u2, no password
+    debug: msg="Add public key to the  q1u1, q2u2 accounts."
+
+  - name: Make .ssh directory for user q1u1
+    file: path=/home/q1u1/.ssh state=directory owner=q1u1 group=q1u1 mode=0700
+    become: true
+    become_method: sudo
+    become_user: root    
