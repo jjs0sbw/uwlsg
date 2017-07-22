@@ -48,4 +48,16 @@
     file: path=/home/q1u1/.ssh state=directory owner=q1u1 group=q1u1 mode=0700
     become: true
     become_method: sudo
-    become_user: root    
+    become_user: root
+
+  - name: Copy pubilic key into ssh/authorized keys file for q1u1
+    copy: src=authorized_keys dest=/home/q1u1/.ssh/authorized_keys owner=q1u1 group=q1u1 mode=0600
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Make .ssh directory for user q1u2
+    copy: src=authorized_keys dest=/home/q1u2/.ssh owner=q1u2 group=q1u2 mode=0600
+    become: true
+    become_method: sudo
+    become_user: root
