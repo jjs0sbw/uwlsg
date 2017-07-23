@@ -61,3 +61,15 @@
     become: true
     become_method: sudo
     become_user: root
+
+  - name: Copy pubilic key into .ssh/authorized_keys file for q1u2
+    copy: src=authorized_keys dest=/home/q1u2/.ssh/authorized_keys owner=q1u2 group=q1u2 mode=0600
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Install man pages
+    yum: name=man state=latest
+    become: true
+    become_method: sudo
+    become_user: root
