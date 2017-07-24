@@ -73,3 +73,21 @@
     become: true
     become_method: sudo
     become_user: root
+
+  - name: Install vim
+    yum: name=vim state=latest
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Install vim-enhanced
+    yum: name=vim-enhanced state=latest
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Install lsscsi.i686
+    yum: name=lsscsi.i686 state=latest
+    become: true
+    become_method: sudo
+    become_user: root  
