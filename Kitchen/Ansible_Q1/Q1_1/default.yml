@@ -90,4 +90,22 @@
     yum: name=lsscsi.i686 state=latest
     become: true
     become_method: sudo
-    become_user: root  
+    become_user: root
+
+  - name: Install dstat
+    yum: name=dstat state=latest
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Install wget
+    yum: name=wget state=latest
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Install mlocate
+    yum: name=mlocate.i686 state=latest
+    become: true
+    become_method: sudo
+    become_user: root
