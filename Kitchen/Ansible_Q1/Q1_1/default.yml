@@ -109,3 +109,21 @@
     become: true
     become_method: sudo
     become_user: root
+
+  - name: Install bind-utils
+    yum: name=bind-utils state=latest
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Install group install Web Server
+    yum: name="@Web Server" state=present
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Install telnet
+    yum: name=telnet state=latest
+    become: true
+    become_method: sudo
+    become_user: root    
