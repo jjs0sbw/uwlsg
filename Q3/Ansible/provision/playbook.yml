@@ -2,7 +2,7 @@
 # Date: 07/09/2017
 # Author: Tom Gillot
 # Purpose: Ubuntu Server LTS 16.04.2 Q3 host setup using Ansible
-# Version 0.1.0
+# Version 0.2.0
 # License:
 #   playbook.yml Provision an Ubuntu Server LTS 16.04.2 machine
 #   Copyright (C) 2017  Tom Gillot
@@ -33,20 +33,44 @@
   - name: Print Lab 2 Setup
     debug: msg="Install Puppet, Puppetmaster, and Facter"
     
+  - name: update apt packages
+    become: true
+    become_method: sudo
+    become_user: root
+    apt:
+      update_cache: yes
+      
+  - name: Install Aptitude
+    apt:
+      name:  aptitude
+      state: present
+    become: true
+    become_method: sudo
+    become_user: root
+    
   - name: Install Puppet
     apt:
       name:  puppet
       state: present
+    become: true
+    become_method: sudo
+    become_user: root
     
   - name: Install Puppermaster
     apt:
       name: puppetmaster
       state: present
+    become: true
+    become_method: sudo
+    become_user: root
     
   - name: Install Facter
     apt:
       name: facter
       state: present
+    become: true
+    become_method: sudo
+    become_user: root
 
   - name: Print Lab 3 Setup
     debug: msg="Remove old Docker packages and install Docker"
@@ -55,16 +79,25 @@
     apt: 
       name: docker-engine
       state: absent
+    become: true
+    become_method: sudo
+    become_user: root
   
   - name: Remove 'docker-ce'
     apt: 
       name: docker-ce
       state: absent
+    become: true
+    become_method: sudo
+    become_user: root
     
   - name: Remove 'docker.io'
     apt: 
       name: docker.io
       state: absent
+    become: true
+    become_method: sudo
+    become_user: root
     
   - name: update apt packages
     become: true
@@ -72,7 +105,6 @@
     become_user: root
     apt:
       update_cache: yes
-      cache_valid_time: 3600
     
   - name: Install packages to to allow apt to use repo over HTTPS
     action: apt pkg={{item}} state=present
@@ -81,27 +113,35 @@
       - ca-certificates
       - curl
       - software-properties-common
+    become: true
+    become_method: sudo
+    become_user: root
   
   - name: Add Docker official DPG key
     apt_key: 
       url: https://download.docker.com/linux/ubuntu/gpg
       state: present
-  
-  - name: Add stable Docker repository
-    command: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
     become: true
     become_method: sudo
     become_user: root
-
+  
+  - name: Add stable Docker repository
+    shell: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    become: true
+    become_method: sudo
+    become_user: root
+  
   - name: update apt packages
     become: true
     become_method: sudo
     become_user: root
     apt:
       update_cache: yes
-      cache_valid_time: 3600
     
   - name: Install 'docker-ce'
     apt: 
       name: docker-ce
       state: present
+    become: true
+    become_method: sudo
+    become_user: root
