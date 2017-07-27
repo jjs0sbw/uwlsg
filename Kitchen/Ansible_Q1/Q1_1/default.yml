@@ -126,4 +126,16 @@
     yum: name=telnet state=latest
     become: true
     become_method: sudo
-    become_user: root    
+    become_user: root
+
+    # use iptables module here
+    # wait for iptables code from Robert
+  # - name: Save a copy of iptables current configuration
+    # debug: msg="Make a copy of the current iptable configuration."
+
+  - name: Create new ftp user ula-vsftp
+    debug: msg="Create new ftp user ula-vsftp."
+
+  - name: Change ula-vsftp user shell to /bin/noshell
+    debug: msg="Change ula-vsftp user shell to /bin/noshell."
+  
