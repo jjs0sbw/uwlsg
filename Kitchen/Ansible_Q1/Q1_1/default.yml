@@ -138,4 +138,15 @@
 
   - name: Change ula-vsftp user shell to /bin/noshell
     debug: msg="Change ula-vsftp user shell to /bin/noshell."
-  
+
+  # - name: Backup existing iptables configuration file.
+    # debug: msg="Backup existing iptables configuration file."
+
+  # - name: Check iptables status.
+    # debug: msg="Check iptables status."
+
+  - name: Edit telnet config under /etc/xinetd.d/
+    debug: msg="Edit telnet config under /etc/xinetd.d/."
+
+  - name: Install ftp -- vsftpd
+    debug: msg="Install ftp -- vsftpd."
