@@ -150,3 +150,15 @@
 
   - name: Install ftp -- vsftpd
     debug: msg="Install ftp -- vsftpd."
+
+  - name: Check /etc/vsftpd/vsftp.conf
+    debug: msg="Check /etc/vsftpd/vsftp.conf."
+
+  - name: Create /etc/vsftpd/vsftpd-userlist.txt
+    debug: msg="Create /etc/vsftpd/vsftpd-userlist.txt."
+
+  - name: Start the vsftpd service
+    debug: msg="Start the vsftpd service."
+
+  - name: Open Port 21 for FTP request
+    debug: msg="Open Port 21 for FTP request."
