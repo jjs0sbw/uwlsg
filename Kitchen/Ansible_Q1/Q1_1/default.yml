@@ -162,3 +162,15 @@
 
   - name: Open Port 21 for FTP request
     debug: msg="Open Port 21 for FTP request."
+
+  - name: Backup named.conf file
+    debug: msg="Backup named.conf file."
+
+  - name: Replace original named.conf with contents of cach_named.txt
+    debug: msg="Replace original named.conf with contents of cach_named.txt."
+
+  - name: Update named.conf and restart named
+    debug: msg="Update named.conf and restart named."
+
+  # - name: Add firewall rules for named
+  # debug: msg="Add firewall rules for named."
