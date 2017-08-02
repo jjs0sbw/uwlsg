@@ -23,3 +23,12 @@ Review the directory contents.
 
 Setup new host name in /etc/hosts file
 -- https://gitlab.local  127.0.0.1
+
+Change directory to working directory
+-- cd  workingDirectory
+
+Run the vagrant up command
+-- vagrant up
+
+After VM is running enter VM using the vagrant ssh command.
+-- vagrant ssh
