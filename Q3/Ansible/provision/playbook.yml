@@ -31,7 +31,63 @@
     debug: msg="Beginning of Ubuntu 16.04.2 configuration Ansible script."
 
   - name: Print Lab 2 Setup
-    debug: msg="Install Puppet, Puppetmaster, and Facter"
+    debug: msg="Provisioning Q3 Ubuntu Host"
+    
+  - name: Create admin user
+    shell: useradd -c "Q3 admin" -G admin q3admin
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Create admin home dir
+    file:
+      path: /home/q3admin
+      state: directory
+      owner: q3admin
+      group: q3admin
+      mode: 0755
+    become: true
+    become_method: sudo
+    become_user: root
+    
+  - name: Create admin ssh dir
+    file:
+      path: /home/q3admin/.ssh
+      state: directory
+      owner: q3admin
+      group: q3admin
+      mode: 0700
+    become: true
+    become_method: sudo
+    become_user: root
+
+  - name: Creates admin authorized_keys dir
+    file:
+      path: /home/q3admin/.ssh/authorized_keys
+      state: directory
+      owner: q3admin
+      group: q3admin
+      mode: 0644
+    become: true
+    become_method: sudo
+    become_user: root
+    
+  - name: Copy pubilic key to admin authorized_keys dir
+    copy:
+      src: authorized_keys
+      dest: /home/q3admin/.ssh/authorized_keys
+      owner: q3admin
+      group: q3admin
+      mode: 0600
+    become: true
+    become_method: sudo
+    become_user: root
+    
+  - name: Disable sudo password for admin group
+    shell: sed -i 's/%admin ALL=(ALL) ALL/%admin ALL=(ALL) NOPASSWD':' ALL/g' /etc/sudoers
+    become: true
+    become_method: sudo
+    become_user: root
     
   - name: update apt packages
     become: true
