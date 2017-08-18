@@ -17,3 +17,5 @@ The selected project should be based on Kubernetes and Docker containers.
 So.. what should we do?
 
 # Need to add some sub-projects to focus approach.
+Gitlab on Digital Ocean installation instructions are here:
+  https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-gitlab-on-ubuntu-16-04
