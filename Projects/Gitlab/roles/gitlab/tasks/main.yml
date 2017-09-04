@@ -1,0 +1,17 @@
+---
+- name: Create users
+  user:
+    name: "{{ item.name }}"
+    group: sudo
+    append: yes
+    state: present
+  with_items: "{{ authorized_users }}"
+- name: Reset user passwords
+  command: passwd -d -e "{{item.name}}"
+  with_items: "{{ authorized_users }}"
+- name: Add authorized keys
+  authorized_key:
+    user: "{{item.name}}"
+    state: present
+    key: "{{item.key}}"
+  with_items: "{{ authorized_users }}"
