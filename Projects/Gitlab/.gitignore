@@ -1,0 +1,8 @@
+# Terraform exclusions
+
+.terraform
+*tfstate*
+
+# Ansible exclusions
+
+*.retry
