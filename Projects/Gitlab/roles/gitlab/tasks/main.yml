@@ -5,9 +5,7 @@
     group: sudo
     append: yes
     state: present
-  with_items: "{{ authorized_users }}"
-- name: Reset user passwords
-  command: passwd -d -e "{{item.name}}"
+    shell: /bin/bash
   with_items: "{{ authorized_users }}"
 - name: Add authorized keys
   authorized_key:
@@ -15,3 +13,61 @@
     state: present
     key: "{{item.key}}"
   with_items: "{{ authorized_users }}"
+- name: Install package dependencies
+  apt:
+    name: "{{item}}"
+    state: latest
+    update_cache: yes
+    cache_valid_time: 3600
+  with_items:
+  - python-pip
+- name: Upgrade pip
+  pip:
+    name: pip
+    state: latest
+- name: Install PyOpenSSL module
+  pip:
+    name: pyopenssl
+    state: latest
+- name: Generate RSA private key for letsencrypt
+  openssl_privatekey:
+    path: "{{letsencrypt_account_key}}"
+- name: Generate TLS private key
+  openssl_privatekey:
+    path: "{{tls_private_key_path}}"
+- name: Generate TLS public key
+  openssl_publickey:
+    path: "{{tls_public_key_path}}"
+    privatekey_path: "{{tls_private_key_path}}"
+- name: Generate TLS certificate request.
+  openssl_csr:
+    path: "{{tls_certificate_request_path}}"
+    privatekey_path: "{{tls_private_key_path}}"
+    subjectAltName: "DNS:{{domain}}"
+- name: Request the TLS certificate.
+  letsencrypt:
+    account_key: "{{letsencrypt_account_key}}"
+    acme_directory: "{{letsecnrypt_acme_directory}}"
+    csr: "{{tls_certificate_request_path}}"
+    dest: "{{tls_certificate_output_path}}"
+  register: challenge
+- name: Make the /var/www/html/.well-known/acme-challenge directory
+  file:
+    path: /var/www/html/.well-known/acme-challenge
+    state: directory
+- name: Prepare to respond to the challenge.
+  copy:
+    dest: /var/www/html/{{ challenge['challenge_data']['uwsg.tech']['http-01']['resource'] }}
+    content: "{{ challenge['challenge_data']['uwsg.tech']['http-01']['resource_value'] }}"
+  when: challenge|changed
+- name: Make sure LigHTTPd is started.
+  service:
+    name: lighttpd
+    state: started
+- name: Respond to the challenge.
+  letsencrypt:
+    account_key: "{{letsencrypt_account_key}}"
+    acme_directory: "{{letsecnrypt_acme_directory}}"
+    csr: "{{tls_certificate_request_path}}"
+    dest: "{{tls_certificate_output_path}}"
+    data: "{{ challenge }}"
