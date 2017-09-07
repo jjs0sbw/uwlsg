@@ -71,3 +71,15 @@
     csr: "{{tls_certificate_request_path}}"
     dest: "{{tls_certificate_output_path}}"
     data: "{{ challenge }}"
+- name: Make sure LigHTTPd is stopped.
+  service:
+    name: lighttpd
+    state: stopped
+- name: Render the GitLab configuration template.
+  template:
+    src: gitlab.rb.j2
+    dest: /etc/gitlab/gitlab.rb
+    owner: root
+    mode: '0600'
+- name: Run gitlab-ctl reconfigure, which starts the actual service.
+  command: gitlab-ctl reconfigure

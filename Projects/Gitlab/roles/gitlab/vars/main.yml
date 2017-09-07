@@ -6,7 +6,7 @@ authorized_users:
 - {name: hasfaw, key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtLP/EykkYauUHfYfkt32AH/yGxlc2OY7cEYBKo04MUSPvVU0gcLQ8sHL/3aQUAgQMEOOPrlBdUGN5a0ZGOC0NqsQXEKkqvNCvkCVpiE2s+BSxadul7cbynBEU5KaGnHwCZZeCmk/ALanO0Egpx8YfbX8LFlNUucIecxPXWxSuFbB48+U8kHYR/Ul558bo0qmYXbJRO1vopYugIglDrljO9fqxJTQcuGHINfuryNVXohPssQHt589mePii8DLYLMAyUJdRo07zhXZ31LSkNq2Xuis/xHLsJzzVlURmg7eNJOycbRlEHxnufkCVYxa+9BJ2Q+UQZ4ibaNyd/g79uz/z}
 domain: uwsg.tech
 letsencrypt_account_key: /etc/ssl/private/letsencrypt_account.key
-letsecnrypt_acme_directory: https://acme-staging.api.letsencrypt.org/directory
+letsecnrypt_acme_directory: https://acme-v01.api.letsencrypt.org/directory
 tls_private_key_path: /etc/ssl/private/privatekey.pem
 tls_public_key_path: /etc/ssl/private/publickey.pem
 tls_certificate_output_path: /etc/ssl/private/certificate.pem
