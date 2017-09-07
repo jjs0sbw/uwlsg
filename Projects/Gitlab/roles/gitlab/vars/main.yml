@@ -9,5 +9,7 @@ letsencrypt_account_key: /etc/ssl/private/letsencrypt_account.key
 letsecnrypt_acme_directory: https://acme-v01.api.letsencrypt.org/directory
 tls_private_key_path: /etc/ssl/private/privatekey.pem
 tls_public_key_path: /etc/ssl/private/publickey.pem
-tls_certificate_output_path: /etc/ssl/private/certificate.pem
+tls_chain_path: /etc/ssl/private/chain.d/chain.pem
+tls_certificate_output_path: /etc/ssl/private/chain.d/certificate.pem
 tls_certificate_request_path: /etc/ssl/private/csr.pem
+tls_certificate_chain_path: /etc/ssl/private/certificate.pem

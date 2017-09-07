@@ -1,4 +1,4 @@
 external_url "https://{{domain}}"
 nginx['redirect_http_to_https'] = true
-nginx['ssl_certificate'] = "{{tls_certificate_output_path}}"
+nginx['ssl_certificate'] = "{{tls_certificate_chain_path}}"
 nginx['ssl_certificate_key'] = "{{tls_private_key_path}}"
