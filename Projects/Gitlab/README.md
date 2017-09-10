@@ -1,6 +1,6 @@
 # GitLab
 
-## How to use
+## Prerequisites
 
 You need to have the following:
 
