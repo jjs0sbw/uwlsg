@@ -29,6 +29,10 @@
   pip:
     name: pyopenssl
     state: latest
+- name: Create directory for combining certificate files
+  file:
+    path: /etc/ssl/private/chain.d
+    state: directory
 - name: Generate RSA private key for letsencrypt
   openssl_privatekey:
     path: "{{letsencrypt_account_key}}"
@@ -75,6 +79,14 @@
   service:
     name: lighttpd
     state: stopped
+- name: Place the Let's Encrypt intermediate certificate.
+  copy:
+    src: chain.pem
+    dest: "{{tls_chain_path}}"
+- name: Assemble the certificate chain file.
+  assemble:
+    src: /etc/ssl/private/chain.d
+    dest: "{{tls_certificate_chain_path}}"
 - name: Render the GitLab configuration template.
   template:
     src: gitlab.rb.j2
