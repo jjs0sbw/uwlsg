@@ -19,16 +19,20 @@ You need to have the following:
 3. Run get-ssh-keys.sh to get the SSH key ID(s) from Digital Ocean.
 4. Place those into the gitlab.tf file (line 7)
 5. Replace all instances of the domain "uwsg.tech" with some other test domain. (If you do not want to register a domain, you can change your /etc/hosts file to accommodate a testing use case.)
-+ roles/gitlab/vars/main.yml
-+ roles/gitlab/tasks/main.yml
-+ vars.tf
-+ gitlab.tf
-+ hosts
+        
+        roles/gitlab/vars/main.yml
+        roles/gitlab/tasks/main.yml
+        vars.tf
+        gitlab.tf
+        hosts
+6. If you haven't already make sure your system-level (/etc/ansible/ansible.cfg) or user-level (~/.ansible.cfg) file contains a line telling Ansible where you want to get your SSH private key from so you can authenticate to your Digital Ocean droplets. This is extremely important!
+
+        private_key_file = ~/.ssh/id_ed25519
 
 ## To run the scripts
 
-1. ./apply.sh (Or ./plan.sh if you want to see what will happen first.)
-2. ansible-playbook playbook.yml
+    ./apply.sh
+    ansible-playbook playbook.yml
 
 ## Outstanding issues
 
