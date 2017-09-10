@@ -9,8 +9,8 @@ You need to have the following:
 3. An [API Personal Access Token](https://cloud.digitalocean.com/settings/api/tokens) on your Digital Ocean account.
 4. An [SSH key](https://cloud.digitalocean.com/settings/security) on your Digital Ocean account.
 
-    #Here is how you create an SSH key
-    ssh-keygen -t ed25519
+        #Here is how you create an SSH key
+        ssh-keygen -t ed25519
 
 ## What you need to do before running this
 
