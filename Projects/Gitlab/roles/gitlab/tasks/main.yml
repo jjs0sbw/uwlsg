@@ -95,3 +95,7 @@
     mode: '0600'
 - name: Run gitlab-ctl reconfigure, which starts the actual service.
   command: gitlab-ctl reconfigure
+- name: Remove the annoying setup prompt on the root account every time we log in.
+  file:
+    path: /etc/update-motd.d/99-one-click
+    state: absent
