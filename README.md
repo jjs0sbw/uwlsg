@@ -31,9 +31,9 @@ Vagrant Ubuntu 16.04 configuration files:
   Vagrant Docker provider [To Do]
 
 
-  ## Start new notes repository
-  ### Outline ideas and issues associated with DevOps
-  #### Main tasks and approach
+## Start new notes repository
+### Outline ideas and issues associated with DevOps
+#### Main tasks and approach
     Track One: Teraform script to deploy Gitlab on Digital Ocean.  (Adrian -
     lead contact)
     -- First cycle of Gitlab deploy-distroy-redeploy is complete. (09-24-2017)
@@ -69,15 +69,15 @@ Vagrant Ubuntu 16.04 configuration files:
     we will move toward adding separate storage volumes as well as a
     CI/CD process for our new Gitlab instance.
 
-    ### General System Architecture Approach
-    Our system has three levels, 1) Github, 2) Gitlab and 3) Gitlab Projects.
+### General System Architecture Approach
+Our system has three levels, 1) Github, 2) Gitlab and 3) Gitlab Projects.
 
-    #### Github [Level One]
-    The Level One system component contains the scripts needed to deploy Gitlab
-    to Digital Ocean.
+#### Github [Level One]
+The Level One system component contains the scripts needed to deploy Gitlab
+to Digital Ocean.
 
 
-  #### Overview of Terraform Up & Running
+### Overview of Terraform Up & Running
   First read the book: "Terraform Up & Running." Presents a good overview
   of DevOps and standard DevOps tools.
 
