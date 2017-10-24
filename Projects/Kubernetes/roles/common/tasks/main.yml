@@ -1,0 +1,42 @@
+---
+
+# Install Aptitude because Ansible complains relentlessly
+- name: Install Aptitude
+  apt:
+    name: aptitude
+    state: present
+
+# Add third party repositories
+- name: Add Docker repository key
+  apt_key:
+    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    url: https://download.docker.com/linux/ubuntu/gpg
+- name: Add Google Cloud repository key
+  apt_key:
+    id: D0BC747FD8CAF7117500D6FA3746C208A7317B0F
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+- name: Add Docker repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu zesty edge
+    state: present
+- name: Add Kubernetes repository
+  apt_repository:
+    repo: deb [arch=amd64] https://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
+
+# Install base packages required to do anything interesting.
+- name: Update package cache
+  apt:
+    autoremove: yes
+    cache_valid_time: 3600
+    update_cache: yes
+    upgrade: yes
+- name: Install packages
+  apt:
+    name: "{{item}}"
+    state: latest
+  with_items:
+    - python3-pip
+    - ebtables
+    - ethtool

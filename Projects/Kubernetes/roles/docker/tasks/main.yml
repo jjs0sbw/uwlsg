@@ -1,0 +1,11 @@
+---
+- name: Install Python package
+  pip:
+    name: docker-py
+    state: latest
+- name: Install packages
+  apt:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - docker-ce
