@@ -1,0 +1,4 @@
+---
+- hosts: leader
+  roles:
+    - leader

@@ -1,9 +1,21 @@
 ---
+- name: Add Google Cloud repository key
+  apt_key:
+    id: D0BC747FD8CAF7117500D6FA3746C208A7317B0F
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+- name: Add Kubernetes repository
+  apt_repository:
+    repo: deb [arch=amd64] https://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
+
 - name: Install packages
   apt:
     name: "{{item}}"
     state: present
-  with_items:
+  loop:
+    - ebtables
+    - ethtool
     - kubelet
     - kubeadm
     - kubectl
