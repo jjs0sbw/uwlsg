@@ -1,9 +1,65 @@
 ---
+- name: Add Google Cloud repository key
+  apt_key:
+    id: D0BC747FD8CAF7117500D6FA3746C208A7317B0F
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+- name: Add Kubernetes repository
+  apt_repository:
+    repo: deb [arch=amd64] https://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
+
 - name: Install packages
   apt:
     name: "{{item}}"
     state: present
-  with_items:
+  loop:
+    - ebtables
+    - ethtool
     - kubelet
     - kubeadm
     - kubectl
+
+- name: Become cluster leader.
+  shell: kubeadm init --pod-network-cidr=192.168.0.0/16 2>/dev/null | grep "kubeadm join --token" | sed -e 's/^[[:space:]]*//'
+  register: kubeadm_join
+  when: inventory_hostname in groups['leader']
+
+- name: Print the bootstrap token so that we know we got it.
+  debug: msg="{{kubeadm_join.stdout}}"
+  when: inventory_hostname in groups['leader']
+
+- name: Create nonprivileged user
+  user:
+    name: nonprivileged
+    state: present
+    shell: /bin/bash
+    groups:
+      - systemd-journal
+  when: inventory_hostname in groups['leader']
+
+- name: Setup home directory
+  file:
+    path: /home/nonprivileged/.kube
+    owner: nonprivileged
+    state: directory
+  when: inventory_hostname in groups['leader']
+
+- name: Copy configuration file to Kube directory.
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/nonprivileged/.kube/config
+    owner: nonprivileged
+    remote_src: yes
+  when: inventory_hostname in groups['leader']
+
+- name: Create the Pod network
+  shell: kubectl apply -f https://docs.projectcalico.org/v2.6/getting-started/kubernetes/installation/hosted/kubeadm/1.6/calico.yaml
+  become: yes
+  become_user: nonprivileged
+  become_method: sudo
+  when: inventory_hostname in groups['leader']
+
+- name: Have the followers join the cluster.
+  shell: "{{ hostvars['k8s-1.uwsg.tech']['kubeadm_join'].stdout }}"
+  when: inventory_hostname in groups['cluster'] and inventory_hostname not in groups['leader']
