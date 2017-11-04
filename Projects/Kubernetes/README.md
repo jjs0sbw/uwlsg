@@ -2,12 +2,15 @@
 
 ### If you want to play with this yourself
 
-- Create or use your own domain
-- Create *at least* three servers with at least 2GB of RAM. (But see discussion below.)
-- Change the domain in the hosts file. For example ```k8s-[1:n].yourdomain.com``` for some value of n
-- Change the hardcoded string in roles/kubernetes/tasks/main.yml 
+- Create or use your own domain.
+- Install Terraform, Python, and Jinja2 for python.
+- Pick a number of servers desired.
+- Edit hosts file to change 1:n to the desired number.
+- Edit render-cluster-configuration.py. Change lines 6 and 7 as desired (host count must match).
+- Change the hardcoded string in roles/kubernetes/tasks/main.yml (Line 64)
 - Make sure you SSH into each server first so you know you can connect and you validated the SSH host key.
-- Run ```ansible-playbook cluster.yml```
+- In the infrastructure directory, run ```./apply.sh```
+- From this directory (Kubernetes), run ```ansible-playbook cluster.yml```
 
 ### Discussion
 
