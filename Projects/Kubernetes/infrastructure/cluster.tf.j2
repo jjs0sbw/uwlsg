@@ -1,0 +1,26 @@
+{% for hostname in clustermembers %}
+resource "digitalocean_droplet" "{{ hostname }}" {
+    image = "ubuntu-17-10-x64"
+    name = "{{ hostname }}"
+    region = "sfo1"
+    size = "4gb"
+    ipv6 = true
+    private_networking = true
+    ssh_keys = [{% for keyid in sshkeys %}"{{ keyid }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+}
+
+resource "digitalocean_record" "{{ hostname }}-ipv6" {
+  domain = "${var.domain}"
+  type   = "AAAA"
+  name   = "{{ hostname }}"
+  value  = "${digitalocean_droplet.{{ hostname }}.ipv6_address}"
+}
+
+resource "digitalocean_record" "{{ hostname }}-ipv4" {
+  domain = "${var.domain}"
+  type   = "A"
+  name   = "{{ hostname }}"
+  value  = "${digitalocean_droplet.{{ hostname }}.ipv4_address}"
+}
+
+{% endfor %}
