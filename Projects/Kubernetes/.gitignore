@@ -1,2 +1,12 @@
+# Ansible
+
 *.retry
 
+# Terraform
+
+.terraform
+*.tfstate*
+
+# Files created from templates
+
+infrastructure/cluster.tf
