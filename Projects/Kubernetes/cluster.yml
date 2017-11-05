@@ -3,5 +3,6 @@
   gather_facts: no
   roles:
     - common
+    - tls
     - docker
     - kubernetes
