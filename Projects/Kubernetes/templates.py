@@ -11,7 +11,8 @@ inventory = env.get_template('hosts.j2')
 
 domain = "uwsg.tech"
 subdomain = "k8s-"
-servers = 6
+servers = 4
+size = "4gb"
 sshkeys = [7172020, 7172181]
 clustermembers = [subdomain+str(n) for n in range(1, servers + 1)]
 
@@ -20,5 +21,5 @@ with open("hosts", "w") as f:
     f.write("\n")
 
 with open("infrastructure/cluster.tf", "w") as f:
-    f.write(infrastructure.render(clustermembers=clustermembers, sshkeys=sshkeys))
+    f.write(infrastructure.render(clustermembers=clustermembers, sshkeys=sshkeys, size=size))
     f.write("\n")
