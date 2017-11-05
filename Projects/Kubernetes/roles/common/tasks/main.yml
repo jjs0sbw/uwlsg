@@ -1,5 +1,14 @@
 ---
 
+- name: Wait for all servers to be reachable.
+  wait_for_connection:
+    delay: 3
+    sleep: 2
+    timeout: 90
+
+- name: Gather facts
+  setup:
+
 - name: Install Aptitude
   apt:
     name: "{{item}}"
