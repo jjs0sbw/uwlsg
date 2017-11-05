@@ -36,6 +36,7 @@
     shell: /bin/bash
     groups:
       - systemd-journal
+      - sudo
   when: inventory_hostname in groups['leader']
 
 - name: Setup home directory
@@ -60,6 +61,19 @@
   become_method: sudo
   when: inventory_hostname in groups['leader']
 
+- name: Allow sudo without password
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%sudo\s'
+    line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+  when: inventory_hostname in groups['leader']
+
 - name: Have the followers join the cluster.
   shell: "{{ hostvars['k8s-1.uwsg.tech']['kubeadm_join'].stdout }}"
   when: inventory_hostname in groups['cluster'] and inventory_hostname not in groups['leader']
+
+- name: Install nginx
+  apt:
+    name: nginx
+    state: present

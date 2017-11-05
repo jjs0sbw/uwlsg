@@ -3,7 +3,7 @@ resource "digitalocean_droplet" "{{ hostname }}" {
     image = "ubuntu-17-10-x64"
     name = "{{ hostname }}"
     region = "sfo1"
-    size = "4gb"
+    size = "{{ size }}"
     ipv6 = true
     private_networking = true
     ssh_keys = [{% for keyid in sshkeys %}"{{ keyid }}"{% if not loop.last %}, {% endif %}{% endfor %}]
@@ -13,6 +13,7 @@ resource "digitalocean_record" "{{ hostname }}-ipv6" {
   domain = "${var.domain}"
   type   = "AAAA"
   name   = "{{ hostname }}"
+  ttl    = 360
   value  = "${digitalocean_droplet.{{ hostname }}.ipv6_address}"
 }
 
@@ -20,6 +21,7 @@ resource "digitalocean_record" "{{ hostname }}-ipv4" {
   domain = "${var.domain}"
   type   = "A"
   name   = "{{ hostname }}"
+  ttl    = 360
   value  = "${digitalocean_droplet.{{ hostname }}.ipv4_address}"
 }
 
