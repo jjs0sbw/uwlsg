@@ -72,8 +72,3 @@
 - name: Have the followers join the cluster.
   shell: "{{ hostvars['k8s-1.uwsg.tech']['kubeadm_join'].stdout }}"
   when: inventory_hostname in groups['cluster'] and inventory_hostname not in groups['leader']
-
-- name: Install nginx
-  apt:
-    name: nginx
-    state: present
