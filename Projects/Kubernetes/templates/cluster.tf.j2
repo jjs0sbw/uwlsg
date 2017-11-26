@@ -3,7 +3,7 @@ resource "digitalocean_droplet" "{{ hostname }}" {
     image = "ubuntu-17-10-x64"
     name = "{{ hostname }}"
     region = "sfo1"
-    size = "4gb"
+    size = "{{ size }}"
     ipv6 = true
     private_networking = true
     ssh_keys = [{% for keyid in sshkeys %}"{{ keyid }}"{% if not loop.last %}, {% endif %}{% endfor %}]
