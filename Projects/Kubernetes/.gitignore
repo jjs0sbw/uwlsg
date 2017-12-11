@@ -2,3 +2,5 @@
 *.tfstate*
 *.retry
 service-account-credentials.json
+outputs.txt
+
