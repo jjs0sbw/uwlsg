@@ -117,7 +117,7 @@
 
   - name: Install vim-enhanced
     yum: name=vim-enhanced state=latest
-    bcome: true
+    become: true
 
   - name: Install lsscsi.i686
     yum: name=lsscsi.i686 state=latest
@@ -205,7 +205,7 @@
     debug: msg="Restart network service when done updating."
 
   - name: Check for access to files under /var/named
-      debug: msg="Check for access to files under /var/named."
+    debug: msg="Check for access to files under /var/named."
 
   - name: Add Development Tools to the machine
     debug: msg="Add Development Tools to the machine."
