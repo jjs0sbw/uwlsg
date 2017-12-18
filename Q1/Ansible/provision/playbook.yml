@@ -67,7 +67,7 @@
     become: true
 
   - name: Copy pubilic key into ssh/authorized keys file for q1u2
-    copy: src=authorized_keys.txt dest=/home/q1u1/.ssh/authorized_keys owner=q1u1 group=q1u1 mode=0600
+    copy: src=authorized_keys.txt dest=/home/q1u2/.ssh/authorized_keys owner=q1u2 group=q1u2 mode=0600
     become: true
 
   - name: Update yum cashe
