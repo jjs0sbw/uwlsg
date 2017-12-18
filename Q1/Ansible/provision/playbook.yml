@@ -29,11 +29,11 @@
   # password -- vagrant in this case.
   # Find the directory path to ansibl.cnf and place here...
   # Changed to Ansible 2.4 to support iptables and iptables_raw
-  - name: Print message
-    debug: msg="Beginning of CentOS 6.6 configuration Ansible script."
+  - name: Beginning of CentOS 6.6 Configuration Ansible Script
+    # debug: msg="Beginning of CentOS 6.6 configuration Ansible script."
 
-  - name: Add admin group message
-    debug: msg="Add a new group, admin, to the system."
+  - name: Add admin group to the system
+    # debug: msg="Add a new group, admin, to the system."
 
   - name: Add group admin
     command: /usr/sbin/groupadd admin
@@ -163,7 +163,7 @@
     yum: name=mlocate.i686 state=latest
     become: true
 
-  - name: Install bind-utils  
+  - name: Install bind-utils
     yum: name=bind-utils state=latest
     become: true
 
@@ -181,10 +181,10 @@
     # debug: msg="Make a copy of the current iptable configuration."
 
   - name: Create new ftp user ula-vsftp
-    debug: msg="Create new ftp user ula-vsftp."
+    # debug: msg="Create new ftp user ula-vsftp."
 
   - name: Change ula-vsftp user shell to /bin/noshell
-    debug: msg="Change ula-vsftp user shell to /bin/noshell."
+    # debug: msg="Change ula-vsftp user shell to /bin/noshell."
 
   # - name: Backup existing iptables configuration file.
     # debug: msg="Backup existing iptables configuration file."
@@ -193,52 +193,52 @@
     # debug: msg="Check iptables status."
 
   - name: Edit telnet config under /etc/xinetd.d/
-    debug: msg="Edit telnet config under /etc/xinetd.d/."
+    # debug: msg="Edit telnet config under /etc/xinetd.d/."
 
   - name: Install ftp -- vsftpd
-    debug: msg="Install ftp -- vsftpd."
+    # debug: msg="Install ftp -- vsftpd."
 
   - name: Check /etc/vsftpd/vsftp.conf
-    debug: msg="Check /etc/vsftpd/vsftp.conf."
+    # debug: msg="Check /etc/vsftpd/vsftp.conf."
 
   - name: Create /etc/vsftpd/vsftpd-userlist.txt
-    debug: msg="Create /etc/vsftpd/vsftpd-userlist.txt."
+    # debug: msg="Create /etc/vsftpd/vsftpd-userlist.txt."
 
   - name: Start the vsftpd service
-    debug: msg="Start the vsftpd service."
+    # debug: msg="Start the vsftpd service."
 
   - name: Open Port 21 for FTP request
-    debug: msg="Open Port 21 for FTP request."
+    # debug: msg="Open Port 21 for FTP request."
 
   - name: Backup named.conf file
-    debug: msg="Backup named.conf file."
+    # debug: msg="Backup named.conf file."
 
   - name: Replace original named.conf with contents of cach_named.txt
-    debug: msg="Replace original named.conf with contents of cach_named.txt."
+    # debug: msg="Replace original named.conf with contents of cach_named.txt."
 
   - name: Update named.conf and restart named
-    debug: msg="Update named.conf and restart named."
+    # debug: msg="Update named.conf and restart named."
 
   # - name: Add firewall rules for named
     # debug: msg="Add firewall rules for named."
 
   - name: Update host DNS nameserver
-    debug: msg="Update host DNS nameserver."
+    # debug: msg="Update host DNS nameserver."
 
   - name:   Backup /etc/resolv.conf
-    debug: msg="Backup /etc/resolv.conf."
+    # debug: msg="Backup /etc/resolv.conf."
 
   - name: Add a nameserver 127.0.0.1 line to the resolv.conf file.
-    debug: msg="Add a nameserver 127.0.0.1 line to the resolv.conf file.."
+    # debug: msg="Add a nameserver 127.0.0.1 line to the resolv.conf file.."
 
   - name: Restart network service when done updating
-    debug: msg="Restart network service when done updating."
+    # debug: msg="Restart network service when done updating."
 
   - name: Check for access to files under /var/named
-    debug: msg="Check for access to files under /var/named."
+    # debug: msg="Check for access to files under /var/named."
 
   - name: Add Development Tools to the machine
-    debug: msg="Add Development Tools to the machine."
+    # debug: msg="Add Development Tools to the machine."
 
     # Be sure to 'Update ssd config to remove root login'
     # cd /etc/ssh/
