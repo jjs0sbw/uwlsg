@@ -39,15 +39,29 @@
     command: /usr/sbin/groupadd admin
     become: true
 
-  - name: Modify sudoers file for wheel group message
-    debug: msg="Remove requirement for password for wheel members."
-
-  - name: Modify sudoers file for wheel group
-    command: sed -i 's/#  %wheel/  %wheel/g' /etc/sudoers
-
   - name: Install libselinux-python
     yum: name='libselinux-python' state=latest
     become: true
+
+  - name: Modify sudoers file for wheel group message
+    debug: msg="Remove requirement for password for wheel members."
+
+  - lineinfile:
+      path: /etc/sudoers
+      state: present
+      regexp: '^%wheel\s'
+      line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+    become: true
+
+    # - name: Modify sudoers file for wheel group message
+    # debug: msg="Remove requirement for password for wheel members."
+
+    # - name: Modify sudoers file for wheel group
+    # command: sed -i 's/#  %wheel/  %wheel/g' /etc/sudoers
+
+    # - name: Install libselinux-python
+    # yum: name='libselinux-python' state=latest
+    # become: true
 
   - name: Print Lab 1a users add message
     debug: msg="Add two new users to the system; q1u1, q1u2."
@@ -148,6 +162,8 @@
   - name: Install mlocate
     yum: name=mlocate.i686 state=latest
     become: true
+
+  - name: Install bind-utils  
     yum: name=bind-utils state=latest
     become: true
 
