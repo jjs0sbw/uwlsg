@@ -29,136 +29,113 @@
   # password -- vagrant in this case.
   # Find the directory path to ansibl.cnf and place here...
   # Changed to Ansible 2.4 to support iptables and iptables_raw
-  - name: Print message
+  - name: Beginning of CentOS 6.6 Configuration Ansible Script
     debug: msg="Beginning of CentOS 6.6 configuration Ansible script."
 
-  - name: Print Lab 1a group add message
+  - name: Add admin group to the system
     debug: msg="Add a new group, admin, to the system."
 
   - name: Add group admin
     command: /usr/sbin/groupadd admin
     become: true
-    become_method: sudo
-    become_user: root
 
-  - name: Print Lab 1a users add message
+  - name: Install libselinux-python
+    yum: name='libselinux-python' state=latest
+    become: true
+
+  - name: Modify sudoers file for wheel group message
+    debug: msg="Remove requirement for password for wheel members."
+
+  - lineinfile:
+      path: /etc/sudoers
+      state: present
+      regexp: '^%wheel\s'
+      line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+    become: true
+
+  - name: Add new users to the system
     debug: msg="Add two new users to the system; q1u1, q1u2."
 
   - name: Add user q1u1
     command: /usr/sbin/useradd -c "Q1C6 User1" -G admin q1u1
     become: true
-    become_method: sudo
-    become_user: root
 
-  - name: Add user q1u2
-    command: /usr/sbin/useradd -c "Q1C6 User2" -G admin q1u2
+  - name: Modify user q1u1 -- add to wheel group
+    command: /usr/sbin/usermod -aG wheel q1u1
     become: true
-    become_method: sudo
-    become_user: root
-
-  - name: Update yum cashe
-    yum: name='*' state=latest
-    become: true
-    become_method: sudo
-    become_user: root
-
-  - name: Install libselinux-python
-    yum: name='libselinux-python' state=latest
-    become: true
-    become_method: sudo
-    become_user: root
-
-  - name: Add ssh public key to q1u1 and q1u2, no password
-    debug: msg="Add public key to the  q1u1, q2u2 accounts."
 
   - name: Make .ssh directory for user q1u1
     file: path=/home/q1u1/.ssh state=directory owner=q1u1 group=q1u1 mode=0700
     become: true
-    become_method: sudo
-    become_user: root
 
   - name: Copy pubilic key into ssh/authorized keys file for q1u1
-    copy: src=authorized_keys dest=/home/q1u1/.ssh/authorized_keys owner=q1u1 group=q1u1 mode=0600
+    copy: src=authorized_keys.txt dest=/home/q1u1/.ssh/authorized_keys owner=q1u1 group=q1u1 mode=0600
     become: true
-    become_method: sudo
-    become_user: root
+
+  - name: Add user q1u2
+    command: /usr/sbin/useradd -c "Q1C6 User2" -G admin q1u2
+    become: true
+
+  - name: Modify user q1u2 -- add to wheel group
+    command: /usr/sbin/usermod -aG wheel q1u2
+    become: true
 
   - name: Make .ssh directory for user q1u2
-    copy: src=authorized_keys dest=/home/q1u2/.ssh owner=q1u2 group=q1u2 mode=0600
+    file: path=/home/q1u2/.ssh state=directory owner=q1u2 group=q1u2 mode=0700
     become: true
-    become_method: sudo
-    become_user: root
 
-  - name: Copy pubilic key into .ssh/authorized_keys file for q1u2
-    copy: src=authorized_keys dest=/home/q1u2/.ssh/authorized_keys owner=q1u2 group=q1u2 mode=0600
+  - name: Copy pubilic key into ssh/authorized keys file for q1u2
+    copy: src=authorized_keys.txt dest=/home/q1u2/.ssh/authorized_keys owner=q1u2 group=q1u2 mode=0600
     become: true
-    become_method: sudo
-    become_user: root
+
+  - name: Update yum cashe
+    yum: name='*' state=latest
+    become: true
 
   - name: Install man pages
     yum: name=man state=latest
     become: true
-    become_method: sudo
-    become_user: root
 
   - name: Install vim
     yum: name=vim state=latest
     become: true
-    become_method: sudo
-    become_user: root
 
   - name: Install vim-enhanced
     yum: name=vim-enhanced state=latest
     become: true
-    become_method: sudo
-    become_user: root
 
   - name: Install lsscsi.i686
     yum: name=lsscsi.i686 state=latest
     become: true
-    become_method: sudo
-    become_user: root
 
   - name: Install dstat
     yum: name=dstat state=latest
     become: true
-    become_method: sudo
-    become_user: root
 
   - name: Install wget
     yum: name=wget state=latest
     become: true
-    become_method: sudo
-    become_user: root
 
   - name: Install mlocate
     yum: name=mlocate.i686 state=latest
     become: true
-    become_method: sudo
-    become_user: root
 
   - name: Install bind-utils
     yum: name=bind-utils state=latest
     become: true
-    become_method: sudo
-    become_user: root
 
   - name: Install group install Web Server
     yum: name="@Web Server" state=present
     become: true
-    become_method: sudo
-    become_user: root
 
   - name: Install telnet
     yum: name=telnet state=latest
     become: true
-    become_method: sudo
-    become_user: root
 
     # use iptables module here
     # wait for iptables code from Robert
-  # - name: Save a copy of iptables current configuration
-    # debug: msg="Make a copy of the current iptable configuration."
+  - name: Save a copy of iptables current configuration
+    debug: msg="Make a copy of the current iptable configuration."
 
   - name: Create new ftp user ula-vsftp
     debug: msg="Create new ftp user ula-vsftp."
@@ -166,11 +143,11 @@
   - name: Change ula-vsftp user shell to /bin/noshell
     debug: msg="Change ula-vsftp user shell to /bin/noshell."
 
-  # - name: Backup existing iptables configuration file.
-    # debug: msg="Backup existing iptables configuration file."
+  - name: Backup existing iptables configuration file.
+    debug: msg="Backup existing iptables configuration file."
 
-  # - name: Check iptables status.
-    # debug: msg="Check iptables status."
+  - name: Check iptables status.
+    debug: msg="Check iptables status."
 
   - name: Edit telnet config under /etc/xinetd.d/
     debug: msg="Edit telnet config under /etc/xinetd.d/."
@@ -199,8 +176,8 @@
   - name: Update named.conf and restart named
     debug: msg="Update named.conf and restart named."
 
-  # - name: Add firewall rules for named
-    # debug: msg="Add firewall rules for named."
+  - name: Add firewall rules for named
+    debug: msg="Add firewall rules for named."
 
   - name: Update host DNS nameserver
     debug: msg="Update host DNS nameserver."
@@ -215,7 +192,7 @@
     debug: msg="Restart network service when done updating."
 
   - name: Check for access to files under /var/named
-      debug: msg="Check for access to files under /var/named."
+    debug: msg="Check for access to files under /var/named."
 
   - name: Add Development Tools to the machine
     debug: msg="Add Development Tools to the machine."
