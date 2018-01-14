@@ -1,0 +1,6 @@
+---
+- hosts: consul
+  roles:
+    - common
+    - consul-base
+    - consul-server

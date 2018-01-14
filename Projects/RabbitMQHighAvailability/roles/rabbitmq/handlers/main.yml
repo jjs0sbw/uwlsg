@@ -1,0 +1,12 @@
+---
+- name: Stop RabbitMQ
+  systemd:
+    name: rabbitmq-server
+    state: stopped
+  listen: "restart rabbitmq"
+
+- name: Start RabbitMQ
+  systemd:
+    name: rabbitmq-server
+    state: started
+  listen: "restart rabbitmq"
