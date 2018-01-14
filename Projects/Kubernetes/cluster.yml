@@ -1,7 +1,0 @@
----
-- hosts: cluster
-  gather_facts: no
-  roles:
-    - common
-    - docker
-    - kubernetes

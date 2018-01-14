@@ -1,0 +1,5 @@
+[consul]
+consul[1:5].uwsg.tech ansible_python_interpreter=/usr/bin/python3
+
+[rabbitmq]
+rabbitmq[1:3].uwsg.tech ansible_python_interpreter=/usr/bin/python3

@@ -1,0 +1,32 @@
+---
+- name: Install RabbitMQ Server
+  apt:
+    name: rabbitmq-server
+    state: present
+
+- name: Enable the Management plugin
+  rabbitmq_plugin:
+    names: rabbitmq_management
+    state: enabled
+
+- name: Create administration user
+  rabbitmq_user:
+    user: admin
+    password: "{{ rabbitmq_admin_password }}"
+    tags: administrator
+
+- name: Delete old-style configuration file.
+  file:
+    path: /etc/rabbitmq/rabbitmq.config
+    state: absent
+
+- name: Copy configuration file.
+  template:
+    src: rabbitmq.conf.j2
+    dest: /etc/rabbitmq/rabbitmq.conf
+  notify: restart rabbitmq
+
+- name: Ensure RabbitMQ is started
+  systemd:
+    name: rabbitmq-server
+    state: started

@@ -1,0 +1,7 @@
+---
+- name: Create configuration file.
+  template:
+    src: server.json.j2
+    dest: /etc/consul/server.json
+  notify: restart consul
+  
