@@ -1,0 +1,14 @@
+---
+- name: Install aptitude
+  apt:
+    name: aptitude
+    state: present
+    update_cache: yes
+
+- name: Install packages
+  apt:
+    name: '{{ item }}'
+    state: present
+  loop:
+    - python3-pip
+    - unzip

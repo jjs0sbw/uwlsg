@@ -1,13 +1,6 @@
-# Ansible
-
-*.retry
-
-# Terraform
-
-.terraform
+.terraform/
 *.tfstate*
+*.retry
+service-account-credentials.json
+outputs.txt
 
-# Files created from templates
-
-infrastructure/cluster.tf
-hosts

@@ -1,0 +1,7 @@
+---
+- hosts: rabbitmq
+  roles:
+    - common
+    - consul-base
+    - consul-client
+    - rabbitmq

@@ -1,0 +1,13 @@
+{
+    "datacenter": "sfo1",
+    "encrypt": "{{ consul_encryption_key }}",
+    "data_dir": "/var/consul",
+    "retry_join": ["provider=digitalocean region=sfo1 tag_name=consul api_token={{ digitalocean_api_key }}"],
+    "bind_addr": "{{ ansible_eth1.ipv4.address }}",
+    "bootstrap_expect": 5,
+    "ui": true,
+    "server": true,
+    "addresses": {
+        "http": "0.0.0.0"
+    }
+}

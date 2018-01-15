@@ -1,0 +1,22 @@
+---
+- name: Ensure configuration directory
+  file:
+    path: /etc/consul
+    state: directory
+
+- name: Copy systemd unit file
+  copy:
+    src: consul.service
+    dest: /etc/systemd/system/consul.service
+  notify: systemd daemon reload
+
+- name: Download Consul
+  get_url:
+    url: https://releases.hashicorp.com/consul/1.0.2/consul_1.0.2_linux_amd64.zip
+    dest: /usr/bin/consul.zip
+
+- name: Extract Consul
+  unarchive:
+    remote_src: yes
+    src: /usr/bin/consul.zip
+    dest: /usr/bin
