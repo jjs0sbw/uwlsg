@@ -1,8 +1,20 @@
 ---
+- name: Add an Apt signing key, uses whichever key is at the URL
+  apt_key:
+    url: https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc
+    id: 0A9AF2115F4687BD29803A206B73A36E6026DFCA
+    state: present
+
+- apt_repository:
+    repo: deb https://dl.bintray.com/rabbitmq/debian artful main
+    state: present
+
 - name: Install RabbitMQ Server
   apt:
     name: rabbitmq-server
-    state: present
+    state: latest
+    update_cache: yes
+  notify: restart rabbitmq
 
 - name: Enable the Management plugin
   rabbitmq_plugin:

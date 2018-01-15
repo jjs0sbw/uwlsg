@@ -1,0 +1,1 @@
+ansible-playbook $1 --vault-password-file vault-password.txt
