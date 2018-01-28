@@ -1,0 +1,57 @@
+---
+- hosts: default
+  tasks:
+  - name: Update apt cache
+    apt: update_cache=yes
+    become: true
+
+  - name: Install aptitude
+    apt:
+      name: aptitude
+      state: latest
+    become: true
+
+  - name: Install software properties common
+    apt:
+      name: software-properties-common
+      state: latest
+    become: true
+
+  - name: Install openjdk-8-jdk
+    apt:
+      name: openjdk-8-jdk
+      state: latest
+    become: true
+
+  - name: Install openjdk-8-jre
+    apt:
+      name: openjdk-8-jre
+      state: latest
+    become: true
+
+  - name: Install zookeeperd
+    apt:
+      name: zookeeperd
+      state: latest
+    become: true
+
+  - name: Create /opt/Kafka
+    file: path=/opt/Kafka state=directory
+    become: true
+
+  - name: Download Kafka
+    get_url:
+      url: http://www.namesdir.com/mirrors/apache/kafka/1.0.0/kafka_2.11-1.0.0.tgz
+      dest: /opt/Kafka
+    become: true
+
+  - name: Unarchive Kafka
+    unarchive:
+      src: /opt/Kafka/kafka_2.11-1.0.0.tgz
+      dest: /opt/Kafka
+      remote_src: yes
+    become: true
+
+  - name: Start Kafka Server
+    command: /opt/Kafka/kafka_2.11-1.0.0/bin/kafka-server-start.sh /opt/Kafka/kafka_2.11-1.0.0/config/server.properties
+    become: true
