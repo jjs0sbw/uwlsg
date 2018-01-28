@@ -1,0 +1,39 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch
+  labels:
+    k8s-app: elasticsearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: elasticsearch
+  template:
+    metadata:
+      labels:
+        k8s-app: elasticsearch
+    spec:
+      containers:
+      - name: elasticsearch
+        image: docker.elastic.co/elasticsearch/elasticsearch:6.1.2
+        ports:
+        - containerPort: 9200
+        - containerPort: 9300
+        env:
+        - name: discovery.type
+          value: single-node
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: elasticsearch
+spec:
+  selector:
+    k8s-app: elasticsearch
+  ports:
+  - name: elasticsearch-9200
+    port: 9200
+  - name: elasticsearch-9300
+    port: 9300

@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: logstash
+  labels:
+    k8s-app: logstash
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: logstash
+  template:
+    metadata:
+      labels:
+        k8s-app: logstash
+    spec:
+      containers:
+      - name: logstash
+        image: docker.elastic.co/logstash/logstash:6.1.2
+        ports:
+        - containerPort: 5044
+        - containerPort: 9600
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: logstash
+spec:
+  selector:
+    k8s-app: logstash
+  ports:
+  - name: logstash-5044
+    port: 5044
+  - name: logstash-9600
+    port: 9600

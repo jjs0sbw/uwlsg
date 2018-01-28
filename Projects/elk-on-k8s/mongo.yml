@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: mongo
+  labels:
+    k8s-app: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: mongo
+  template:
+    metadata:
+      labels:
+        k8s-app: mongo
+    spec:
+      containers:
+      - name: mongo
+        image: mongo:latest
+        ports:
+        - containerPort: 27017
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: mongo
+spec:
+  selector:
+    k8s-app: mongo
+  ports:
+  - name: mongo
+    port: 27017
