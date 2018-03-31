@@ -5,7 +5,7 @@
 Start with a local Kubernetes cluster that has at least 4 GiB of RAM.
 
 ```
-minikube start --memory 4096
+minikube start --memory 4096 --kubernetes-version v1.9.0
 ```
 
 Create all of the Kubernetes objects in the cluster.
