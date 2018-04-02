@@ -1,0 +1,13 @@
+[Unit]
+Description=Cloudflare TLS PKI Server
+
+[Service]
+Type=simple
+User=ca
+Group=ca
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+ExecStart=/usr/bin/cfssl serve -config=/etc/cfssl/config.json -ca-key=/etc/cfssl/ca-key.pem -ca=/etc/cfssl/ca.pem -address=:: -port=443 -tls-key=/etc/cfssl/ca-server-key.pem -tls-cert=/etc/cfssl/ca-server.pem
+
+[Install]
+WantedBy=multi-user.target
