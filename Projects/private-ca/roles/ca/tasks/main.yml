@@ -1,0 +1,42 @@
+---
+- name: Update package lists
+  apt:
+    name:
+      - golang-cfssl
+    cache_valid_time: 240
+- name: Create the ca user
+  user:
+    name: ca
+    system: yes
+    state: present
+- name: Ensure /etc/cfssl exists
+  file:
+    path: /etc/cfssl
+    state: directory
+    owner: ca
+    group: ca
+- name: Copy configuration files for cfssl
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0400
+    owner: ca
+    group: ca
+  loop:
+    - {src: "config.json", dest: "/etc/cfssl/config.json" }
+    - {src: "ca-key.pem", dest: "/etc/cfssl/ca-key.pem" }
+    - {src: "ca.pem", dest: "/etc/cfssl/ca.pem" }
+    - {src: "ca-server-key.pem", dest: "/etc/cfssl/ca-server-key.pem" }
+    - {src: "ca-server.pem", dest: "/etc/cfssl/ca-server.pem" }
+- name: Copy systemd service
+  copy:
+    src: cfssl.service
+    dest: /lib/systemd/system/cfssl.service
+    owner: root
+    group: root
+- name: Start cfssl
+  systemd:
+    daemon_reload: yes
+    name: cfssl
+    enabled: yes
+    state: started

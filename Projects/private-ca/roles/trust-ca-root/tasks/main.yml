@@ -1,0 +1,10 @@
+- name: Copy Example Root CA certificate
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+  loop:
+    - {src: "ca.pem", dest: "/usr/local/share/ca-certificates/Example_Root_CA.crt" }
+- name: Update TLS roots.
+  shell: update-ca-certificates
