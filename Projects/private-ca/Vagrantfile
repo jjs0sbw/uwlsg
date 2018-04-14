@@ -9,17 +9,43 @@ Vagrant.configure("2") do |config|
 
   config.vm.box = "ubuntu/bionic64"
   
-  config.vm.define "tls-ca-server"
+  N = 4
+  (1..N).each do |machine_id|
+    config.vm.define "machine#{machine_id}" do |machine|
 
-  config.vm.provision "ansible" do |ansible|
-    ansible.compatibility_mode = "2.0"
+      if N == 1
+        machine.vm.hostname = "ca"
+      end
 
-    ansible.playbook = "playbook.yml"
-    ansible.limit = "all"
-    ansible.become = true
-    
-    ansible.groups = {
-      "ca" => [ "tls-ca-server" ]
-    }
+      if N > 1 && N <= 4
+        machine.vm.hostname = "consul#{machine_id - 1}"
+      end
+
+      if N <= 4
+        machine.vm.provider "virtualbox" do |v|
+          v.memory = 512
+          v.cpus = 1
+        end
+      end
+
+      machine.vm.network "private_network", ip: "192.168.77.#{20+machine_id}"
+
+      # Only execute once the Ansible provisioner,
+      # when all the machines are up and ready.
+      if machine_id == N
+        machine.vm.provision :ansible do |ansible|
+          ansible.compatibility_mode = "2.0"
+
+          ansible.playbook = "playbook.yml"
+          ansible.limit = "all"
+          ansible.become = true
+          
+          ansible.groups = {
+            "ca" => [ "machine1" ],
+            "consul" => [ "machine2", "machine3", "machine4" ]
+          }
+        end
+      end
+    end
   end
 end

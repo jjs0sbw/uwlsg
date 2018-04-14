@@ -1,0 +1,3 @@
+---
+dependencies:
+  - { role: trust-ca-root }
