@@ -1,0 +1,15 @@
+{
+  "hosts": [
+    "{{ ansible_hostname }}",
+    "{{ ansible_hostname }}.cluster.local"
+  ],
+  "key": {
+    "algo": "ecdsa",
+    "size": 384
+  },
+    "names": [
+        {
+            "O":  "Some Organization"
+        }
+    ]
+}
