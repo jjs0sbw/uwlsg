@@ -54,6 +54,12 @@
     become_method: sudo
     become_user: root
 
+  - name: Install th libselinux-python package
+    yum: name=libselinux-python state=installed
+    become: true
+    become_method: sudo
+    become_user: root
+
   - name: Add ssh public key to q1u1 and q1u2, no password
     debug: msg="Add public key to the  q1u1, q2u2 accounts."
 
@@ -64,7 +70,7 @@
     become_user: root
 
   - name: Make .ssh directory for user q1u2
-    copy: src=authorized_keys dest=/home/q1u2/.ssh owner=q1u2 group=q1u2 mode=0600
+    copy: src=authorized_keys dest=/home/q1u1/.ssh owner=q1u1 group=q1u1 mode=0600
     become: true
     become_method: sudo
     become_user: root
