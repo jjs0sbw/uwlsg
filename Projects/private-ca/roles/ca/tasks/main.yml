@@ -32,4 +32,10 @@
     dest: /lib/systemd/system/cfssl.service
     owner: root
     group: root
-  notify: Start cfssl server
+
+- name: Start cfssl server
+  systemd:
+    daemon_reload: yes
+    name: cfssl
+    enabled: yes
+    state: started

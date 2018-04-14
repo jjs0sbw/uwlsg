@@ -6,7 +6,9 @@
     group: root
   loop:
     - {src: "ca.pem", dest: "/usr/local/share/ca-certificates/Example_Root_CA.crt" }
-  notify: Update TLS roots
+
+- name: Update TLS roots
+  shell: update-ca-certificates
 
 - name: Install cfssl
   apt:
