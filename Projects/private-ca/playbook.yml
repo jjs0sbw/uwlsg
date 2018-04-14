@@ -1,5 +1,7 @@
 ---
-- hosts: all
+- hosts: ca
   roles:
     - ca
+- hosts: consul
+  roles:
     - consul
