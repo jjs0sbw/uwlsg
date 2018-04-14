@@ -1,0 +1,58 @@
+---
+- name: Create configuration directories
+  file:
+    path: '{{ item }}'
+    state: directory
+  loop:
+    - "/etc/consul"
+
+- name: Copy CFSSL configuration
+  copy:
+    src: config.json
+    dest: /etc/consul/config.json
+
+- name: Render csr.json
+  template:
+    src: csr.json.j2
+    dest: /etc/consul/csr.json
+
+- name : Create the TLS certificate
+  shell: "cfssl gencert -config=config.json csr.json | sudo cfssljson -bare"
+  args:
+    chdir: /etc/consul
+    creates: /etc/consul/cert.pem
+
+- name: Render consul-config.json
+  template:
+    src: consul-config.json.j2
+    dest: /etc/consul/consul-config.json
+  notify: Start Consul
+
+- name: Download unzip
+  apt:
+    name: unzip
+    state: present
+
+- name: Download Hashicorp tools
+  get_url:
+    url: '{{ item.url }}'
+    checksum: '{{ item.checksum }}'
+    dest: '{{ item.dest }}'
+  loop:
+    - { url: "https://releases.hashicorp.com/consul/1.0.6/consul_1.0.6_linux_amd64.zip", dest: "/tmp/consul_1.0.6_linux_amd64.zip", checksum: "sha256:bcc504f658cef2944d1cd703eda90045e084a15752d23c038400cf98c716ea01" }
+    - { url: "https://releases.hashicorp.com/vault/0.9.6/vault_0.9.6_linux_amd64.zip", dest: "/tmp/vault_0.9.6_linux_amd64.zip", checksum: "sha256:3f1f346ff7aaf367fed6a3e83e5a07fdc032f22860585e36c3674f9ead08dbaf" }
+
+- name: Extract Hashicorp tools
+  unarchive:
+    src: '{{ item }}'
+    dest: /usr/bin
+    remote_src: yes
+  loop:
+    - "/tmp/consul_1.0.6_linux_amd64.zip"
+    - "/tmp/vault_0.9.6_linux_amd64.zip"
+
+- name: Copy systemd unit file for Consul
+  copy:
+    src: consul.service
+    dest: /lib/systemd/system/consul.service
+  notify: Start Consul

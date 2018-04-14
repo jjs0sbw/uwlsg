@@ -1,0 +1,7 @@
+---
+- name: Start cfssl server
+  systemd:
+    daemon_reload: yes
+    name: cfssl
+    enabled: yes
+    state: started

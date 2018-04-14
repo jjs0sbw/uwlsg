@@ -6,5 +6,20 @@
     group: root
   loop:
     - {src: "ca.pem", dest: "/usr/local/share/ca-certificates/Example_Root_CA.crt" }
-- name: Update TLS roots.
-  shell: update-ca-certificates
+  notify: Update TLS roots
+
+- name: Install cfssl
+  apt:
+    name:
+      - golang-cfssl
+    cache_valid_time: 240
+
+- name: As a hack, let's define all of the hostnames
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ item }}"
+  loop:
+    - "192.168.77.21 ca ca.cluster.local"
+    - "192.168.77.22 consul1 consul1.cluster.local"
+    - "192.168.77.23 consul2 consul2.cluster.local"
+    - "192.168.77.24 consul3 consul3.cluster.local"
