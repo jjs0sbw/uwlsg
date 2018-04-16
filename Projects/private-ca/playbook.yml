@@ -5,3 +5,4 @@
 - hosts: consul
   roles:
     - consul
+    - vault
