@@ -26,7 +26,6 @@
   template:
     src: consul-config.json.j2
     dest: /etc/consul/consul-config.json
-  notify: Start Consul
 
 - name: Download unzip
   apt:
@@ -41,6 +40,9 @@
   loop:
     - { url: "https://releases.hashicorp.com/consul/1.0.6/consul_1.0.6_linux_amd64.zip", dest: "/tmp/consul_1.0.6_linux_amd64.zip", checksum: "sha256:bcc504f658cef2944d1cd703eda90045e084a15752d23c038400cf98c716ea01" }
     - { url: "https://releases.hashicorp.com/vault/0.9.6/vault_0.9.6_linux_amd64.zip", dest: "/tmp/vault_0.9.6_linux_amd64.zip", checksum: "sha256:3f1f346ff7aaf367fed6a3e83e5a07fdc032f22860585e36c3674f9ead08dbaf" }
+    - { url: "https://releases.hashicorp.com/nomad/0.8.1/nomad_0.8.1_linux_amd64.zip", dest: "/tmp/nomad_0.8.1_linux_amd64.zip", checksum: "sha256:2d44c77f980fca9ad0af77137b101bb6f0bfe828950c99876c3360b654758a04"}
+
+    
 
 - name: Extract Hashicorp tools
   unarchive:
@@ -50,9 +52,16 @@
   loop:
     - "/tmp/consul_1.0.6_linux_amd64.zip"
     - "/tmp/vault_0.9.6_linux_amd64.zip"
+    - "/tmp/nomad_0.8.1_linux_amd64.zip"
 
 - name: Copy systemd unit file for Consul
   copy:
     src: consul.service
     dest: /lib/systemd/system/consul.service
-  notify: Start Consul
+
+- name: Start Consul
+  systemd:
+    daemon_reload: yes
+    name: consul
+    enabled: yes
+    state: started
