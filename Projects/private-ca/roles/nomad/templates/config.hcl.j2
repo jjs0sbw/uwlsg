@@ -1,0 +1,33 @@
+datacenter = "local-dc"
+data_dir   = "/var/lib/nomad"
+
+advertise {
+  # Defaults to the first private IP address.
+  http = "{{ ansible_enp0s8.ipv4.address }}"
+  rpc  = "{{ ansible_enp0s8.ipv4.address }}"
+  serf = "{{ ansible_enp0s8.ipv4.address }}" # non-default ports may be specified
+}
+
+server {
+  enabled          = true
+  bootstrap_expect = 3
+}
+
+consul {
+  address   = "{{ ansible_hostname }}:8500"
+  ssl       = true
+  key_file  = "/etc/ssl/cert-key.pem"  
+  cert_file = "/etc/ssl/cert.pem"
+  ca_file   = "/usr/local/share/ca-certificates/Example_Root_CA.crt"
+}
+
+tls {
+  http = true
+  rpc  = true
+
+  key_file  = "/etc/ssl/cert-key.pem"  
+  cert_file = "/etc/ssl/cert.pem"
+  ca_file   = "/usr/local/share/ca-certificates/Example_Root_CA.crt"
+
+  verify_https_client    = true
+}

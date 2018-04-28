@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
         machine.vm.hostname = "ca"
       end
 
-      if N > 1 && N <= 4
+      if N > 1 and N <= 4
         machine.vm.hostname = "control#{machine_id - 1}"
       end
 

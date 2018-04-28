@@ -10,6 +10,14 @@
     dest: /etc/vault/vault.hcl
     mode: 0400
 
+- name: Set environment variables
+  lineinfile:
+    line: "{{ item }}"
+    path: /etc/environment
+  loop:
+    - "VAULT_CLIENT_KEY=/etc/ssl/cert-key.pem"
+    - "VAULT_CLIENT_CERT=/etc/ssl/cert.pem"
+
 - name: Copy vault systemd unit file
   copy:
     src: vault.service

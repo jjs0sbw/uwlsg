@@ -42,7 +42,6 @@
     - { url: "https://releases.hashicorp.com/vault/0.10.1/vault_0.10.1_linux_amd64.zip", dest: "/tmp/vault_0.10.1_linux_amd64.zip", checksum: "sha256:031e521b4603487126fd353a9557dd22a02304a8a11f843e9914be59a8009c8a" }
     - { url: "https://releases.hashicorp.com/nomad/0.8.3/nomad_0.8.3_linux_amd64.zip", dest: "/tmp/nomad_0.8.3_linux_amd64.zip", checksum: "sha256:c7faaee8fad0f6a74df01b9283253ee565f85791adca1d6a38462e0387dee175"}
 
-    
 
 - name: Extract Hashicorp tools
   unarchive:
@@ -53,6 +52,15 @@
     - "/tmp/consul_1.0.7_linux_amd64.zip"
     - "/tmp/vault_0.10.1_linux_amd64.zip"
     - "/tmp/nomad_0.8.3_linux_amd64.zip"
+
+- name: Set environment variables
+  lineinfile:
+    line: "{{ item }}"
+    path: /etc/environment
+  loop:
+    - "CONSUL_HTTP_ADDR=https://localhost:8500"
+    - "CONSUL_CLIENT_KEY=/etc/ssl/cert-key.pem"
+    - "CONSUL_CLIENT_CERT=/etc/ssl/cert.pem"
 
 - name: Copy systemd unit file for Consul
   copy:
