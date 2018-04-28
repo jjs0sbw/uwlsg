@@ -9,18 +9,18 @@
 - name: Copy CFSSL configuration
   copy:
     src: config.json
-    dest: /etc/consul/config.json
+    dest: /etc/ssl/config.json
 
 - name: Render csr.json
   template:
     src: csr.json.j2
-    dest: /etc/consul/csr.json
+    dest: /etc/ssl/csr.json
 
 - name : Create the TLS certificate
   shell: "cfssl gencert -config=config.json csr.json | sudo cfssljson -bare"
   args:
-    chdir: /etc/consul
-    creates: /etc/consul/cert.pem
+    chdir: /etc/ssl
+    creates: /etc/ssl/cert.pem
 
 - name: Render consul-config.json
   template:
@@ -38,9 +38,9 @@
     checksum: '{{ item.checksum }}'
     dest: '{{ item.dest }}'
   loop:
-    - { url: "https://releases.hashicorp.com/consul/1.0.6/consul_1.0.6_linux_amd64.zip", dest: "/tmp/consul_1.0.6_linux_amd64.zip", checksum: "sha256:bcc504f658cef2944d1cd703eda90045e084a15752d23c038400cf98c716ea01" }
-    - { url: "https://releases.hashicorp.com/vault/0.9.6/vault_0.9.6_linux_amd64.zip", dest: "/tmp/vault_0.9.6_linux_amd64.zip", checksum: "sha256:3f1f346ff7aaf367fed6a3e83e5a07fdc032f22860585e36c3674f9ead08dbaf" }
-    - { url: "https://releases.hashicorp.com/nomad/0.8.1/nomad_0.8.1_linux_amd64.zip", dest: "/tmp/nomad_0.8.1_linux_amd64.zip", checksum: "sha256:2d44c77f980fca9ad0af77137b101bb6f0bfe828950c99876c3360b654758a04"}
+    - { url: "https://releases.hashicorp.com/consul/1.0.7/consul_1.0.7_linux_amd64.zip", dest: "/tmp/consul_1.0.7_linux_amd64.zip", checksum: "sha256:6c2c8f6f5f91dcff845f1b2ce8a29bd230c11397c448ce85aae6dacd68aa4c14" }
+    - { url: "https://releases.hashicorp.com/vault/0.10.1/vault_0.10.1_linux_amd64.zip", dest: "/tmp/vault_0.10.1_linux_amd64.zip", checksum: "sha256:031e521b4603487126fd353a9557dd22a02304a8a11f843e9914be59a8009c8a" }
+    - { url: "https://releases.hashicorp.com/nomad/0.8.3/nomad_0.8.3_linux_amd64.zip", dest: "/tmp/nomad_0.8.3_linux_amd64.zip", checksum: "sha256:c7faaee8fad0f6a74df01b9283253ee565f85791adca1d6a38462e0387dee175"}
 
     
 
@@ -50,9 +50,9 @@
     dest: /usr/bin
     remote_src: yes
   loop:
-    - "/tmp/consul_1.0.6_linux_amd64.zip"
-    - "/tmp/vault_0.9.6_linux_amd64.zip"
-    - "/tmp/nomad_0.8.1_linux_amd64.zip"
+    - "/tmp/consul_1.0.7_linux_amd64.zip"
+    - "/tmp/vault_0.10.1_linux_amd64.zip"
+    - "/tmp/nomad_0.8.3_linux_amd64.zip"
 
 - name: Copy systemd unit file for Consul
   copy:
