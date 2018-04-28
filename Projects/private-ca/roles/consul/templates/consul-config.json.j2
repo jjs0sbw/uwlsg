@@ -5,10 +5,12 @@
   "node_name": "{{ ansible_hostname }}",
   "server": true,
   "bootstrap_expect": 3,
-  "retry_join": ["consul1"],
+  "retry_join": ["control1", "control2", "control3"],
   "advertise_addr": "{{ ansible_enp0s8.ipv4.address }}",
+  "bind_addr" : "{{ ansible_enp0s8.ipv4.address }}",
   "addresses": {
-    "https": "0.0.0.0"
+    "https": "0.0.0.0",
+    "dns": "0.0.0.0"
   },
   "ports": {
     "http": 0,
@@ -16,8 +18,8 @@
     "dns": 8600
   },
   "encrypt": "n0ud3/xiZp6z6LSxl+c2cg==",
-  "key_file": "/etc/consul/cert-key.pem",
-  "cert_file": "/etc/consul/cert.pem",
+  "key_file": "/etc/ssl/cert-key.pem",
+  "cert_file": "/etc/ssl/cert.pem",
   "ca_file": "/usr/local/share/ca-certificates/Example_Root_CA.crt",
   "verify_outgoing": true,
   "verify_incoming": true
