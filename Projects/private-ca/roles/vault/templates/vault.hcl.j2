@@ -1,16 +1,16 @@
 storage "consul" {
   address       = "{{ ansible_hostname }}:8500"
   scheme        = "https"
-  tls_key_file  = "/etc/consul/cert-key.pem"
-  tls_cert_file = "/etc/consul/cert.pem"
+  tls_key_file  = "/etc/ssl/cert-key.pem"
+  tls_cert_file = "/etc/ssl/cert.pem"
   tls_ca_file   = "/usr/local/share/ca-certificates/Example_Root_CA.crt"
   path          = "vault/"
 }
 
 listener "tcp" {
-  address                            = "{{ ansible_hostname }}:8200"
-  tls_key_file                       = "/etc/consul/cert-key.pem"
-  tls_cert_file                      = "/etc/consul/cert.pem"
+  address                            = "0.0.0.0:8200"
+  tls_key_file                       = "/etc/ssl/cert-key.pem"
+  tls_cert_file                      = "/etc/ssl/cert.pem"
   tls_client_ca_file                 = "/usr/local/share/ca-certificates/Example_Root_CA.crt"
   tls_require_and_verify_client_cert = "true"
 }
