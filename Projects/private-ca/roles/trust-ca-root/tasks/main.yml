@@ -22,6 +22,6 @@
     line: "{{ item }}"
   loop:
     - "192.168.77.21 ca ca.cluster.local"
-    - "192.168.77.22 consul1 consul1.cluster.local"
-    - "192.168.77.23 consul2 consul2.cluster.local"
-    - "192.168.77.24 consul3 consul3.cluster.local"
+    - "192.168.77.22 control1 control1.cluster.local"
+    - "192.168.77.23 control2 control2.cluster.local"
+    - "192.168.77.24 control3 control3.cluster.local"
