@@ -9,19 +9,37 @@ Vagrant.configure("2") do |config|
 
   config.vm.box = "ubuntu/bionic64"
   
-  N = 4
+  N = 6
   (1..N).each do |machine_id|
     config.vm.define "machine#{machine_id}" do |machine|
 
-      if N == 1
+      # All this runs is cfssl, so keep it very light.
+      if machine_id == 1
         machine.vm.hostname = "ca"
+
+        machine.vm.provider "virtualbox" do |v|
+          v.memory = 512
+          v.cpus = 1
+        end
       end
 
-      if N > 1 and N <= 4
+      # These are the control nodes, so they need some
+      # resources, but we need not be excessive here.
+      if machine_id > 1 && machine_id <= 4
         machine.vm.hostname = "control#{machine_id - 1}"
+
+        machine.vm.provider "virtualbox" do |v|
+          v.memory = 1024
+          v.cpus = 1
+        end
       end
 
-      if N <= 4
+      # These are the worker nodes that we will actually
+      # schedule on, so we would like them to be the
+      # heaviest.
+      if machine_id > 4 && machine_id <= 6
+        machine.vm.hostname = "compute#{machine_id - 4}"
+
         machine.vm.provider "virtualbox" do |v|
           v.memory = 2048
           v.cpus = 2
@@ -42,7 +60,8 @@ Vagrant.configure("2") do |config|
           
           ansible.groups = {
             "ca" => [ "machine1" ],
-            "consul" => [ "machine2", "machine3", "machine4" ]
+            "consul" => [ "machine2", "machine3", "machine4" ],
+            "compute" => [ "machine5", "machine6" ]
           }
         end
       end
