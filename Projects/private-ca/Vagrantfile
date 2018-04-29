@@ -9,7 +9,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.box = "ubuntu/bionic64"
   
-  N = 6
+  N = 8
   (1..N).each do |machine_id|
     config.vm.define "machine#{machine_id}" do |machine|
 
@@ -37,7 +37,7 @@ Vagrant.configure("2") do |config|
       # These are the worker nodes that we will actually
       # schedule on, so we would like them to be the
       # heaviest.
-      if machine_id > 4 && machine_id <= 6
+      if machine_id > 4 && machine_id <= N
         machine.vm.hostname = "compute#{machine_id - 4}"
 
         machine.vm.provider "virtualbox" do |v|
@@ -61,7 +61,7 @@ Vagrant.configure("2") do |config|
           ansible.groups = {
             "ca" => [ "machine1" ],
             "consul" => [ "machine2", "machine3", "machine4" ],
-            "compute" => [ "machine5", "machine6" ]
+            "compute" => [ "machine5", "machine6", "machine7", "machine8" ]
           }
         end
       end
