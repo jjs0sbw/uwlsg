@@ -1,7 +1,0 @@
----
-- name: Start Consul
-  systemd:
-    daemon_reload: yes
-    name: consul
-    enabled: yes
-    state: started

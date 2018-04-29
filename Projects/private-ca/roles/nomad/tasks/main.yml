@@ -1,0 +1,33 @@
+---
+- name: Create configuration directories
+  file:
+    path: '{{ item }}'
+    state: directory
+  loop:
+    - "/etc/nomad"
+
+- name: Render config.hcl
+  template:
+    src: config.hcl.j2
+    dest: /etc/nomad/config.hcl
+
+- name: Set environment variables
+  lineinfile:
+    line: "{{ item }}"
+    path: /etc/environment
+  loop:
+    - "NOMAD_ADDR=https://localhost:4646"
+    - "NOMAD_CLIENT_KEY=/etc/ssl/cert-key.pem"
+    - "NOMAD_CLIENT_CERT=/etc/ssl/cert.pem"
+
+- name: Copy systemd unit file
+  copy:
+    src: nomad.service
+    dest: /lib/systemd/system/nomad.service
+
+- name: Start Nomad
+  systemd:
+    daemon_reload: yes
+    name: nomad
+    enabled: yes
+    state: started
