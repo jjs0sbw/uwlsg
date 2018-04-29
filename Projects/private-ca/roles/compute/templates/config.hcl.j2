@@ -1,0 +1,40 @@
+datacenter = "local-dc"
+data_dir   = "/var/lib/nomad"
+
+advertise {
+  http = "{{ ansible_enp0s8.ipv4.address }}"
+  rpc  = "{{ ansible_enp0s8.ipv4.address }}"
+  serf = "{{ ansible_enp0s8.ipv4.address }}"
+}
+
+client {
+  enabled           = true
+  network_interface = "enp0s8"
+
+  options = {
+    "driver.whitelist" = "docker"
+  }
+}
+
+consul {
+  ssl       = true
+  key_file  = "/etc/ssl/cert-key.pem"  
+  cert_file = "/etc/ssl/cert.pem"
+  ca_file   = "/usr/local/share/ca-certificates/Example_Root_CA.crt"
+}
+
+tls {
+  http = true
+  rpc  = true
+
+  key_file  = "/etc/ssl/cert-key.pem"  
+  cert_file = "/etc/ssl/cert.pem"
+  ca_file   = "/usr/local/share/ca-certificates/Example_Root_CA.crt"
+
+  # We cannot both have HTTPS health checks and verify the client.
+  # This is a shame, but I'll take a health check over not having
+  # one. See upstream:
+  # https://github.com/hashicorp/nomad/commit/77d9b417c1a18320f4cd7606c47700fbac3f2199
+  
+  verify_https_client    = false
+}

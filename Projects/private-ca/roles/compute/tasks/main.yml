@@ -1,0 +1,108 @@
+---
+- name: Create configuration directories
+  file:
+    path: '{{ item }}'
+    state: directory
+  loop:
+    - "/etc/consul"
+
+- name: Copy CFSSL configuration
+  copy:
+    src: config.json
+    dest: /etc/ssl/config.json
+
+- name: Render csr.json
+  template:
+    src: csr.json.j2
+    dest: /etc/ssl/csr.json
+
+- name : Create the TLS certificate
+  shell: "cfssl gencert -config=config.json csr.json | sudo cfssljson -bare"
+  args:
+    chdir: /etc/ssl
+    creates: /etc/ssl/cert.pem
+
+- name: Render consul-config.json
+  template:
+    src: consul-config.json.j2
+    dest: /etc/consul/consul-config.json
+
+- name: Download unzip
+  apt:
+    name: unzip
+    state: present
+
+- name: Download Hashicorp tools
+  get_url:
+    url: '{{ item.url }}'
+    checksum: '{{ item.checksum }}'
+    dest: '{{ item.dest }}'
+  loop:
+    - { url: "https://releases.hashicorp.com/consul/1.0.7/consul_1.0.7_linux_amd64.zip", dest: "/tmp/consul_1.0.7_linux_amd64.zip", checksum: "sha256:6c2c8f6f5f91dcff845f1b2ce8a29bd230c11397c448ce85aae6dacd68aa4c14" }
+    - { url: "https://releases.hashicorp.com/vault/0.10.1/vault_0.10.1_linux_amd64.zip", dest: "/tmp/vault_0.10.1_linux_amd64.zip", checksum: "sha256:031e521b4603487126fd353a9557dd22a02304a8a11f843e9914be59a8009c8a" }
+    - { url: "https://releases.hashicorp.com/nomad/0.8.3/nomad_0.8.3_linux_amd64.zip", dest: "/tmp/nomad_0.8.3_linux_amd64.zip", checksum: "sha256:c7faaee8fad0f6a74df01b9283253ee565f85791adca1d6a38462e0387dee175"}
+
+
+- name: Extract Hashicorp tools
+  unarchive:
+    src: '{{ item }}'
+    dest: /usr/bin
+    remote_src: yes
+  loop:
+    - "/tmp/consul_1.0.7_linux_amd64.zip"
+    - "/tmp/vault_0.10.1_linux_amd64.zip"
+    - "/tmp/nomad_0.8.3_linux_amd64.zip"
+
+- name: Set environment variables
+  lineinfile:
+    line: "{{ item }}"
+    path: /etc/environment
+  loop:
+    - "CONSUL_HTTP_ADDR=https://localhost:8500"
+    - "CONSUL_CLIENT_KEY=/etc/ssl/cert-key.pem"
+    - "CONSUL_CLIENT_CERT=/etc/ssl/cert.pem"
+
+- name: Copy systemd unit file for Consul
+  copy:
+    src: consul.service
+    dest: /lib/systemd/system/consul.service
+
+- name: Start Consul
+  systemd:
+    daemon_reload: yes
+    name: consul
+    enabled: yes
+    state: started
+
+- name: Create configuration directories
+  file:
+    path: '{{ item }}'
+    state: directory
+  loop:
+    - "/etc/nomad"
+
+- name: Render config.hcl
+  template:
+    src: config.hcl.j2
+    dest: /etc/nomad/config.hcl
+
+- name: Set environment variables
+  lineinfile:
+    line: "{{ item }}"
+    path: /etc/environment
+  loop:
+    - "NOMAD_ADDR=https://localhost:4646"
+    - "NOMAD_CLIENT_KEY=/etc/ssl/cert-key.pem"
+    - "NOMAD_CLIENT_CERT=/etc/ssl/cert.pem"
+
+- name: Copy systemd unit file
+  copy:
+    src: nomad.service
+    dest: /lib/systemd/system/nomad.service
+
+- name: Start Nomad
+  systemd:
+    daemon_reload: yes
+    name: nomad
+    enabled: yes
+    state: started

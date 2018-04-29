@@ -1,0 +1,19 @@
+{
+  "hosts": [
+    "{{ ansible_hostname }}",
+    "{{ ansible_hostname }}.cluster.local",
+    "client.global.nomad",
+    "localhost",
+    "127.0.0.1",
+    "127.0.1.1"
+  ],
+  "key": {
+    "algo": "ecdsa",
+    "size": 384
+  },
+    "names": [
+        {
+            "O":  "Some Organization"
+        }
+    ]
+}

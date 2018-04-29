@@ -2,8 +2,13 @@
 - hosts: ca
   roles:
     - ca
+
 - hosts: consul
   roles:
     - consul
     - vault
     - nomad
+
+- hosts: compute
+  roles:
+    - compute
