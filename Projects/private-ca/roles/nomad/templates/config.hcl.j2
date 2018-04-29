@@ -30,5 +30,10 @@ tls {
   cert_file = "/etc/ssl/cert.pem"
   ca_file   = "/usr/local/share/ca-certificates/Example_Root_CA.crt"
 
-  verify_https_client    = true
+  # We cannot both have HTTPS health checks and verify the client.
+  # This is a shame, but I'll take a health check over not having
+  # one. See upstream:
+  # https://github.com/hashicorp/nomad/commit/77d9b417c1a18320f4cd7606c47700fbac3f2199
+  
+  verify_https_client    = false
 }
