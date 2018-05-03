@@ -1,4 +1,4 @@
 ---
 dependencies:
   - { role: trust-ca-root }
-  - { role: vault }
+  - { role: get-cert-from-ca }

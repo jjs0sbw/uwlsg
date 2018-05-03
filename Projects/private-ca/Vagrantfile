@@ -60,7 +60,8 @@ Vagrant.configure("2") do |config|
           
           ansible.groups = {
             "ca" => [ "machine1" ],
-            "consul" => [ "machine2", "machine3", "machine4" ],
+            "hashicorp" => [ "machine2", "machine3", "machine4", "machine5", "machine6", "machine7", "machine8" ],
+            "control" => [ "machine2", "machine3", "machine4" ],
             "compute" => [ "machine5", "machine6", "machine7", "machine8" ]
           }
         end
