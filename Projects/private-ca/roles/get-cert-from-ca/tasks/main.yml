@@ -1,0 +1,16 @@
+---
+- name: Render CFSSL configuration
+  template:
+    src: cfssl-config.json.j2
+    dest: /etc/ssl/cfssl-config.json
+
+- name: Render csr.json
+  template:
+    src: '{{ csr_template_file }}'
+    dest: /etc/ssl/csr.json
+
+- name : Create the TLS certificate
+  shell: "cfssl gencert -config=cfssl-config.json csr.json | sudo cfssljson -bare"
+  args:
+    chdir: /etc/ssl
+    creates: /etc/ssl/cert.pem

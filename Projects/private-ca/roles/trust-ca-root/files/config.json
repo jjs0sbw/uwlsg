@@ -10,7 +10,7 @@
     "auth_keys": {
       "primary": {
         "type":"standard",
-        "key":"8b21fc5df25f716064803fde8f4c0366"
+        "key":"{{ ca_shared_key }}"
         }
     },
     "remotes": {

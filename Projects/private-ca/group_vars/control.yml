@@ -1,0 +1,3 @@
+csr_template_file: control-csr.json.j2
+consul_template_file: consul-server-config.json.j2
+nomad_template_file: nomad-server-config.hcl.j2
