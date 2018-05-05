@@ -3,3 +3,5 @@
 *.pem
 *.csr
 .vagrant/
+pwd.txt
+
