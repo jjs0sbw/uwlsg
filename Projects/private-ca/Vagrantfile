@@ -54,13 +54,15 @@ Vagrant.configure("2") do |config|
         machine.vm.provision :ansible do |ansible|
           ansible.compatibility_mode = "2.0"
 
-          ansible.playbook = "playbook.yml"
-          ansible.limit = "all"
-          ansible.become = true
+          ansible.playbook            = "playbook.yml"
+          ansible.limit               = "all"
+          ansible.become              = true
+          ansible.vault_password_file = "pwd.txt"
           
           ansible.groups = {
             "ca" => [ "machine1" ],
-            "consul" => [ "machine2", "machine3", "machine4" ],
+            "hashicorp" => [ "machine2", "machine3", "machine4", "machine5", "machine6", "machine7", "machine8" ],
+            "control" => [ "machine2", "machine3", "machine4" ],
             "compute" => [ "machine5", "machine6", "machine7", "machine8" ]
           }
         end

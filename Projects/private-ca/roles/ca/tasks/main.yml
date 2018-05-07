@@ -12,7 +12,7 @@
     owner: ca
     group: ca
 
-- name: Copy configuration files for cfssl
+- name: Copy key files
   copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -20,11 +20,20 @@
     owner: ca
     group: ca
   loop:
-    - {src: "config.json", dest: "/etc/cfssl/config.json" }
     - {src: "ca-key.pem", dest: "/etc/cfssl/ca-key.pem" }
     - {src: "ca.pem", dest: "/etc/cfssl/ca.pem" }
     - {src: "ca-server-key.pem", dest: "/etc/cfssl/ca-server-key.pem" }
     - {src: "ca-server.pem", dest: "/etc/cfssl/ca-server.pem" }
+
+- name: Render configuration files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0400
+    owner: ca
+    group: ca
+  loop:
+    - {src: "config.json.j2", dest: "/etc/cfssl/config.json" }
 
 - name: Copy systemd service
   copy:
