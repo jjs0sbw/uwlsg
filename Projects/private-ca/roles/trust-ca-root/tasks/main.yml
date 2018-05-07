@@ -16,7 +16,7 @@
       - golang-cfssl
     cache_valid_time: 240
 
-- name: As a hack, let's define all of the hostnames
+- name: Define all hostnames that any server in the cluster must know about.
   lineinfile:
     path: /etc/hosts
     line: "{{ item }}"

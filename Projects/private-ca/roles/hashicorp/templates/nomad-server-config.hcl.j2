@@ -11,7 +11,7 @@ advertise {
 server {
   enabled          = true
   bootstrap_expect = 3
-  encrypt          = "64M4vx1lHXmkvKXB1bwVfw=="
+  encrypt          = "{{ nomad_gossip_key }}"
 }
 
 consul {
