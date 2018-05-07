@@ -5,8 +5,8 @@
   "node_name": "{{ ansible_hostname }}",
   "server": false,
   "retry_join": ["control1", "control2", "control3"],
-  "advertise_addr": "{{ ansible_enp0s8.ipv4.address }}",
-  "bind_addr" : "{{ ansible_enp0s8.ipv4.address }}",
+  "advertise_addr": "{{ hostvars[inventory_hostname]['ansible_enp0s8']['ipv4']['address'] }}",
+  "bind_addr" : "{{ hostvars[inventory_hostname]['ansible_enp0s8']['ipv4']['address'] }}",
   "addresses": {
     "https": "0.0.0.0",
     "dns": "0.0.0.0"

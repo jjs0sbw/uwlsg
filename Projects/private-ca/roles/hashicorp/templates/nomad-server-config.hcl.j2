@@ -2,10 +2,9 @@ datacenter = "local-dc"
 data_dir   = "/var/lib/nomad"
 
 advertise {
-  # Defaults to the first private IP address.
-  http = "{{ ansible_enp0s8.ipv4.address }}"
-  rpc  = "{{ ansible_enp0s8.ipv4.address }}"
-  serf = "{{ ansible_enp0s8.ipv4.address }}" # non-default ports may be specified
+  http = "{{ hostvars[inventory_hostname]['ansible_enp0s8']['ipv4']['address'] }}"
+  rpc  = "{{ hostvars[inventory_hostname]['ansible_enp0s8']['ipv4']['address'] }}"
+  serf = "{{ hostvars[inventory_hostname]['ansible_enp0s8']['ipv4']['address'] }}"
 }
 
 server {
