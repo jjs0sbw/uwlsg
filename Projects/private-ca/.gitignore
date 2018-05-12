@@ -1,4 +1,5 @@
 *.retry
+*.cache
 *.log
 *.pem
 *.csr
@@ -6,3 +7,6 @@
 pwd.txt
 
 terraform/do-token.tf
+terraform/.terraform/
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
