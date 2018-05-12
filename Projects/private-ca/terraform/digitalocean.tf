@@ -10,36 +10,57 @@ resource "digitalocean_tag" "compute_tag" {
   name = "compute"
 }
 
+resource "digitalocean_tag" "hashicorp_tag" {
+  name = "hashicorp"
+}
+
+resource "digitalocean_tag" "ca_tag" {
+  name = "ca"
+}
+
+variable "domain" {
+  default = "adriennecohea.ninja"
+}
+
+variable "counts" {
+  type = "map"
+
+  default = {
+    "compute" = 1
+    "control" = 3
+  }
+}
+
 resource "digitalocean_droplet" "control" {
-  count              = 3
+  count              = "${var.counts["control"]}"
   image              = "ubuntu-18-04-x64"
   size               = "s-2vcpu-2gb"
   region             = "sfo1"
   name               = "control${count.index + 1}"
   ssh_keys           = [7172020, 7172181]
   private_networking = true
-  tags               = ["control"]
+  tags               = ["hashicorp", "control"]
 }
 
 resource "digitalocean_droplet" "compute" {
-  count              = 2
+  count              = "${var.counts["compute"]}"
   image              = "ubuntu-18-04-x64"
   size               = "s-2vcpu-2gb"
   region             = "sfo1"
   name               = "compute${count.index + 1}"
   ssh_keys           = [7172020, 7172181]
   private_networking = true
-  tags               = ["compute"]
+  tags               = ["hashicorp", "compute"]
 }
 
 resource "digitalocean_domain" "control_fqns" {
-  count      = 3
-  name       = "${element(digitalocean_droplet.control.*.name, count.index)}.adriennecohea.ninja"
+  count      = "${var.counts["control"]}"
+  name       = "${element(digitalocean_droplet.control.*.name, count.index)}.${var.domain}"
   ip_address = "${element(digitalocean_droplet.control.*.ipv4_address, count.index)}"
 }
 
 resource "digitalocean_domain" "compute_fqns" {
-  count      = 2
-  name       = "${element(digitalocean_droplet.compute.*.name, count.index)}.adriennecohea.ninja"
+  count      = "${var.counts["compute"]}"
+  name       = "${element(digitalocean_droplet.compute.*.name, count.index)}.${var.domain}"
   ip_address = "${element(digitalocean_droplet.compute.*.ipv4_address, count.index)}"
 }
