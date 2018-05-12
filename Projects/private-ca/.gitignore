@@ -5,3 +5,4 @@
 .vagrant/
 pwd.txt
 
+terraform/do-token.tf
