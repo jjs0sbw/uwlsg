@@ -1,3 +1,4 @@
+---
 - name: Copy Example Root CA certificate
   copy:
     src: "{{ item.src }}"
@@ -16,12 +17,11 @@
       - golang-cfssl
     cache_valid_time: 240
 
-- name: Define all hostnames that any server in the cluster must know about.
-  lineinfile:
-    path: /etc/hosts
-    line: "{{ item }}"
-  loop:
-    - "192.168.77.21 ca ca.cluster.local"
-    - "192.168.77.22 control1 control1.cluster.local"
-    - "192.168.77.23 control2 control2.cluster.local"
-    - "192.168.77.24 control3 control3.cluster.local"
+- name: "Build hosts file"
+  lineinfile: 
+    dest: /etc/hosts
+    regexp: '.*{{ hostvars[item].ansible_hostname }}$'
+    line: "{{ hostvars[item].ansible_eth1.ipv4.address }} {{ hostvars[item].ansible_hostname }} {{ hostvars[item].ansible_hostname }}.cluster.local"
+    state: present
+  when: hostvars[item].ansible_eth1.ipv4.address is defined
+  with_items: "{{ groups['control'] }}"
