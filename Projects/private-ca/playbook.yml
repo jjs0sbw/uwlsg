@@ -1,4 +1,7 @@
 ---
+- hosts: all
+  tasks: [ ] 
+  
 - hosts: ca
   roles:
     - ca
