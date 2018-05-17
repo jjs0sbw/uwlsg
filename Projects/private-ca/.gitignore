@@ -10,3 +10,5 @@ terraform/do-token.tf
 terraform/.terraform/
 terraform/terraform.tfstate
 terraform/terraform.tfstate.backup
+terraform.tfstate
+terraform.tfstate.backup
