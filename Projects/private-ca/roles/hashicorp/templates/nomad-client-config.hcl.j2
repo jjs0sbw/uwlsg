@@ -17,6 +17,7 @@ client {
 }
 
 consul {
+  address   = "{{ ansible_hostname }}:8500"
   ssl       = true
   key_file  = "/etc/ssl/cert-key.pem"  
   cert_file = "/etc/ssl/cert.pem"
