@@ -5,6 +5,7 @@
   "node_name": "{{ ansible_hostname }}",
   "server": true,
   "bootstrap_expect": 3,
+  "protocol": 3,
   "retry_join": ["control1", "control2", "control3"],
   "advertise_addr": "{{ hostvars[inventory_hostname]['ansible_eth1']['ipv4']['address'] }}",
   "bind_addr" : "{{ hostvars[inventory_hostname]['ansible_eth1']['ipv4']['address'] }}",
