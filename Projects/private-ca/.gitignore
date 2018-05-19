@@ -5,3 +5,7 @@
 .vagrant/
 pwd.txt
 
+terraform/.terraform
+terraform/do-token.tf
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
