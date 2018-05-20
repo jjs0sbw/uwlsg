@@ -7,8 +7,8 @@
   "bootstrap_expect": 3,
   "protocol": 3,
   "retry_join": ["control1", "control2", "control3"],
-  "advertise_addr": "{{ hostvars[inventory_hostname]['ansible_eth1']['ipv4']['address'] }}",
-  "bind_addr" : "{{ hostvars[inventory_hostname]['ansible_eth1']['ipv4']['address'] }}",
+  "advertise_addr": "{{ hostvars[inventory_hostname][hostvars[inventory_hostname]['ansible_interface_variable']]['ipv4']['address'] }}",
+  "bind_addr" : "{{ hostvars[inventory_hostname][hostvars[inventory_hostname]['ansible_interface_variable']]['ipv4']['address'] }}",
   "addresses": {
     "https": "0.0.0.0",
     "dns": "0.0.0.0"
