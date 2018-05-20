@@ -1,0 +1,11 @@
+---
+- hosts: hashicorp
+  tasks:
+    - name: Enumerate Consul members.
+      shell: consul members || exit -1
+
+    - name: Enumerate Nomad server members.
+      shell: nomad server members || exit -1
+
+    - name: Enumerate Nomad server members.
+      shell: nomad node status || exit -1
