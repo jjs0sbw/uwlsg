@@ -31,6 +31,8 @@
 
 - name: Install cfssl
   apt:
-    name:
-      - golang-cfssl
+    name: "{{ item }}"
     cache_valid_time: 240
+  loop:
+    - "golang-cfssl"
+    - "secure-delete"
