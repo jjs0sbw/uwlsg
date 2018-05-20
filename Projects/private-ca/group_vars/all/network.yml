@@ -1,1 +1,2 @@
 private_network_interface: "eth1"
+ansible_interface_variable: "ansible_eth1"

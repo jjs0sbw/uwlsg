@@ -3,18 +3,18 @@
   lineinfile: 
     dest: /etc/hosts
     regexp: '.*{{ hostvars[item].ansible_hostname }}$'
-    line: "{{ hostvars[item].ansible_eth1.ipv4.address }} {{ hostvars[item].ansible_hostname }} {{ hostvars[item].ansible_hostname }}.cluster.local"
+    line: "{{ hostvars[item][hostvars[item]['ansible_interface_variable']]['ipv4']['address'] }} {{ hostvars[item].ansible_hostname }} {{ hostvars[item].ansible_hostname }}.cluster.local"
     state: present
-  when: hostvars[item].ansible_eth1.ipv4.address is defined
+  when: hostvars[item][hostvars[item]['ansible_interface_variable']]['ipv4']['address'] is defined
   with_items: "{{ groups['ca'] }}"
 
 - name: "Add /etc/hosts entries for control servers"
   lineinfile: 
     dest: /etc/hosts
     regexp: '.*{{ hostvars[item].ansible_hostname }}$'
-    line: "{{ hostvars[item]['ansible_eth1']['ipv4']['address'] }} {{ hostvars[item]['ansible_hostname'] }} {{ hostvars[item]['ansible_hostname'] }}.cluster.local"
+    line: "{{ hostvars[item][hostvars[item]['ansible_interface_variable']]['ipv4']['address'] }} {{ hostvars[item]['ansible_hostname'] }} {{ hostvars[item]['ansible_hostname'] }}.cluster.local"
     state: present
-  when: hostvars[item]['ansible_eth1']['ipv4']['address'] is defined
+  when: hostvars[item][hostvars[item]['ansible_interface_variable']]['ipv4']['address'] is defined
   with_items: "{{ groups['control'] }}"
 
 - name: Copy Example Root CA certificate
