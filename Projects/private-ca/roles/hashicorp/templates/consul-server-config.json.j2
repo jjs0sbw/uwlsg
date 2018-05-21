@@ -5,9 +5,10 @@
   "node_name": "{{ ansible_hostname }}",
   "server": true,
   "bootstrap_expect": 3,
+  "protocol": 3,
   "retry_join": ["control1", "control2", "control3"],
-  "advertise_addr": "{{ ansible_enp0s8.ipv4.address }}",
-  "bind_addr" : "{{ ansible_enp0s8.ipv4.address }}",
+  "advertise_addr": "{{ hostvars[inventory_hostname][hostvars[inventory_hostname]['ansible_interface_variable']]['ipv4']['address'] }}",
+  "bind_addr" : "{{ hostvars[inventory_hostname][hostvars[inventory_hostname]['ansible_interface_variable']]['ipv4']['address'] }}",
   "addresses": {
     "https": "0.0.0.0",
     "dns": "0.0.0.0"
@@ -17,7 +18,7 @@
     "https": 8500,
     "dns": 8600
   },
-  "encrypt": "n0ud3/xiZp6z6LSxl+c2cg==",
+  "encrypt": "{{ consul_gossip_key }}",
   "encrypt_verify_outgoing": true,
   "encrypt_verify_incoming": true,
   "key_file": "/etc/ssl/cert-key.pem",

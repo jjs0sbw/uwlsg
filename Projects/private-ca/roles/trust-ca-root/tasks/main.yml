@@ -1,3 +1,22 @@
+---
+- name: "Add /etc/hosts entry for CA server"
+  lineinfile: 
+    dest: /etc/hosts
+    regexp: '.*{{ hostvars[item].ansible_hostname }}$'
+    line: "{{ hostvars[item][hostvars[item]['ansible_interface_variable']]['ipv4']['address'] }} {{ hostvars[item].ansible_hostname }} {{ hostvars[item].ansible_hostname }}.cluster.local"
+    state: present
+  when: hostvars[item][hostvars[item]['ansible_interface_variable']]['ipv4']['address'] is defined
+  with_items: "{{ groups['ca'] }}"
+
+- name: "Add /etc/hosts entries for control servers"
+  lineinfile: 
+    dest: /etc/hosts
+    regexp: '.*{{ hostvars[item].ansible_hostname }}$'
+    line: "{{ hostvars[item][hostvars[item]['ansible_interface_variable']]['ipv4']['address'] }} {{ hostvars[item]['ansible_hostname'] }} {{ hostvars[item]['ansible_hostname'] }}.cluster.local"
+    state: present
+  when: hostvars[item][hostvars[item]['ansible_interface_variable']]['ipv4']['address'] is defined
+  with_items: "{{ groups['control'] }}"
+
 - name: Copy Example Root CA certificate
   copy:
     src: "{{ item.src }}"
@@ -12,16 +31,8 @@
 
 - name: Install cfssl
   apt:
-    name:
-      - golang-cfssl
+    name: "{{ item }}"
     cache_valid_time: 240
-
-- name: As a hack, let's define all of the hostnames
-  lineinfile:
-    path: /etc/hosts
-    line: "{{ item }}"
   loop:
-    - "192.168.77.21 ca ca.cluster.local"
-    - "192.168.77.22 control1 control1.cluster.local"
-    - "192.168.77.23 control2 control2.cluster.local"
-    - "192.168.77.24 control3 control3.cluster.local"
+    - "golang-cfssl"
+    - "secure-delete"
