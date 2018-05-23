@@ -15,3 +15,7 @@
 - hosts: hashicorp
   roles:
     - hashicorp
+
+- hosts: compute
+  roles:
+    - docker
