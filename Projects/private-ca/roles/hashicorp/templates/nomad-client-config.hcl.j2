@@ -39,3 +39,10 @@ tls {
   
   verify_https_client    = false
 }
+
+vault {
+  enabled     = true
+  key_file    = "/etc/ssl/cert-key.pem"
+  cert_file   = "/etc/ssl/cert.pem"
+  ca_file     = "/usr/local/share/ca-certificates/Example_Root_CA.crt"
+}
