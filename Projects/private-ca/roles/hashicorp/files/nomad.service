@@ -2,6 +2,7 @@
 Description=Nomad
 
 [Service]
+EnvironmentFile=/run/nomad-vault-token
 Type=simple
 ExecStart=/usr/bin/nomad agent -config=/etc/nomad
 
