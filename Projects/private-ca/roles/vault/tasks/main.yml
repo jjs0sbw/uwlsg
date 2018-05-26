@@ -1,0 +1,28 @@
+---
+- name: Initialize
+  shell: vault operator init -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem
+  register: vault_output
+  when: inventory_hostname == "control1.adriennecohea.ninja"
+
+- name: Print one-time keys
+  debug:
+    var: "{{ item }}"
+  loop:
+    - vault_output.stdout_lines[0][14:]
+    - vault_output.stdout_lines[1][14:]
+    - vault_output.stdout_lines[2][14:]
+    - vault_output.stdout_lines[3][14:]
+    - vault_output.stdout_lines[4][14:]
+    - vault_output.stdout_lines[6][20:]
+  when: inventory_hostname == "control1.adriennecohea.ninja"
+
+- name: Unseal
+  expect:
+    command: vault operator unseal -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem
+    responses:
+      hidden: "{{ item }}"
+    echo: yes
+  loop:
+    - "{{ vault_output.stdout_lines[0][14:] }}"
+    - "{{ vault_output.stdout_lines[1][14:] }}"
+    - "{{ vault_output.stdout_lines[2][14:] }}"
