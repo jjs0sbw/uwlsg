@@ -16,6 +16,6 @@
   roles:
     - hashicorp
 
-- hosts: compute
+- hosts: control
   roles:
-    - docker
+    - vault
