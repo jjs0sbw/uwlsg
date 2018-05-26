@@ -16,7 +16,7 @@
   roles:
     - hashicorp
 
-- hosts: control
+- hosts: hashicorp
   roles:
     - vault
 
