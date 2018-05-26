@@ -1,9 +1,16 @@
 ---
 
-- name: Install unzip
+- name: Install baseline required packages
   apt:
-    name: unzip
+    name: "{{ item }}"
     state: present
+  loop:
+    - unzip
+    - python3-pip
+
+- name: Install pexpect
+  pip:
+    name: pexpect
 
 - name: Download Hashicorp tools
   get_url:
