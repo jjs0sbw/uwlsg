@@ -1,4 +1,8 @@
 ---
+- name: Wait on vault agents
+  wait_for:
+    port: 8200
+
 - name: Initialize
   shell: vault operator init -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem
   register: vault_output
