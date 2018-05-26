@@ -7,10 +7,10 @@
 - name: Set unseal keys and root token as facts
   set_fact:
     unseal_key_1: "{{ vault_output.stdout_lines[0][14:] }}"
-    unseal_key_2: "{{ vault_output.stdout_lines[0][14:] }}"
-    unseal_key_3: "{{ vault_output.stdout_lines[0][14:] }}"
-    unseal_key_4: "{{ vault_output.stdout_lines[0][14:] }}"
-    unseal_key_5: "{{ vault_output.stdout_lines[0][14:] }}"
+    unseal_key_2: "{{ vault_output.stdout_lines[1][14:] }}"
+    unseal_key_3: "{{ vault_output.stdout_lines[2][14:] }}"
+    unseal_key_4: "{{ vault_output.stdout_lines[3][14:] }}"
+    unseal_key_5: "{{ vault_output.stdout_lines[4][14:] }}"
     root_token: "{{ vault_output.stdout_lines[6][20:] }}"
   run_once: true
 
@@ -24,15 +24,3 @@
     - "{{ vault_output.stdout_lines[0][14:] }}"
     - "{{ vault_output.stdout_lines[1][14:] }}"
     - "{{ vault_output.stdout_lines[2][14:] }}"
-
-- name: Print unseal keys and root token so we can store them offline
-  debug:
-    var: "{{ item }}"
-  run_once: true
-  loop:
-    - "{{ vault_output.stdout_lines[0][14:] }}"
-    - "{{ vault_output.stdout_lines[1][14:] }}"
-    - "{{ vault_output.stdout_lines[2][14:] }}"
-    - "{{ vault_output.stdout_lines[3][14:] }}"
-    - "{{ vault_output.stdout_lines[4][14:] }}"
-    - "{{ vault_output.stdout_lines[6][20:] }}"
