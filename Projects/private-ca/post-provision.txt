@@ -13,7 +13,7 @@ vault operator init
 vault operator unseal   #(provide unseal key #1)
 vault operator unseal   #(provide unseal key #2)
 vault operator unseal   #(provide unseal key #3)
-vault auth              #(provide root token)
+vault login              #(provide root token)
 vault policy write nomad-server /etc/vault/nomad-server-policy.hcl
 vault write /auth/token/roles/nomad-cluster @/etc/vault/nomad-cluster-role.json
 vault token create -policy nomad-server -period 72h -orphan
