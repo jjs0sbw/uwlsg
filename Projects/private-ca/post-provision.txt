@@ -1,0 +1,37 @@
+# On a single control server, we need to do this:
+#
+# 0. Initialize the Vault.
+# 1. Unseal the Vault.
+# 2. Authenticate to Vault using the root token.
+# 3. Create the Nomad server policy.
+# 4. Create the Nomad cluster role.
+# 5. Create a token that has the Nomad server policy.
+# 6. Write the token to tmpfs. (Instead of persisting to disk.)
+# 7. Start Nomad server.
+
+vault operator init
+vault operator unseal   #(provide unseal key #1)
+vault operator unseal   #(provide unseal key #2)
+vault operator unseal   #(provide unseal key #3)
+vault login              #(provide root token)
+vault policy write nomad-server /etc/vault/nomad-server-policy.hcl
+vault write /auth/token/roles/nomad-cluster @/etc/vault/nomad-cluster-role.json
+vault token create -policy nomad-server -period 72h -orphan
+echo "VAULT_TOKEN=da5a3b1a-c671-d629-cc84-51be50736f53" > /run/nomad-vault-token
+systemctl restart nomad
+
+# On all of our Nomad servers (should be all hosts in the control group), we need to do this:
+#
+# 1. Unseal the Vault.
+# 2. Authenticate to Vault using the root token. (Creates a secret persisted to disk.)
+# 3. Create a token using the Nomad cluster.
+# 4. Write the token to tmpfs. (Instead of persisting to disk.)
+# 5. Start Nomad server.
+
+vault operator unseal   #(provide unseal key #1)
+vault operator unseal   #(provide unseal key #2)
+vault operator unseal   #(provide unseal key #3)
+vault auth              #(provide root token)
+vault token create -policy nomad-server -period 72h -orphan
+echo "VAULT_TOKEN=da5a3b1a-c671-d629-cc84-51be50736f53" > /run/nomad-vault-token
+systemctl restart nomad

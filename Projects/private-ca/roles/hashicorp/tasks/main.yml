@@ -1,9 +1,16 @@
 ---
 
-- name: Install unzip
+- name: Install baseline required packages
   apt:
-    name: unzip
+    name: "{{ item }}"
     state: present
+  loop:
+    - unzip
+    - python3-pip
+
+- name: Install pexpect
+  pip:
+    name: pexpect
 
 - name: Download Hashicorp tools
   get_url:
@@ -57,7 +64,7 @@
     - "VAULT_CLIENT_KEY=/etc/ssl/cert-key.pem"
     - "VAULT_CLIENT_CERT=/etc/ssl/cert.pem"
 
-- name: Copy systemd unit file for Consul
+- name: Copy configuration files
   copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -65,6 +72,8 @@
     - { src: "consul.service", dest: "/lib/systemd/system/consul.service"}
     - { src: "vault.service", dest: "/lib/systemd/system/vault.service"}
     - { src: "nomad.service", dest: "/lib/systemd/system/nomad.service"}
+    - { src: "nomad-server-policy.hcl", dest: "/etc/vault/nomad-server-policy.hcl"}
+    - { src: "nomad-cluster-role.json", dest: "/etc/vault/nomad-cluster-role.json"}
 
 - name: Start services
   systemd:
@@ -75,4 +84,3 @@
   loop:
     - "consul"
     - "vault"
-    - "nomad"

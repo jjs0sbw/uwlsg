@@ -15,3 +15,11 @@
 - hosts: hashicorp
   roles:
     - hashicorp
+
+- hosts: hashicorp
+  roles:
+    - vault
+
+- hosts: hashicorp
+  roles:
+    - nomad

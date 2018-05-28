@@ -1,0 +1,67 @@
+---
+- name: Wait on vault agents
+  wait_for:
+    port: 8200
+
+- name: Initialize
+  shell: vault operator init -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem
+  register: vault_output
+  run_once: true
+
+- name: Set unseal keys and root token as facts
+  set_fact:
+    unseal_key_1: "{{ vault_output.stdout_lines[0][14:] }}"
+    unseal_key_2: "{{ vault_output.stdout_lines[1][14:] }}"
+    unseal_key_3: "{{ vault_output.stdout_lines[2][14:] }}"
+    unseal_key_4: "{{ vault_output.stdout_lines[3][14:] }}"
+    unseal_key_5: "{{ vault_output.stdout_lines[4][14:] }}"
+    root_token: "{{ vault_output.stdout_lines[6][20:] }}"
+  run_once: true
+
+- name: Unseal
+  expect:
+    command: vault operator unseal -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem
+    responses:
+      hidden: "{{ item }}"
+    echo: yes
+  loop:
+    - "{{ vault_output.stdout_lines[0][14:] }}"
+    - "{{ vault_output.stdout_lines[1][14:] }}"
+    - "{{ vault_output.stdout_lines[2][14:] }}"
+
+- name: Write secrets to tmpfs before extraction
+  copy:
+    content: "{{ vault_output }}"
+    dest: /run/vault-secrets
+  run_once: true
+
+- name: Retrieve secrets
+  fetch:
+    src: /run/vault-secrets
+    dest: /tmp/vault-secrets
+    flat: yes
+  run_once: true
+
+- name: Remove secrets file
+  shell: srm /run/vault-secrets
+  run_once: true
+
+- name: Log in to Vault
+  expect:
+    command: vault login -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem
+    responses:
+      hidden: "{{ vault_output.stdout_lines[6][20:] }}"
+    echo: yes
+  run_once: true
+
+- name: Create the nomad-server policy
+  shell: vault policy write -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem nomad-server /etc/vault/nomad-server-policy.hcl
+  run_once: true
+
+- name: Create the Nomad cluster role
+  shell: vault write -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem /auth/token/roles/nomad-cluster @/etc/vault/nomad-cluster-role.json
+  run_once: true
+
+#- name: Create nomad-server policy
+#  shell: vault operator init -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem
+#  run_once: true

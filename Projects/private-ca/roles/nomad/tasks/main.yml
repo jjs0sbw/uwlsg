@@ -1,0 +1,6 @@
+---
+- name: Start Nomad
+  systemd:
+    name: nomad
+    enabled: yes
+    state: started
