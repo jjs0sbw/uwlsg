@@ -51,8 +51,6 @@
     command: vault login -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem
     responses:
       hidden: "{{ vault_output.stdout_lines[6][20:] }}"
-    echo: yes
-  run_once: true
 
 - name: Create the nomad-server policy
   shell: vault policy write -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem nomad-server /etc/vault/nomad-server-policy.hcl
@@ -62,6 +60,11 @@
   shell: vault write -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem /auth/token/roles/nomad-cluster @/etc/vault/nomad-cluster-role.json
   run_once: true
 
-#- name: Create nomad-server policy
-#  shell: vault operator init -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem
-#  run_once: true
+- name: Create the Nomad server token
+  shell: vault token create -client-key /etc/ssl/cert-key.pem -client-cert -policy nomad-server -period 72h -orphan
+  register: nomad_server_token
+
+- name: Write the server token to tmpfs
+  copy:
+    content: "VAULT_TOKEN={{ nomad_server_token.stdout_lines[2][19:] }}"
+    dest: /run/nomad-vault-token
