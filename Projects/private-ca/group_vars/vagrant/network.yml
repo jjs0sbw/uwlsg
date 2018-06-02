@@ -1,0 +1,2 @@
+private_network_interface: "enp0s8"
+ansible_interface_variable: "ansible_enp0s8"
