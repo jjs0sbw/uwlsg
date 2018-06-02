@@ -3,6 +3,10 @@
   wait_for:
     port: 8200
 
+- name: Wait for a bit.
+  pause:
+    seconds: 20
+
 - name: Initialize
   shell: vault operator init -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem
   register: vault_output
@@ -61,7 +65,7 @@
   run_once: true
 
 - name: Create the Nomad server token
-  shell: vault token create -client-key /etc/ssl/cert-key.pem -client-cert -policy nomad-server -period 72h -orphan
+  shell: vault token create -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem -policy nomad-server -period 72h -orphan
   register: nomad_server_token
 
 - name: Write the server token to tmpfs
