@@ -1,0 +1,21 @@
+---
+- hosts: hashicorp
+  remote_user: root
+  vars_prompt:
+    - name: "unseal1"
+      prompt: "Unseal Key 1"
+    - name: "unseal2"
+      prompt: "Unseal Key 2"
+    - name: "unseal3"
+      prompt: "Unseal Key 3"
+  tasks:
+  - name: Unseal
+    expect:
+      command: vault operator unseal -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem
+      responses:
+        hidden: "{{ item }}"
+      echo: yes
+    loop:
+      - "{{ unseal1 }}"
+      - "{{ unseal2 }}"
+      - "{{ unseal3 }}"
