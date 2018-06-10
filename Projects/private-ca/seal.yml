@@ -1,0 +1,10 @@
+# Restart vault which will seal them again
+ansible hashicorp -m shell -u root -a "systemctl restart vault"
+---
+- hosts: hashicorp
+  remote_user: root
+  tasks:
+  - name: Restart (implicitly seal) vault
+    systemd:
+      name: vault
+      state: restarted
