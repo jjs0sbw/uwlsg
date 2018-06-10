@@ -6,7 +6,7 @@
     line: "{{ hostvars[item][hostvars[item]['ansible_interface_variable']]['ipv4']['address'] }} {{ hostvars[item].ansible_hostname }} {{ hostvars[item].ansible_hostname }}.cluster.local"
     state: present
   when: hostvars[item][hostvars[item]['ansible_interface_variable']]['ipv4']['address'] is defined
-  with_items: "{{ groups['ca'] }}"
+  loop: "{{ groups['ca'] }}"
 
 - name: "Add /etc/hosts entries for control servers"
   lineinfile: 
@@ -15,7 +15,7 @@
     line: "{{ hostvars[item][hostvars[item]['ansible_interface_variable']]['ipv4']['address'] }} {{ hostvars[item]['ansible_hostname'] }} {{ hostvars[item]['ansible_hostname'] }}.cluster.local"
     state: present
   when: hostvars[item][hostvars[item]['ansible_interface_variable']]['ipv4']['address'] is defined
-  with_items: "{{ groups['control'] }}"
+  loop: "{{ groups['control'] }}"
 
 - name: Copy Example Root CA certificate
   copy:
