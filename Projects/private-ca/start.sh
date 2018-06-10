@@ -6,4 +6,4 @@ cd terraform
 terraform init
 terraform apply
 cd ..
-ansible-playbook playbook.yml
+ansible-playbook -i digitalocean.py playbook.yml
