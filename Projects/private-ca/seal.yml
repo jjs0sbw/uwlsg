@@ -1,0 +1,9 @@
+---
+# Restart vault which will seal them again
+- hosts: hashicorp
+  remote_user: root
+  tasks:
+  - name: Restart (implicitly seal) vault
+    systemd:
+      name: vault
+      state: restarted
