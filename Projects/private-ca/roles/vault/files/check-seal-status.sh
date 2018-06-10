@@ -11,7 +11,7 @@
 # policies and roles that already exist.
 
 
-IS_SEALED=`vault status | grep Sealed | awk '{print $2}'`
+IS_SEALED=`vault status -client-key=/etc/ssl/cert-key.pem -client-cert=/etc/ssl/cert.pem | grep Sealed | awk '{print $2}'`
 
 if [ $IS_SEALED == "true"  ]
 then
