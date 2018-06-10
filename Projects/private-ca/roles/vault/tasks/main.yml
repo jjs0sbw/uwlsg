@@ -7,6 +7,13 @@
   pause:
     seconds: 10
 
+- name: Copy Vault seal status helper script
+  copy:
+    src: check-seal-status.sh
+    dest: /usr/bin/check-seal-status.sh
+    mode: 0755
+    owner: root
+
 - name: Check if Vault has been previously initialized
   shell: consul kv get -http-addr=https://localhost:8500 -client-key=/etc/ssl/cert-key.pem -client-cert=/etc/ssl/cert.pem -recurse vault/core/seal-config
   register: vault_initialized
@@ -29,6 +36,11 @@
   run_once: true
   when: vault_initialized is not defined
 
+- name: Check if any Vaults need to be unsealed.
+  shell: /usr/bin/check-seal-status.sh
+  register: vault_requires_unseal
+  ignore_errors: yes
+
 - name: Unseal
   expect:
     command: vault operator unseal -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem
@@ -39,7 +51,7 @@
     - "{{ vault_output.stdout_lines[0][14:] }}"
     - "{{ vault_output.stdout_lines[1][14:] }}"
     - "{{ vault_output.stdout_lines[2][14:] }}"
-  when: vault_initialized is not defined
+  when: vault_requires_unseal.rc == 0
 
 - name: Write secrets to tmpfs before extraction
   copy:
