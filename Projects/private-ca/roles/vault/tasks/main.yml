@@ -15,15 +15,16 @@
     owner: root
 
 - name: Check if Vault has been previously initialized
-  shell: consul kv get -http-addr=https://localhost:8500 -client-key=/etc/ssl/cert-key.pem -client-cert=/etc/ssl/cert.pem -recurse vault/core/seal-config
+  shell: consul kv get -http-addr=https://localhost:8500 -client-key=/etc/ssl/cert-key.pem -client-cert=/etc/ssl/cert.pem vault/core/seal-config
+  run_once: true
   register: vault_initialized
   ignore_errors: yes
 
 - name: Initialize
   shell: vault operator init -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem
-  register: vault_output
   run_once: true
-  when: vault_initialized is not defined
+  register: vault_output
+  when: vault_initialized.rc == 1
 
 - name: Set unseal keys and root token as facts
   set_fact:
@@ -34,7 +35,7 @@
     unseal_key_5: "{{ vault_output.stdout_lines[4][14:] }}"
     root_token: "{{ vault_output.stdout_lines[6][20:] }}"
   run_once: true
-  when: vault_initialized is not defined
+  when: vault_initialized.rc == 1
 
 - name: Check if any Vaults need to be unsealed.
   shell: /usr/bin/check-seal-status.sh
@@ -48,9 +49,9 @@
       hidden: "{{ item }}"
     echo: yes
   loop:
-    - "{{ vault_output.stdout_lines[0][14:] }}"
-    - "{{ vault_output.stdout_lines[1][14:] }}"
-    - "{{ vault_output.stdout_lines[2][14:] }}"
+    - "{{ unseal_key_1 }}"
+    - "{{ unseal_key_2 }}"
+    - "{{ unseal_key_3 }}"
   when: vault_requires_unseal.rc == 0
 
 - name: Write secrets to tmpfs before extraction
@@ -58,7 +59,7 @@
     content: "{{ vault_output }}"
     dest: /run/vault-secrets
   run_once: true
-  when: vault_initialized is not defined
+  when: vault_initialized.rc == 1
 
 - name: Retrieve secrets
   fetch:
@@ -66,37 +67,37 @@
     dest: /tmp/vault-secrets
     flat: yes
   run_once: true
-  when: vault_initialized is not defined
+  when: vault_initialized.rc == 1
 
 - name: Remove secrets file
   shell: srm /run/vault-secrets
   run_once: true
-  when: vault_initialized is not defined
+  when: vault_initialized.rc == 1
 
 - name: Log in to Vault
   expect:
     command: vault login -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem
     responses:
       hidden: "{{ vault_output.stdout_lines[6][20:] }}"
-  when: vault_initialized is not defined
+  when: vault_initialized.rc == 1
 
 - name: Create the nomad-server policy
   shell: vault policy write -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem nomad-server /etc/vault/nomad-server-policy.hcl
   run_once: true
-  when: vault_initialized is not defined
+  when: vault_initialized.rc == 1
 
 - name: Create the Nomad cluster role
   shell: vault write -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem /auth/token/roles/nomad-cluster @/etc/vault/nomad-cluster-role.json
   run_once: true
-  when: vault_initialized is not defined
+  when: vault_initialized.rc == 1
 
 - name: Create the Nomad server token
   shell: vault token create -client-key /etc/ssl/cert-key.pem -client-cert /etc/ssl/cert.pem -policy nomad-server -period 72h -orphan
   register: nomad_server_token
-  when: vault_initialized is not defined
+  when: vault_initialized.rc == 1
 
 - name: Write the server token to tmpfs
   copy:
     content: "VAULT_TOKEN={{ nomad_server_token.stdout_lines[2][19:] }}"
     dest: /run/nomad-vault-token
-  when: vault_initialized is not defined
+  when: vault_initialized.rc == 1
