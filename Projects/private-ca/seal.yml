@@ -1,6 +1,5 @@
-# Restart vault which will seal them again
-ansible hashicorp -m shell -u root -a "systemctl restart vault"
 ---
+# Restart vault which will seal them again
 - hosts: hashicorp
   remote_user: root
   tasks:
