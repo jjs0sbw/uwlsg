@@ -1,8 +1,7 @@
 {
   "hosts": [
     "{{ ansible_hostname }}",
-    "{{ ansible_hostname }}.cluster.local",
-    "server.global.nomad",
+    "server.{{ region }}.nomad",
     "vault.service.consul",
     "localhost",
     "127.0.0.1",
