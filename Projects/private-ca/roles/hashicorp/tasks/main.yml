@@ -19,8 +19,8 @@
     dest: '{{ item.dest }}'
   loop:
     - { url: "https://releases.hashicorp.com/consul/1.1.0/consul_1.1.0_linux_amd64.zip", dest: "/tmp/consul_1.1.0_linux_amd64.zip", checksum: "sha256:09c40c8b5be868003810064916d8460bff334ccfb59a5046390224b27e052c45" }
-    - { url: "https://releases.hashicorp.com/vault/0.10.1/vault_0.10.1_linux_amd64.zip", dest: "/tmp/vault_0.10.1_linux_amd64.zip", checksum: "sha256:031e521b4603487126fd353a9557dd22a02304a8a11f843e9914be59a8009c8a" }
-    - { url: "https://releases.hashicorp.com/nomad/0.8.3/nomad_0.8.3_linux_amd64.zip", dest: "/tmp/nomad_0.8.3_linux_amd64.zip", checksum: "sha256:c7faaee8fad0f6a74df01b9283253ee565f85791adca1d6a38462e0387dee175"}
+    - { url: "https://releases.hashicorp.com/vault/0.10.2/vault_0.10.2_linux_amd64.zip", dest: "/tmp/vault_0.10.2_linux_amd64.zip", checksum: "sha256:f725be68316d10ef2e7779fdedd8eb5d4ed9975303c828466bb9a729e01392dd" }
+    - { url: "https://releases.hashicorp.com/nomad/0.8.4/nomad_0.8.4_linux_amd64.zip", dest: "/tmp/nomad_0.8.4_linux_amd64.zip", checksum: "sha256:42fc455d09ea0085cc79d7be4fb2089a9ab7db3cc2e8047e8437855a81b090e9"}
 
 - name: Install Hashicorp tools
   unarchive:
@@ -29,8 +29,8 @@
     remote_src: yes
   loop:
     - "/tmp/consul_1.1.0_linux_amd64.zip"
-    - "/tmp/vault_0.10.1_linux_amd64.zip"
-    - "/tmp/nomad_0.8.3_linux_amd64.zip"
+    - "/tmp/vault_0.10.2_linux_amd64.zip"
+    - "/tmp/nomad_0.8.4_linux_amd64.zip"
 
 - name: Create configuration directories
   file:

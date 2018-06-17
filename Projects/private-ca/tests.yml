@@ -11,5 +11,8 @@
     - name: Enumerate Nomad server members.
       shell: nomad server members || exit 1
 
-    - name: Enumerate Nomad server members.
+    - name: Enumerate Nomad client nodes.
       shell: nomad node status || exit 1
+
+    - name: Check that Vault is running.
+      shell: vault status || exit 1

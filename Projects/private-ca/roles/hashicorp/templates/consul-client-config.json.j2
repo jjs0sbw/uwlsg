@@ -1,5 +1,5 @@
 {
-  "datacenter": "local-dc",
+  "datacenter": "{{ provider }}-{{ datacenter }}",
   "data_dir": "/opt/consul",
   "log_level": "INFO",
   "node_name": "{{ ansible_hostname }}",
