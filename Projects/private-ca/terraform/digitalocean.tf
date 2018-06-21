@@ -2,35 +2,6 @@ provider "digitalocean" {
   token = "${var.do_token}"
 }
 
-resource "digitalocean_tag" "control_tag" {
-  name = "control"
-}
-
-resource "digitalocean_tag" "compute_tag" {
-  name = "compute"
-}
-
-resource "digitalocean_tag" "hashicorp_tag" {
-  name = "hashicorp"
-}
-
-resource "digitalocean_tag" "ca_tag" {
-  name = "ca"
-}
-
-variable "domain" {
-  default = "adriennecohea.ninja"
-}
-
-variable "counts" {
-  type = "map"
-
-  default = {
-    "compute" = 4
-    "control" = 3
-  }
-}
-
 resource "digitalocean_droplet" "ca" {
   count              = 1
   image              = "ubuntu-18-04-x64"
@@ -64,6 +35,16 @@ resource "digitalocean_droplet" "compute" {
   tags               = ["hashicorp", "compute"]
 }
 
+resource "digitalocean_droplet" "loadbalancer" {
+  image              = "ubuntu-18-04-x64"
+  size               = "s-2vcpu-2gb"
+  region             = "sfo1"
+  name               = "loadbalancer-sfo1"
+  ssh_keys           = [7172020, 7172181]
+  private_networking = true
+  tags               = ["loadbalancer"]
+}
+
 resource "digitalocean_domain" "ca_fqdn" {
   name       = "ca.${var.domain}"
   ip_address = "${digitalocean_droplet.ca.ipv4_address}"
@@ -79,4 +60,9 @@ resource "digitalocean_domain" "compute_fqns" {
   count      = "${var.counts["compute"]}"
   name       = "${element(digitalocean_droplet.compute.*.name, count.index)}.${var.domain}"
   ip_address = "${element(digitalocean_droplet.compute.*.ipv4_address, count.index)}"
+}
+
+resource "digitalocean_domain" "loadbalancer_fqdn" {
+  name       = "loadbalancer.${var.domain}"
+  ip_address = "${digitalocean_droplet.loadbalancer.ipv4_address}"
 }

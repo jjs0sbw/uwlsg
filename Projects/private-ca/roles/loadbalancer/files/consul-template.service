@@ -1,0 +1,12 @@
+[Unit]
+Description=Consul Template
+
+[Service]
+User=root
+PIDFile=/run/consul-template.pid
+ExecStart=/usr/bin/consul-template -config "/etc/consul-template.hcl"
+Restart=always
+Type=notify
+
+[Install]
+WantedBy=multi-user.target

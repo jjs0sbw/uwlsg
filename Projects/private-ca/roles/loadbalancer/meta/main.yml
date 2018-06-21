@@ -1,0 +1,4 @@
+---
+dependencies:
+  - { role: trust-ca-root }
+  - { role: get-cert-from-ca }
