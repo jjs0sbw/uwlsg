@@ -25,6 +25,7 @@
   loop:
     - { src: "consul-template.service", dest: "/lib/systemd/system/consul-template.service" }
     - { src: "consul-template.hcl", dest: "/etc/consul-template.hcl" }
+    - { src: "haproxy.cfg.ctmpl", dest: "/etc/haproxy/haproxy.cfg.ctmpl" }
 
 - name: Start services
   systemd:
