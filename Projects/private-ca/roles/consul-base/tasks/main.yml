@@ -1,0 +1,31 @@
+---
+- name: Download
+  get_url:
+    url: "https://releases.hashicorp.com/consul/1.1.0/consul_1.1.0_linux_amd64.zip"
+    checksum: "sha256:09c40c8b5be868003810064916d8460bff334ccfb59a5046390224b27e052c45"
+    dest: "/tmp/consul.zip"
+
+- name: Install
+  unarchive:
+    src: "/tmp/consul.zip"
+    dest: /usr/bin
+    remote_src: yes
+
+- name: Create configuration directory
+  file:
+    path: "/etc/consul"
+    state: directory
+
+- name: Set environment variables
+  lineinfile:
+    line: "{{ item }}"
+    path: /etc/environment
+  loop:
+    - "CONSUL_HTTP_ADDR=https://localhost:8500"
+    - "CONSUL_CLIENT_KEY=/etc/ssl/cert-key.pem"
+    - "CONSUL_CLIENT_CERT=/etc/ssl/cert.pem"
+
+- name: Copy configuration files
+  copy:
+    src: "consul.service"
+    dest: "/lib/systemd/system/consul.service"

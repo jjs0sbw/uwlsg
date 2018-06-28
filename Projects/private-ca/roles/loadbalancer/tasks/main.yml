@@ -1,0 +1,38 @@
+---
+- name: Install HAProxy
+  apt:
+    name: haproxy
+    state: present
+
+- name: Download Consul Template
+  get_url:
+    url: https://releases.hashicorp.com/consul-template/0.19.5/consul-template_0.19.5_linux_amd64.tgz
+    checksum: sha256:39f4fc2ffaa00e0a7504f531f922d9d39dd29520c03dc0abde46835ebd52c647
+    dest: /usr/bin/consul-template.tgz
+
+- name: Install Consul Template
+  unarchive:
+    remote_src: yes
+    src: /usr/bin/consul-template.tgz
+    dest: /usr/bin
+    mode: 0755
+    owner: root
+
+- name: Copy configuration files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { src: "consul-template.service", dest: "/lib/systemd/system/consul-template.service" }
+    - { src: "consul-template.hcl", dest: "/etc/consul-template.hcl" }
+    - { src: "haproxy.cfg.ctmpl", dest: "/etc/haproxy/haproxy.cfg.ctmpl" }
+
+- name: Start services
+  systemd:
+    daemon_reload: yes
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    - haproxy
+    - consul-template

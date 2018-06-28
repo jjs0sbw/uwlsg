@@ -1,0 +1,31 @@
+---
+- name: Download
+  get_url:
+    url: "https://releases.hashicorp.com/nomad/0.8.4/nomad_0.8.4_linux_amd64.zip"
+    checksum: "sha256:42fc455d09ea0085cc79d7be4fb2089a9ab7db3cc2e8047e8437855a81b090e9"
+    dest: "/tmp/nomad.zip"
+
+- name: Install
+  unarchive:
+    src: "/tmp/nomad.zip"
+    dest: /usr/bin
+    remote_src: yes
+
+- name: Create configuration directory
+  file:
+    path: "/etc/nomad"
+    state: directory
+
+- name: Set environment variables
+  lineinfile:
+    line: "{{ item }}"
+    path: /etc/environment
+  loop:
+    - "NOMAD_ADDR=https://localhost:4646"
+    - "NOMAD_CLIENT_KEY=/etc/ssl/cert-key.pem"
+    - "NOMAD_CLIENT_CERT=/etc/ssl/cert.pem"
+
+- name: Copy configuration files
+  copy:
+    src: "nomad.service"
+    dest: "/lib/systemd/system/nomad.service"

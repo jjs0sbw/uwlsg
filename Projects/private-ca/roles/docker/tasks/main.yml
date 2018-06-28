@@ -4,20 +4,14 @@
     id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
     url: https://download.docker.com/linux/ubuntu/gpg
 
-- name: Add Docker repository
+- name: Add repository
   apt_repository:
     repo: deb https://download.docker.com/linux/ubuntu bionic edge
     state: present
 
-- name: Install dependencies for Docker
+- name: Install
   apt:
-    name: "{{ item }}"
+    name: "docker-ce"
     state: present
     update_cache: yes
     cache_valid_time: 300
-  loop:
-    - "apt-transport-https"
-    - "ca-certificates"
-    - "curl"
-    - "software-properties-common"
-    - "docker-ce"
