@@ -16,9 +16,19 @@
   roles:
     - ca
 
-- hosts: hashicorp
+- hosts: control
   roles:
-    - hashicorp
+    - consul-server
+    - nomad-server
+
+- hosts: loadbalancer
+  roles:
+    - loadbalancer
+
+- hosts: compute
+  roles:
+    - consul-client
+    - nomad-client
 
 - hosts: hashicorp
   roles:
@@ -27,7 +37,3 @@
 - hosts: hashicorp
   roles:
     - nomad
-
-- hosts: loadbalancer
-  roles:
-    - loadbalancer

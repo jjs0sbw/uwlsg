@@ -1,0 +1,46 @@
+---
+- name: Download
+  get_url:
+    url: https://releases.hashicorp.com/vault/0.10.3/vault_0.10.3_linux_amd64.zip
+    checksum: "sha256:ffec1c201f819f47581f54c08653a8d17ec0a6699854ebd7f6625babb9e290ed"
+    dest: "/tmp/vault.zip"
+
+- name: Install
+  unarchive:
+    src: "/tmp/vault.zip"
+    dest: /usr/bin
+    remote_src: yes
+
+- name: Create configuration directory
+  file:
+    path: "/etc/vault"
+    state: directory
+
+- name: Render configuration template
+  template:
+    src: "config.hcl.j2"
+    dest: /etc/vault/config.hcl
+
+- name: Set environment variables
+  lineinfile:
+    line: "{{ item }}"
+    path: /etc/environment
+  loop:
+    - "VAULT_CLIENT_KEY=/etc/ssl/cert-key.pem"
+    - "VAULT_CLIENT_CERT=/etc/ssl/cert.pem"
+
+- name: Copy configuration files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { src: "vault.service", dest: "/lib/systemd/system/vault.service"}
+    - { src: "nomad-server-policy.hcl", dest: "/etc/vault/nomad-server-policy.hcl"}
+    - { src: "nomad-cluster-role.json", dest: "/etc/vault/nomad-cluster-role.json"}
+
+- name: Start service
+  systemd:
+    daemon_reload: yes
+    name: "vault"
+    enabled: yes
+    state: started
