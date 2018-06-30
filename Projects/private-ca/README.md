@@ -14,7 +14,7 @@ This project is a study on setting up a Nomad datacenter which is backed by a pr
 
 - Vagrant (Development environment provisioning tool by Hashicorp)
 
-## Quick Start (DigitalOcean)
+## Directions (DigitalOcean)
 
 1. **Create an API access token** To run this datacenter in the public cloud, you will need a DigitalOcean account. The Terraform specification runs nine 2GB RAM hosts, so it costs $0.20 per hour, or $4.75 per day. From the DigitalOcean dashboard, you will need to create an API access token with read and write capabilities. You will need to copy that key to your clipboard and place it into a new Terraform file located at ```terraform/do_token.tf```. The contents of the file should be as follows:
 
@@ -56,9 +56,14 @@ variable "domain" {
 }
 ```
 
-(Don't forget to run ```destory.sh``` and save yourself a cup of coffee)
-On Ubuntu, the command to install cfssl is ```sudo apt install golang-cfssl```
+5. **Create the certificate authority root**
 
-2. Run ```./init_ca.sh```. This will create the certificate authority root key and certificate required to establish the PKI.
+Run ```init_ca.sh``` which will create the private key and TLS certificate for the root of the PKI. It will also copy these files to the Ansible ```ca``` role folder so that that key material will be provisioned when the infrastructure is created.
 
-3. Run ```vagrant up```.
+6. **Create the infrastructure**
+
+Run the ```start.sh``` script to kick off the primary tasks of creating the infrastructure in DigitalOcean using Terraform and running the provisioning and configuration using Ansible.
+
+7. **Destroy the infrastructure when finished**
+
+Run the ```destroy.sh``` script to discard the infrastructure after you are finished using it to avoid incurring charges.
