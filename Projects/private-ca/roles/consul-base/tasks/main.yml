@@ -25,7 +25,38 @@
     - "CONSUL_CLIENT_KEY=/etc/ssl/cert-key.pem"
     - "CONSUL_CLIENT_CERT=/etc/ssl/cert.pem"
 
-- name: Copy configuration files
+- name: Install dnsmasq
+  apt:
+    name: dnsmasq
+    state: present
+
+- name: Copy configuration file
   copy:
-    src: "consul.service"
-    dest: "/lib/systemd/system/consul.service"
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - {src: "consul.service", dest: "/lib/systemd/system/consul.service"}
+    - {src: "consul-dnsmasq", dest: "/etc/dnsmasq.d/consul"}
+    - {src: "resolved.conf", dest: "/etc/systemd/resolved.conf"}
+
+- name: Stop dnsmasq
+  systemd:
+    daemon_reload: yes
+    name: "dnsmasq"
+    enabled: yes
+    state: stopped
+
+- name: Restart dnsmasq
+  systemd:
+    name: "dnsmasq"
+    state: started
+
+- name: Stop systemd-resolved
+  systemd:
+    name: "systemd-resolved"
+    state: stopped
+
+- name: Restart systemd-resolved
+  systemd:
+    name: "systemd-resolved"
+    state: started
