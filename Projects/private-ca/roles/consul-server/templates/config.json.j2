@@ -10,6 +10,7 @@
   "retry_join": ["control1", "control2", "control3"],
   "advertise_addr": "{{ hostvars[inventory_hostname][hostvars[inventory_hostname]['ansible_interface_variable']]['ipv4']['address'] }}",
   "bind_addr" : "{{ hostvars[inventory_hostname][hostvars[inventory_hostname]['ansible_interface_variable']]['ipv4']['address'] }}",
+  "client_addr": "169.254.1.1",
   "ui": true,
   "addresses": {
     "https": "0.0.0.0",
