@@ -1,4 +1,15 @@
 ---
+- name: Allow incoming connections
+  iptables:
+    chain: INPUT
+    destination_port: "{{ item.port }}"
+    jump: ACCEPT
+    comment: "{{ item.comment }}"
+  loop:
+    - { port: 4646, comment: "Allow Nomad HTTP" }
+    - { port: 4647, comment: "Allow Nomad RPC" }
+    - { port: 4648, comment: "Allow Nomad Serf WAN" }
+
 - name: Download
   get_url:
     url: "https://releases.hashicorp.com/nomad/0.8.4/nomad_0.8.4_linux_amd64.zip"

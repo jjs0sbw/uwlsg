@@ -1,4 +1,14 @@
 ---
+- name: Allow incoming connections
+  iptables:
+    chain: INPUT
+    destination_port: "{{ item.port }}"
+    jump: ACCEPT
+    comment: "{{ item.comment }}"
+  loop:
+    - { port: 8200, comment: "Allow Vault HTTP" }
+    - { port: 8125, comment: "Allow Vault telemetry" }
+
 - name: Download
   get_url:
     url: https://releases.hashicorp.com/vault/0.10.3/vault_0.10.3_linux_amd64.zip

@@ -1,4 +1,17 @@
 ---
+- name: Allow incoming connections
+  iptables:
+    chain: INPUT
+    destination_port: "{{ item.port }}"
+    jump: ACCEPT
+    comment: "{{ item.comment }}"
+  loop:
+    - { port: 8302, comment: "Allow Consul server RPC" }
+    - { port: 8301, comment: "Allow Consul Serf LAN" }
+    - { port: 8302, comment: "Allow Consul Serf WAN" }
+    - { port: 8500, comment: "Allow Consul HTTP" }
+    - { port: 8600, comment: "Allow Consul DNS" }
+
 - name: Download
   get_url:
     url: "https://releases.hashicorp.com/consul/1.2.0/consul_1.2.0_linux_amd64.zip"
