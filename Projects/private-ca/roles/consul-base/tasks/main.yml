@@ -38,6 +38,14 @@
     - {src: "consul.service", dest: "/lib/systemd/system/consul.service"}
     - {src: "consul-dnsmasq", dest: "/etc/dnsmasq.d/consul"}
     - {src: "resolved.conf", dest: "/etc/systemd/resolved.conf"}
+    - {src: "dummy0.network", dest: "/etc/systemd/network/dummy0.network"}
+    - {src: "dummy0.netdev", dest: "/etc/systemd/network/dummy0.netdev"}
+
+- name: Restart systemd-networkd
+  systemd:
+    name: "systemd-networkd"
+    enabled: yes
+    state: restarted
 
 - name: Stop dnsmasq
   systemd:
