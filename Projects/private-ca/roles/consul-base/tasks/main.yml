@@ -1,4 +1,17 @@
 ---
+- name: Allow incoming connections
+  iptables:
+    chain: INPUT
+    destination_port: "{{ item.port }}"
+    jump: ACCEPT
+    comment: "{{ item.comment }}"
+  loop:
+    - { port: 8302, comment: "Allow Consul server RPC" }
+    - { port: 8301, comment: "Allow Consul Serf LAN" }
+    - { port: 8302, comment: "Allow Consul Serf WAN" }
+    - { port: 8500, comment: "Allow Consul HTTP" }
+    - { port: 8600, comment: "Allow Consul DNS" }
+
 - name: Download
   get_url:
     url: "https://releases.hashicorp.com/consul/1.2.0/consul_1.2.0_linux_amd64.zip"
@@ -25,7 +38,46 @@
     - "CONSUL_CLIENT_KEY=/etc/ssl/cert-key.pem"
     - "CONSUL_CLIENT_CERT=/etc/ssl/cert.pem"
 
-- name: Copy configuration files
+- name: Install dnsmasq
+  apt:
+    name: dnsmasq
+    state: present
+
+- name: Copy configuration file
   copy:
-    src: "consul.service"
-    dest: "/lib/systemd/system/consul.service"
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - {src: "consul.service", dest: "/lib/systemd/system/consul.service"}
+    - {src: "consul-dnsmasq", dest: "/etc/dnsmasq.d/consul"}
+    - {src: "resolved.conf", dest: "/etc/systemd/resolved.conf"}
+    - {src: "dummy0.network", dest: "/etc/systemd/network/dummy0.network"}
+    - {src: "dummy0.netdev", dest: "/etc/systemd/network/dummy0.netdev"}
+
+- name: Restart systemd-networkd
+  systemd:
+    name: "systemd-networkd"
+    enabled: yes
+    state: restarted
+
+- name: Stop dnsmasq
+  systemd:
+    daemon_reload: yes
+    name: "dnsmasq"
+    enabled: yes
+    state: stopped
+
+- name: Restart dnsmasq
+  systemd:
+    name: "dnsmasq"
+    state: started
+
+- name: Stop systemd-resolved
+  systemd:
+    name: "systemd-resolved"
+    state: stopped
+
+- name: Restart systemd-resolved
+  systemd:
+    name: "systemd-resolved"
+    state: started
