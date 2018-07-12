@@ -32,4 +32,4 @@
 - name: Set default DROP policy
   iptables:
     chain: INPUT
-    policy: DROP
+    policy: ACCEPT
