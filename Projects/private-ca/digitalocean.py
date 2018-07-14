@@ -4,9 +4,18 @@ import os
 import sys
 import urllib.request
 
+def get_digitalocean_api_key():
+    try:
+        with open("terraform/do_token.tf") as f:
+            lines = f.readlines()
+            key = lines[1].split(" ")[4][1:-2]
+            return key
+    except:
+        return os.environ["DO_PAT"]
+
 def get_all_droplets():
     req = urllib.request.Request("https://api.digitalocean.com/v2/droplets?per_page=100")
-    req.add_header("Authorization", 'Bearer %s' % os.environ["DO_PAT"])
+    req.add_header("Authorization", 'Bearer %s' % get_digitalocean_api_key())
     req.add_header("Accept", "application/json")
     resp = urllib.request.urlopen(req)
     content = resp.read()
