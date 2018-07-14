@@ -32,11 +32,16 @@ Create a file called ```pwd.txt``` which contains a password for Ansible Vault t
 
 3. **Create group_vars/all/secrets.yml**
 
-```ansible-vault create group_vars/all/secrets.yml```
+```
+echo "consul_gossip_key: "$(openssl rand -base64 16) >> group_vars/all/secrets.yml
+echo "nomad_gossip_key: "$(openssl rand -base64 16) >> group_vars/all/secrets.yml
+echo "ca_shared_key: "$(openssl rand -hex 16) >> group_vars/all/secrets.yml
+ansible-vault encrypt group_vars/all/secrets.yml
+```
 
 This file needs to contain gossip keys for Consul and Nomad respectively, as well as a shared secret key for Cloudflare SSL. The gossip keys are used by Consul and Nomad to communicate membership and cluster state over a secure channel. Because this protocol takes place over UDP, TLS is not available, and we need to use pre-shared symmetric keys for securing the gossip communication. The CA shared key is used by ```cfssl``` to authenticate clients which are attempting to obtain TLS certificates for the first time. Because I run the CA publicly, I need a way to prevent unauthorized clients from obtaining TLS certificates and joining the cluster as trusted hosts.
 
-Place something like the following content into this file:
+The resulting file will look something like this, and you can inspect its contents with ```ansible-vault view group_vars/all/secrets.yml```
 
 ```
 consul_gossip_key: daieWROxeBs4KLWV4AEDWA==
@@ -44,15 +49,13 @@ nomad_gossip_key: l4fqucDNLg9OIViMsWTznQ==
 ca_shared_key: 34ebe20f67ffaef907179d04526cc9e6
 ```
 
-The gossip keys can be generated using ```openssl rand -base64 16``` and the CA shared key can be generated using ```openssl rand -hex 16```.
-
 4. **Set the domain variable in Terraform**
 
 In ```terraform/vars.tf``` change the value of the ```domain``` variable to a domain that you own. The variable is found in at the top of the file in a section that looks like this:
 
 ```
 variable "domain" {
-  default = "adriennecohea.ninja" # <- Change this value
+  default = "<YOUR DOMAIN HERE>" # <- Change this value
 }
 ```
 
