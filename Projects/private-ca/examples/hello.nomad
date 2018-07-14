@@ -19,7 +19,7 @@ job "hello" {
   }
 
   group "web" {
-    count = 1
+    count = 3
 
     restart {
       attempts = 2
@@ -60,3 +60,4 @@ job "hello" {
       }
     }
   }
+}
