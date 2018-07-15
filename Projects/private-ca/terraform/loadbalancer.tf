@@ -3,7 +3,7 @@ resource "digitalocean_droplet" "loadbalancer" {
   size               = "s-2vcpu-2gb"
   region             = "sfo1"
   name               = "loadbalancer"
-  ssh_keys           = [7172020, 7172181]
+  ssh_keys           = "${var.ssh_keys}"
   private_networking = true
   tags               = ["loadbalancer"]
 }
