@@ -11,6 +11,10 @@
   loop:
     - { port: 8125, protocol: "tcp", comment: "Allow Vault telemetry" }
     - { port: 8200, protocol: "tcp", comment: "Allow Vault HTTP" }
+<<<<<<< HEAD
+=======
+    - { port: 8201, protocol: "tcp", comment: "Allow Vault Discovery" }
+>>>>>>> master
 
 - name: Download
   get_url:

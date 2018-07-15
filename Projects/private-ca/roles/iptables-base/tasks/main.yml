@@ -30,7 +30,11 @@
     jump: ACCEPT
 
 # Change this to DROP at some point
+<<<<<<< HEAD
 - name: Set default ACCEPT policy
+=======
+- name: Set default DROP policy
+>>>>>>> master
   iptables:
     chain: INPUT
     policy: ACCEPT
