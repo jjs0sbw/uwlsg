@@ -1,5 +1,5 @@
 ---
-- name: Allow incoming connections
+- name: Allow incoming TCP connections
   iptables:
     chain: INPUT
     protocol: "{{ item.protocol }}"
@@ -11,18 +11,17 @@
   loop:
     - { port: 4646, protocol: "tcp", comment: "Allow Nomad HTTP" }
     - { port: 4647, protocol: "tcp", comment: "Allow Nomad RPC" }
-    - { port: 4648, protocol: "tcp", comment: "Allow Nomad Serf WAN (tcp)" }
+    - { port: 4648, protocol: "tcp", comment: "Allow Nomad Serf WAN" }
 
-- name: Allow Nomad Serf WAN (udp)
+- name: Allow incoming UDP connections
   iptables:
     chain: INPUT
     protocol: "{{ item.protocol }}"
     destination_port: "{{ item.port }}"
     comment: "{{ item.comment }}"
-    ctstate: NEW
     jump: ACCEPT
   loop:
-    - { port: 4648, protocol: "udp", comment: "Allow Nomad Serf WAN (udp)" }
+    - { port: 4648, protocol: "udp", comment: "Allow Nomad Serf WAN" }
 
 - name: Download
   get_url:
