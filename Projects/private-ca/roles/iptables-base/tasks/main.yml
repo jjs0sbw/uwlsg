@@ -29,7 +29,6 @@
     ctstate: ESTABLISHED,RELATED
     jump: ACCEPT
 
-# Change this to DROP at some point
 - name: Set default DROP policy
   iptables:
     chain: INPUT
