@@ -1,16 +1,37 @@
 ---
-- name: Allow incoming connections
+- name: Allow connections on the dummy interface
   iptables:
     chain: INPUT
-    destination_port: "{{ item.port }}"
+    in_interface: dummy0
     jump: ACCEPT
+
+- name: Allow incoming TCP connections
+  iptables:
+    chain: INPUT
+    protocol: "{{ item.protocol }}"
+    destination_port: "{{ item.port }}"
     comment: "{{ item.comment }}"
+    ctstate: NEW
+    syn: match
+    jump: ACCEPT
   loop:
-    - { port: 8302, comment: "Allow Consul server RPC" }
-    - { port: 8301, comment: "Allow Consul Serf LAN" }
-    - { port: 8302, comment: "Allow Consul Serf WAN" }
-    - { port: 8500, comment: "Allow Consul HTTP" }
-    - { port: 8600, comment: "Allow Consul DNS" }
+    - { port: 8300, protocol: "tcp", comment: "Allow Consul server RPC" }
+    - { port: 8301, protocol: "tcp", comment: "Allow Consul Serf LAN" }
+    - { port: 8302, protocol: "tcp", comment: "Allow Consul Serf WAN" }
+    - { port: 8500, protocol: "tcp", comment: "Allow Consul HTTP" }
+    - { port: 8600, protocol: "tcp", comment: "Allow Consul DNS" }
+
+- name: Allow incoming UDP connections
+  iptables:
+    chain: INPUT
+    protocol: "{{ item.protocol }}"
+    destination_port: "{{ item.port }}"
+    comment: "{{ item.comment }}"
+    jump: ACCEPT
+  loop:
+    - { port: 8301, protocol: "udp", comment: "Allow Consul Serf LAN" }
+    - { port: 8302, protocol: "udp", comment: "Allow Consul Serf WAN" }
+    - { port: 8600, protocol: "udp", comment: "Allow Consul DNS" }
 
 - name: Download
   get_url:

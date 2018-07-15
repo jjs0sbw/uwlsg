@@ -30,13 +30,21 @@ variable "do_token" {
 
 Create a file called ```pwd.txt``` which contains a password for Ansible Vault to use for encryption of secret variables. This file can contain any suitably secure passphrase and then a newline.
 
-3. **Create group_vars/all/secrets.yml**
+3. **Set the domain variable in Terraform**
 
-```ansible-vault create group_vars/all/secrets.yml```
+In ```terraform/vars.tf``` change the value of the ```domain``` variable to a domain that you own. The variable is found in at the top of the file in a section that looks like this:
 
-This file needs to contain gossip keys for Consul and Nomad respectively, as well as a shared secret key for Cloudflare SSL. The gossip keys are used by Consul and Nomad to communicate membership and cluster state over a secure channel. Because this protocol takes place over UDP, TLS is not available, and we need to use pre-shared symmetric keys for securing the gossip communication. The CA shared key is used by ```cfssl``` to authenticate clients which are attempting to obtain TLS certificates for the first time. Because I run the CA publicly, I need a way to prevent unauthorized clients from obtaining TLS certificates and joining the cluster as trusted hosts.
+```
+variable "domain" {
+  default = "<YOUR DOMAIN HERE>" # <- Change this value
+}
+```
 
-Place something like the following content into this file:
+4. **Create initial secrets**
+
+Run ```init_secrets.sh``` which will create all of the secret key material required for the compute cluster.
+
+There are three primary components: the certificate authority root, the shared key that will be introduced so that all VMs in the cluster can authenticate to the certificate authority and request a valid certificate, and the gossip keys that will be used by the Serf protocol for Consul and Nomad. The main CA root is placed in all VMs in the infrastructure as a common trust anchor. The other secrets stored in Ansible Vault are placed in ```group_vars/all/secrets.yml```. Because it is encrypted, it is safe to check into version control, although by default we do not. The contents of the file will look something like this:
 
 ```
 consul_gossip_key: daieWROxeBs4KLWV4AEDWA==
@@ -44,25 +52,18 @@ nomad_gossip_key: l4fqucDNLg9OIViMsWTznQ==
 ca_shared_key: 34ebe20f67ffaef907179d04526cc9e6
 ```
 
-The gossip keys can be generated using ```openssl rand -base64 16``` and the CA shared key can be generated using ```openssl rand -hex 16```.
 
-4. **Set the domain variable in Terraform**
-
-In ```terraform/vars.tf``` change the value of the ```domain``` variable to a domain that you own. The variable is found in at the top of the file in a section that looks like this:
-
-```
-variable "domain" {
-  default = "adriennecohea.ninja" # <- Change this value
-}
-```
-
-5. **Create the certificate authority root**
-
-Run ```init_ca.sh``` which will create the private key and TLS certificate for the root of the PKI. It will also copy these files to the Ansible ```ca``` role folder so that that key material will be provisioned when the infrastructure is created.
-
-6. **Create the infrastructure**
+5. **Create the infrastructure**
 
 Run the ```start.sh``` script to kick off the primary tasks of creating the infrastructure in DigitalOcean using Terraform and running the provisioning and configuration using Ansible.
+
+6. **Start workloads on the cluster to verify its operation**
+
+As an example, you can SSH to one of the ```control``` or ```compute``` VMs and copy the contents of ```examples/hello.nomad``` to a ```~/hello.nomad``` and then run ```nomad job run ~/hello.nomad```.
+
+This particular example will run three instances of the ```tutum/hello-world``` container. After the Nomad clients download the Docker image for the first time, you should be able to verify that the backend servers appear in the loadbalancer.
+
+Thus if you were to request loadbalancer.yourdomain.com in a browser, you will see that the hostname changes each time the page is refreshed. (This verifies that requests are being distributed in a round-robin fashion.)
 
 7. **Destroy the infrastructure when finished**
 
