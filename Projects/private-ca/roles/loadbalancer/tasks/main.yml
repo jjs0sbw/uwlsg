@@ -1,4 +1,17 @@
 ---
+- name: Allow incoming TCP connections
+  iptables:
+    chain: INPUT
+    protocol: "{{ item.protocol }}"
+    destination_port: "{{ item.port }}"
+    comment: "{{ item.comment }}"
+    ctstate: NEW
+    syn: match
+    jump: ACCEPT
+  loop:
+    - { port: 80, protocol: "tcp", comment: "Allow HTTP over plaintext" }
+    - { port: 443, protocol: "tcp", comment: "Allow HTTP over TLS" }
+
 - name: Install HAProxy
   apt:
     name: haproxy
