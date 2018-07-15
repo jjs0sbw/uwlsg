@@ -1,7 +1,7 @@
 resource "digitalocean_droplet" "compute" {
   count              = "${var.counts["compute"]}"
   image              = "ubuntu-18-04-x64"
-  size               = "s-2vcpu-2gb"
+  size               = "${var.compute_size}"
   region             = "sfo1"
   name               = "compute${count.index + 1}"
   ssh_keys           = "${var.ssh_keys}"

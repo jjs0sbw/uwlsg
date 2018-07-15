@@ -14,3 +14,11 @@ variable "counts" {
     "control" = 3
   }
 }
+
+variable "control_size" {
+  default = "s-2vcpu-2gb"
+}
+
+variable "compute_size" {
+  default = "s-4vcpu-8gb"
+}
