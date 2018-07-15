@@ -5,6 +5,7 @@
 *.csr
 .vagrant/
 pwd.txt
+group_vars/all/secrets.yml
 
 terraform/do-token.tf
 terraform/do_token.tf

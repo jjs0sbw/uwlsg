@@ -4,7 +4,7 @@ resource "digitalocean_droplet" "control" {
   size               = "s-2vcpu-2gb"
   region             = "sfo1"
   name               = "control${count.index + 1}"
-  ssh_keys           = [7172020, 7172181]
+  ssh_keys           = "${var.ssh_keys}"
   private_networking = true
   tags               = ["hashicorp", "control"]
 }
