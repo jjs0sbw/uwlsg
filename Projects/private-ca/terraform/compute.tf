@@ -4,7 +4,7 @@ resource "digitalocean_droplet" "compute" {
   size               = "${var.compute_size}"
   region             = "sfo1"
   name               = "compute${count.index + 1}"
-  ssh_keys           = ["${digitalocean_ssh_key.ssh.id}"}]
+  ssh_keys           = ["${digitalocean_ssh_key.ssh.id}"]
   private_networking = true
   tags               = ["hashicorp", "compute"]
 }
