@@ -35,8 +35,8 @@
 
 - name: Download
   get_url:
-    url: "https://releases.hashicorp.com/consul/1.2.0/consul_1.2.0_linux_amd64.zip"
-    checksum: "sha256:85d84ea3f6c68d52549a29b00fd0035f72c2eabff672ae46ca643cb407ef94b4"
+    url: "https://releases.hashicorp.com/consul/1.2.1/consul_1.2.1_linux_amd64.zip"
+    checksum: "sha256:e4146334be453146890023303da3e0c815669e108a18fb7d742745df3414a31a"
     dest: "/tmp/consul.zip"
 
 - name: Install
