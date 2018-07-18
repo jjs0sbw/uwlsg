@@ -4,7 +4,7 @@ resource "digitalocean_droplet" "ca" {
   size               = "s-1vcpu-1gb"
   region             = "sfo1"
   name               = "ca"
-  ssh_keys           = "${var.ssh_keys}"
+  ssh_keys           = ["${digitalocean_ssh_key.ssh.id}"]
   private_networking = true
   tags               = ["ca"]
 }

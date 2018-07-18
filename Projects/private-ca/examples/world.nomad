@@ -1,4 +1,4 @@
-job "hello" {
+job "world" {
   datacenters = ["digitalocean-sfo1"]
   type = "service"
 
@@ -48,7 +48,7 @@ job "hello" {
       }
 
       service {
-        name = "hello"
+        name = "world"
         tags = ["public"]
         port = "http"
         check {
