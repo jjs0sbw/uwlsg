@@ -42,7 +42,9 @@ frontend http
 frontend https
     bind *:433
 
-backend webapp
+{{range services}}
+backend {{.Name}}
 	balance roundrobin
-{{range service "webapp"}}
+{{range service .Name}}
 	server {{.Node}}_{{.Port}} {{.Address}}:{{.Port}} maxconn 10 check inter 5s rise 2 fall 1 weight 10{{end}}
+{{end}}
