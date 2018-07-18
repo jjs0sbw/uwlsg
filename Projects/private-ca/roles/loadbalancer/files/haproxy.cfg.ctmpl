@@ -36,7 +36,6 @@ defaults
 frontend http
 	bind *:80
 	mode http
-	default_backend webapp
 	# Force TLS eventually
 
 {{range services}}{{ if .Tags | contains "public" }}
