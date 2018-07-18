@@ -48,7 +48,8 @@ job "world" {
       }
 
       service {
-        name = "webapp"
+        name = "world"
+        tags = ["public"]
         port = "http"
         check {
           name     = "alive"
