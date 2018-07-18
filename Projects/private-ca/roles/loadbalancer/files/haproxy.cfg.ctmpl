@@ -38,11 +38,12 @@ frontend http
 	mode http
 	# Force TLS eventually
 
-{{range services}}{{ if .Tags | contains "public" }}
-	acl path_is_{{.Name}} hdr_beg(host) {{.Name}}.{{end}}{{end}}
+{{range services}}{{ if .Tags | contains "public" }}    acl path_is_{{.Name}} hdr_beg(host) {{.Name}}.
+{{end}}{{end}}
 
-{{range services}}{{ if .Tags | contains "public" }}
-	use_backend {{.Name}} if path_is_{{.Name}}{{end}}{{end}}
+{{range services}}{{ if .Tags | contains "public" }}    use_backend {{.Name}} if path_is_{{.Name}}
+{{end}}{{end}}
+
 
 frontend https
     bind *:433
