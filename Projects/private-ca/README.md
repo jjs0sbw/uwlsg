@@ -26,11 +26,7 @@ variable "do_token" {
 
 :red_circle: This file is extremely sensitive, and its public disclosure would be catastrophic, resulting in anything from other people running expensive cryptocurrency mining workloads at your expense, or even destruction of your existing resources. A read/write API access token provides a user not only with the ability to create and destroy droplets but also to insert their own SSH keys into the authorized hosts file. The probability of these events is all but guaranteed. Open source offensive security tools such as [gitrob](https://github.com/michenriksen/gitrob) are used by low-sophistication users on a regular basis to carry out these kinds of attacks.
 
-2. **Create an Ansible Vault password file**
-
-Create a file called ```pwd.txt``` which contains a password for Ansible Vault to use for encryption of secret variables. This file can contain any suitably secure passphrase and then a newline.
-
-3. **Set the domain variable in Terraform**
+2. **Set the domain variable in Terraform**
 
 In ```terraform/vars.tf``` change the value of the ```domain``` variable to a domain that you own. The variable is found in at the top of the file in a section that looks like this:
 
@@ -40,7 +36,7 @@ variable "domain" {
 }
 ```
 
-4. **Create initial secrets**
+3. **Create initial secrets**
 
 Run ```init_secrets.sh``` which will create all of the secret key material required for the compute cluster.
 
@@ -53,11 +49,11 @@ ca_shared_key: 34ebe20f67ffaef907179d04526cc9e6
 ```
 
 
-5. **Create the infrastructure**
+4. **Create the infrastructure**
 
 Run the ```start.sh``` script to kick off the primary tasks of creating the infrastructure in DigitalOcean using Terraform and running the provisioning and configuration using Ansible.
 
-6. **Start workloads on the cluster to verify its operation**
+5. **Start workloads on the cluster to verify its operation**
 
 As an example, you can SSH to one of the ```control``` or ```compute``` VMs and copy the contents of ```examples/hello.nomad``` to a ```~/hello.nomad``` and then run ```nomad job run ~/hello.nomad```.
 
@@ -65,6 +61,6 @@ This particular example will run three instances of the ```tutum/hello-world``` 
 
 Thus if you were to request loadbalancer.yourdomain.com in a browser, you will see that the hostname changes each time the page is refreshed. (This verifies that requests are being distributed in a round-robin fashion.)
 
-7. **Destroy the infrastructure when finished**
+6. **Destroy the infrastructure when finished**
 
 Run the ```destroy.sh``` script to discard the infrastructure after you are finished using it to avoid incurring charges.
