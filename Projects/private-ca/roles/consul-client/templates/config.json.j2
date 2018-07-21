@@ -8,8 +8,10 @@
   "protocol": 3,
   "retry_join": ["control1", "control2", "control3"],
   "advertise_addr": "{{ hostvars[inventory_hostname][hostvars[inventory_hostname]['ansible_interface_variable']]['ipv4']['address'] }}",
+  "advertise_addr_wan": "{{ hostvars[inventory_hostname][hostvars[inventory_hostname]['ansible_public_interface_variable']]['ipv4']['address'] }}",
   "bind_addr" : "{{ hostvars[inventory_hostname][hostvars[inventory_hostname]['ansible_interface_variable']]['ipv4']['address'] }}",
   "client_addr": "169.254.1.1",
+  "translate_wan_addrs": true,
   "addresses": {
     "https": "0.0.0.0",
     "dns": "0.0.0.0"
