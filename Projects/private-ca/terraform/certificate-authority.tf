@@ -9,7 +9,10 @@ resource "digitalocean_droplet" "ca" {
   tags               = ["ca"]
 }
 
-resource "digitalocean_domain" "ca_fqdn" {
-  name       = "ca.${var.domain}"
-  ip_address = "${digitalocean_droplet.ca.ipv4_address}"
+resource "digitalocean_record" "ca_fqdn" {
+  domain = "${var.domain}"
+  type   = "A"
+  ttl    = 60
+  name   = "ca"
+  value  = "${digitalocean_droplet.ca.ipv4_address}"
 }

@@ -8,7 +8,10 @@ resource "digitalocean_droplet" "loadbalancer" {
   tags               = ["loadbalancer"]
 }
 
-resource "digitalocean_domain" "loadbalancer_fqdn" {
-  name       = "loadbalancer.${var.domain}"
-  ip_address = "${digitalocean_droplet.loadbalancer.ipv4_address}"
+resource "digitalocean_record" "loadbalancer_fqdn" {
+  domain = "${var.domain}"
+  type   = "A"
+  ttl    = 60
+  name   = "${digitalocean_droplet.loadbalancer.name}"
+  value  = "${digitalocean_droplet.loadbalancer.ipv4_address}"
 }

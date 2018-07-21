@@ -9,8 +9,11 @@ resource "digitalocean_droplet" "compute" {
   tags               = ["hashicorp", "compute"]
 }
 
-resource "digitalocean_domain" "compute_fqns" {
-  count      = "${var.counts["compute"]}"
-  name       = "${element(digitalocean_droplet.compute.*.name, count.index)}.${var.domain}"
-  ip_address = "${element(digitalocean_droplet.compute.*.ipv4_address, count.index)}"
+resource "digitalocean_record" "compute_fqdns" {
+  count  = "${var.counts["compute"]}"
+  domain = "${var.domain}"
+  type   = "A"
+  ttl    = 60
+  name   = "${element(digitalocean_droplet.compute.*.name, count.index)}"
+  value  = "${element(digitalocean_droplet.compute.*.ipv4_address, count.index)}"
 }
