@@ -18,3 +18,37 @@
     name: "systemd-networkd"
     enabled: yes
     state: restarted
+
+- name: Install dnsmasq
+  apt:
+    name: dnsmasq
+    state: present
+
+- name: Copy configuration file
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - {src: "resolved.conf", dest: "/etc/systemd/resolved.conf"}
+
+- name: Stop dnsmasq
+  systemd:
+    daemon_reload: yes
+    name: "dnsmasq"
+    enabled: yes
+    state: stopped
+
+- name: Restart dnsmasq
+  systemd:
+    name: "dnsmasq"
+    state: restarted
+
+- name: Stop systemd-resolved
+  systemd:
+    name: "systemd-resolved"
+    state: stopped
+
+- name: Restart systemd-resolved
+  systemd:
+    name: "systemd-resolved"
+    state: started
