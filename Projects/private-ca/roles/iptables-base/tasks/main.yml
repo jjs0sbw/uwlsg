@@ -1,9 +1,12 @@
 ---
-- name: Allow incoming from the loopback address
+- name: Allow incoming from specific interfaces
   iptables:
     chain: INPUT
     in_interface: lo
     jump: ACCEPT
+  loop:
+    - "lo"
+    - "{{ private_network_interface }}"
 
 - name: Allow incoming SSH connections
   iptables:
@@ -14,14 +17,9 @@
     syn: match
     jump: ACCEPT
     comment: Accept new SSH connections.
-
-- name: Allow incoming HTTP over TLS
-  iptables:
-    chain: INPUT
-    protocol: tcp
-    destination_port: 443
-    jump: ACCEPT
-    comment: Accept HTTP/TLS connections
+  loop:
+    - 22
+    - 443
 
 - name: Allow incoming related and established connections
   iptables:
