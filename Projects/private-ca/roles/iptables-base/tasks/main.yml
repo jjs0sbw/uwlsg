@@ -1,18 +1,24 @@
 ---
-- name: Allow incoming from specific interfaces
+- name: Allow incoming traffic from interfaces
   iptables:
     chain: INPUT
-    in_interface: lo
+    in_interface: "{{ item }}"
     jump: ACCEPT
   loop:
     - "lo"
     - "{{ private_network_interface }}"
 
-- name: Allow incoming SSH connections
+- name: Allow incoming ICMP traffic
+  iptables:
+    chain: INPUT
+    protocol: icmp
+    jump: ACCEPT
+
+- name: Allow incoming traffic on standard ports
   iptables:
     chain: INPUT
     protocol: tcp
-    destination_port: 22
+    destination_port: "{{ item }}"
     ctstate: NEW
     syn: match
     jump: ACCEPT
