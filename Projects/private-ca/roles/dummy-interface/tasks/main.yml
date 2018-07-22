@@ -30,6 +30,7 @@
     dest: "{{ item.dest }}"
   loop:
     - {src: "resolved.conf", dest: "/etc/systemd/resolved.conf"}
+    - {src: "consul-dnsmasq", dest: "/etc/dnsmasq.d/consul-over-dummy-interface"}
 
 - name: Stop dnsmasq
   systemd:
