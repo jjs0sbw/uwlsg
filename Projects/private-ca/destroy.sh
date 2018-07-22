@@ -3,4 +3,4 @@
 set -e
 
 cd terraform
-terraform destroy
+terraform destroy -auto-approve
