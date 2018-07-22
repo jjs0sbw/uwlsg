@@ -1,0 +1,20 @@
+---
+- name: Allow connections on the dummy interface
+  iptables:
+    chain: INPUT
+    in_interface: dummy0
+    jump: ACCEPT
+
+- name: Copy configuration files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - {src: "dummy0.network", dest: "/etc/systemd/network/dummy0.network"}
+    - {src: "dummy0.netdev", dest: "/etc/systemd/network/dummy0.netdev"}
+
+- name: Restart systemd-networkd
+  systemd:
+    name: "systemd-networkd"
+    enabled: yes
+    state: restarted
