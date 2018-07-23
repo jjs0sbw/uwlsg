@@ -10,7 +10,9 @@ resource "digitalocean_droplet" "compute" {
 
   provisioner "remote-exec" {
     when    = "destroy"
-    command = "/usr/bin/pre-destroy.sh ${self.name} ${self.region}"
+    inline  = [
+      "/usr/bin/pre-destroy.sh ${self.name} ${self.region}"
+    ]
   }
 }
 
