@@ -8,6 +8,10 @@ resource "digitalocean_droplet" "compute" {
   private_networking = true
   tags               = ["hashicorp", "compute"]
 
+  connection {
+    private_key = "${file("~/.ssh/id_ed25519")}"
+  }
+
   provisioner "remote-exec" {
     when    = "destroy"
     inline  = [
