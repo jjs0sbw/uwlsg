@@ -8,7 +8,7 @@ resource "digitalocean_droplet" "compute" {
   private_networking = true
   tags               = ["hashicorp", "compute"]
 
-  provisioner "local-exec" {
+  provisioner "remote-exec" {
     when    = "destroy"
     command = "/usr/bin/pre-destroy.sh ${self.name} ${self.region}"
   }
