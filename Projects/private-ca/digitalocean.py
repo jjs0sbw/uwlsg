@@ -5,13 +5,7 @@ import sys
 import urllib.request
 
 def get_digitalocean_api_key():
-    try:
-        with open("terraform/do_token.tf") as f:
-            lines = f.readlines()
-            key = lines[1].split(" ")[4][1:-2]
-            return key
-    except:
-        return os.environ["DO_PAT"]
+    return os.environ["DIGITALOCEAN_TOKEN"]
 
 def get_all_droplets():
     req = urllib.request.Request("https://api.digitalocean.com/v2/droplets?per_page=100")
