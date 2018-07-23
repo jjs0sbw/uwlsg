@@ -7,6 +7,11 @@ resource "digitalocean_droplet" "compute" {
   ssh_keys           = ["${digitalocean_ssh_key.ssh.id}"]
   private_networking = true
   tags               = ["hashicorp", "compute"]
+
+  provisioner "local-exec" {
+    when    = "destroy"
+    command = "/usr/bin/pre-destroy.sh ${self.name} ${self.region}"
+  }
 }
 
 resource "digitalocean_record" "compute_fqdns" {
