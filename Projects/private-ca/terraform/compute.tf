@@ -7,7 +7,7 @@ resource "digitalocean_droplet" "compute" {
   ssh_keys           = ["${digitalocean_ssh_key.ssh.id}"]
   private_networking = true
   tags               = ["hashicorp", "compute"]
-  depends_on         = ["${digitalocean_droplet.control}"]
+  depends_on         = ["digitalocean_droplet.control"]
 
   connection {
     private_key = "${file("~/.ssh/id_ed25519")}"
