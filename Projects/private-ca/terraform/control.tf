@@ -1,6 +1,6 @@
 resource "digitalocean_droplet" "control" {
   count              = "${var.counts["control"]}"
-  image              = "ubuntu-18-04-x64"
+  image              = 36561977
   size               = "${var.control_size}"
   region             = "sfo1"
   name               = "control${count.index + 1}"
