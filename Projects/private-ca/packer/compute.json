@@ -3,7 +3,7 @@
     {
       "snapshot_name": "compute",
       "type": "digitalocean",
-      "image": "ubuntu-18-04-x64",
+      "image": 36561977,
       "size": "s-2vcpu-2gb",
       "region": "sfo1",
       "ssh_username": "root"
@@ -12,42 +12,14 @@
   
   "provisioners": [
         {
-        "type": "file",
-        "source": "hashicorp.asc",
-        "destination": "/tmp/hashicorp.asc"
-        },
-        {
         "type": "shell",
         "inline": [
-        "gpg --import /tmp/hashicorp.asc",
-        "apt update -yq",
-        "apt install -y unzip jq dnsmasq apt-transport-https ca-certificates curl software-properties-common",
-        "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -",
-        "add-apt-repository \"deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic edge\"",
-        "apt install -y docker-ce",
-        "curl -Os https://releases.hashicorp.com/consul/1.2.1/consul_1.2.1_SHA256SUMS",
-        "curl -Os https://releases.hashicorp.com/consul/1.2.1/consul_1.2.1_SHA256SUMS.sig",
-        "curl -Os https://releases.hashicorp.com/consul/1.2.1/consul_1.2.1_linux_amd64.zip",
-        "curl -Os https://releases.hashicorp.com/vault/0.10.3/vault_0.10.3_SHA256SUMS",
-        "curl -Os https://releases.hashicorp.com/vault/0.10.3/vault_0.10.3_SHA256SUMS.sig",
-        "curl -Os https://releases.hashicorp.com/vault/0.10.3/vault_0.10.3_linux_amd64.zip",
-        "curl -Os https://releases.hashicorp.com/nomad/0.8.4/nomad_0.8.4_SHA256SUMS",
-        "curl -Os https://releases.hashicorp.com/nomad/0.8.4/nomad_0.8.4_SHA256SUMS.sig",
-        "curl -Os https://releases.hashicorp.com/nomad/0.8.4/nomad_0.8.4_linux_amd64.zip",
-        "gpg --verify consul_1.2.1_SHA256SUMS.sig consul_1.2.1_SHA256SUMS",
-        "gpg --verify vault_0.10.3_SHA256SUMS.sig vault_0.10.3_SHA256SUMS",
-        "gpg --verify nomad_0.8.4_SHA256SUMS.sig nomad_0.8.4_SHA256SUMS",
-        "sha256sum --check --ignore-missing consul_1.2.1_SHA256SUMS vault_0.10.3_SHA256SUMS nomad_0.8.4_SHA256SUMS",
-        "unzip -qq consul_1.2.1_linux_amd64.zip -d /usr/bin",
-        "unzip -qq vault_0.10.3_linux_amd64.zip -d /usr/bin",
-        "unzip -qq nomad_0.8.4_linux_amd64.zip -d /usr/bin",
-        "mkdir -p /etc/consul",
-        "mkdir -p /etc/vault",
-        "mkdir -p /etc/nomad",
-        "consul version",
-        "vault version",
-        "nomad version",
-        "sync"
+          "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -",
+          "add-apt-repository \"deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic edge\"",
+          "apt update -yq",
+          "apt install -y docker-ce",
+          "DEBIAN_FRONTEND=noninteractive apt upgrade -yq",
+          "sync"
         ]
     }
   ]

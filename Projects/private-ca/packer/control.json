@@ -21,7 +21,8 @@
       "inline": [
         "gpg --import /tmp/hashicorp.asc",
         "apt update -yq",
-        "apt install -y unzip jq dnsmasq",
+        "apt install -y unzip jq dnsmasq apt-transport-https ca-certificates curl software-properties-common",
+        "DEBIAN_FRONTEND=noninteractive apt upgrade -yq",
         "curl -Os https://releases.hashicorp.com/consul/1.2.1/consul_1.2.1_SHA256SUMS",
         "curl -Os https://releases.hashicorp.com/consul/1.2.1/consul_1.2.1_SHA256SUMS.sig",
         "curl -Os https://releases.hashicorp.com/consul/1.2.1/consul_1.2.1_linux_amd64.zip",
