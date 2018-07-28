@@ -20,6 +20,12 @@
       "type": "shell",
       "inline": [
         "gpg --import /tmp/hashicorp.asc",
+        "wget -q https://packages.chef.io/files/stable/inspec/2.2.50/ubuntu/18.04/inspec_2.2.50-1_amd64.deb",
+        "echo \"e674683fc4bd34a47645306b971bffb555a113e244dd10ae8326794828fa2a32  inspec_2.2.50-1_amd64.deb\" >> /tmp/inspec_sha256sum.expected",
+        "sha256sum inspec_2.2.50-1_amd64.deb >> /tmp/inspec_sha256sum.actual",
+        "(diff /tmp/inspec_sha256sum.expected /tmp/inspec_sha256sum.actual && echo \"Chef InSpec checksum verified...\") || echo \"The expected checksum for Chef InSpec did not match the actual checksum. Failing the Packer build!\"",
+        "dpkg -i inspec_2.2.50-1_amd64.deb",
+        "rm -f /tmp/inspec_sha256sum.expected /tmp/inspec_sha256sum.actual /root/inspec_2.2.50-1_amd64.deb",
         "apt update -yq",
         "apt install -y unzip jq dnsmasq apt-transport-https ca-certificates curl software-properties-common",
         "DEBIAN_FRONTEND=noninteractive apt upgrade -yq",
@@ -45,6 +51,7 @@
         "consul version",
         "vault version",
         "nomad version",
+        "inspec version",
         "sync"
       ]
     }
