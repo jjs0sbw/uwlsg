@@ -4,7 +4,7 @@ control 'nomad-3' do
     desc 'Ensures that the Consul cluster has a leader.'
 
     describe bash('nomad agent-info | grep leader_addr | awk \'{print $3}\'') do
-        its('stdout.strip') { should ne '' }
+        its('stdout.strip') { should_not cmp '' }
         its('exit_status') { should eq 0 }
     end
 end
