@@ -11,9 +11,15 @@ echo "Cleanly draining node before destruction..."
 systemctl status docker > /dev/null 2>&1
 NOMAD_STATUS=`echo $?`
 
+netstat -tulpn | grep :4646 > /dev/null 2>&1
+HTTP_PORT_LISTENING=`echo $?`
+
 if [ $NOMAD_STATUS -ne 0 ]; then
     echo "Nomad agent was not running, allowing destruction to proceed..."
-    exit 1
+    exit 0
+elif [ $HTTP_PORT_LISTENING -ne 0 ]; then
+    echo "Nomad agent running but HTTP API port was not listening, allowing destruction to proceed..."
+    exit 0
 fi
 
 echo "Nomad agent is running..."
