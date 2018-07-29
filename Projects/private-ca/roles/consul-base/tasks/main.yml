@@ -27,22 +27,13 @@
     - { port: 8302, protocol: "udp", comment: "Allow Consul Serf WAN" }
     - { port: 8600, protocol: "udp", comment: "Allow Consul DNS" }
 
-- name: Download
-  get_url:
-    url: "https://releases.hashicorp.com/consul/1.2.1/consul_1.2.1_linux_amd64.zip"
-    checksum: "sha256:e4146334be453146890023303da3e0c815669e108a18fb7d742745df3414a31a"
-    dest: "/tmp/consul.zip"
-
-- name: Install
-  unarchive:
-    src: "/tmp/consul.zip"
-    dest: /usr/bin
-    remote_src: yes
-
-- name: Create configuration directory
+- name: Ensure directories
   file:
-    path: "/etc/consul"
+    path: "{{ item }}"
     state: directory
+  loop:
+    - "/etc/consul"
+    - /etc/inspec"
 
 - name: Set environment variables
   lineinfile:
@@ -58,7 +49,7 @@
     name: dnsmasq
     state: present
 
-- name: Copy configuration file
+- name: Copy files
   copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -66,6 +57,7 @@
     - {src: "consul.service", dest: "/lib/systemd/system/consul.service"}
     - {src: "consul-dnsmasq", dest: "/etc/dnsmasq.d/consul"}
     - {src: "resolved.conf", dest: "/etc/systemd/resolved.conf"}
+    - {src: "control-plane-1.0.0.tar.gz", dest: "/etc/inspec/control-plane-1.0.0.tar.gz"}
 
 - name: Stop dnsmasq
   systemd:
