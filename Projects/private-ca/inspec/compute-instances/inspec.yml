@@ -1,0 +1,7 @@
+name: control-plane
+title: Functional and security test of compute nodes
+maintainer: Adrienne Cohea
+copyright: Adrienne Cohea
+license: GPL-3.0-or-later
+summary: Verify that Nomad compute nodes are working and configured correctly.
+version: 1.0.0
