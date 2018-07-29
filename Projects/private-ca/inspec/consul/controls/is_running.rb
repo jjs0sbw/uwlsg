@@ -9,8 +9,9 @@ control 'consul-1' do
             it { should be_running }
     end
 
-    describe bash('consul members') do
-        its('stdout') { should match /alive/ }
+    describe bash('consul members | grep server | grep alive | wc -l') do
+        title 'A different title'
+        its('stdout') { should be >= 3 }
         its('exit_status') { should eq 0 }
       end
 
