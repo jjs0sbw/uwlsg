@@ -10,10 +10,9 @@ control 'consul-1' do
     end
 
     describe bash('consul members | grep server | grep alive | wc -l') do
-        title 'A different title'
         its('stdout') { should be >= 3 }
         its('exit_status') { should eq 0 }
-      end
+    end
 
     describe port(8300) do
         it { should be_listening }
