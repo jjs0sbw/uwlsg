@@ -32,8 +32,8 @@
     path: "{{ item }}"
     state: directory
   loop:
-    - "/etc/consul"
-    - /etc/inspec"
+    - /etc/consul
+    - /etc/inspec
 
 - name: Set environment variables
   lineinfile:
