@@ -1,4 +1,4 @@
-control 'consul' do
+control 'consul-1' do
     impact 0.8
     title 'Ensure Consul is running correctly'
     desc 'Ensures the Consul service is running.'

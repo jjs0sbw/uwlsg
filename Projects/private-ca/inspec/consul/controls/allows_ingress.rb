@@ -1,4 +1,4 @@
-control 'consul' do
+control 'consul-2' do
     impact 0.8
     title 'Ensure Consul allows incoming connections'
     desc 'Checks that Consul allows ingress on required ports.'
