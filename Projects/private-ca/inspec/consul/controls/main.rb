@@ -1,5 +1,7 @@
 control 'consul' do
     impact 0.8
+    title 'Ensure Consul is running correctly'
+
     desc '
         This test assures that the user "Bob" has a user installed on the system, along with a
         specified password.

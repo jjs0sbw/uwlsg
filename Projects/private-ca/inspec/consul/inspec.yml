@@ -1,6 +1,7 @@
 name: consul
 title: HashiCorp Consul
 maintainer: Adrienne Cohea
-license: GPLv3 or later version
+copyright: Adrienne Cohea
+license: GPL-3.0-or-later
 summary: Verify that Consul is configured and running correctly
 version: 1.0.0
