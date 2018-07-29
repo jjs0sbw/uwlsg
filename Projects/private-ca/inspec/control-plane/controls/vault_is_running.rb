@@ -9,20 +9,13 @@ control 'vault-1' do
             it { should be_running }
     end
 
-    describe bash('vault status') do
+    describe bash('vault status | grep Sealed | awk \'{print $2}\'') do
+        its('stdout.strip') { should cmp 'false' }
         its('stderr') { should eq '' }
         its('exit_status') { should eq 0 }
     end
 
-    describe port(8125) do
-        it { should be_listening }
-    end
-
     describe port(8200) do
-        it { should be_listening }
-    end
-
-    describe port(8201) do
         it { should be_listening }
     end
 end
