@@ -1,14 +1,15 @@
-control 'consul-3' do
+control 'consul-server-1' do
     impact 0.8
-    title 'Ensure Consul is running correctly'
-    desc 'Ensures the Consul service is running.'
+    title 'Ensure Consul requires TLS mutual authentication'
+    desc 'Ensures Consul servers are configured to require client TLS certificates and that HTTP is disabled.'
 
-    describe file('/etc/consul/config.json') do
-        its('content') { should match(%r{"verify_incoming": true}) }
-        its('content') { should match(%r{"verify_outgoing": true}) }
-        its('content') { should match(%r{"http": 0}) }
-        its('content') { should match(%r{"encrypt_verify_outgoing": true}) }
-        its('content') { should match(%r{"encrypt_verify_incoming": true}) }
+    describe json('/etc/consul/config.json') do
+        its('verify_incoming') { should eq true }
+        its('encrypt_verify_incoming') { should eq true }
+        its('verify_outgoing') { should eq true }
+        its('encrypt_verify_outgoing') { should eq true }
+        its(['ports', 'http']) { should eq 0 }
+        its(['ports', 'https']) { should eq 8500 }
     end
 end
 
