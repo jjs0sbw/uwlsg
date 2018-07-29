@@ -7,5 +7,3 @@ control 'vault-4' do
         its('content') { should match(%r{tls_require_and_verify_client_cert = "true"}) }
     end
 end
-
-
