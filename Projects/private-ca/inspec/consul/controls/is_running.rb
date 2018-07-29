@@ -9,6 +9,11 @@ control 'consul-1' do
             it { should be_running }
     end
 
+    describe bash('consul members') do
+        its('stdout') { should match /alive/ }
+        its('exit_status') { should eq 0 }
+      end
+
     describe port(8300) do
         it { should be_listening }
     end
