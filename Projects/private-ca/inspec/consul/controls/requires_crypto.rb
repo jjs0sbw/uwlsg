@@ -5,8 +5,10 @@ control 'consul-3' do
 
     describe file('/etc/consul/config.json') do
         its('content') { should match(%r{"verify_incoming": true}) }
-        its('content') { should match(%r{host\s.*?all\s.*?all\s.*?127.0.0.1\/32\s.*?md5}) }
-        its('content') { should match(%r{host\s.*?all\s.*?all\s.*?::1\/128\s.*?md5}) }
+        its('content') { should match(%r{"verify_outgoing": true}) }
+        its('content') { should match(%r{"http": 0}) }
+        its('content') { should match(%r{"encrypt_verify_outgoing": true}) }
+        its('content') { should match(%r{"encrypt_verify_incoming": true}) }
     end
 end
 
