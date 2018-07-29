@@ -1,17 +1,7 @@
 control 'consul' do
     impact 0.8
-    title 'Ensure Consul is running correctly'
-
-    desc '
-        This test assures that the user "Bob" has a user installed on the system, along with a
-        specified password.
-         '
-
-    describe systemd_service('consul') do
-            it { should be_installed }
-            it { should be_enabled }
-            it { should be_running }
-    end
+    title 'Ensure Consul allows incoming connections'
+    desc 'Checks that Consul allows ingress on required ports.'
 
     describe iptables(table: 'filter', chain: 'INPUT') do
         it { should have_rule('-A INPUT -p tcp -m tcp --dport 8300 --tcp-flags FIN,SYN,RST,ACK SYN -m comment --comment "Allow Consul server RPC" -m conntrack --ctstate NEW -j ACCEPT') }
