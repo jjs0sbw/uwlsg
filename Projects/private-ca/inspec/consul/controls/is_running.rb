@@ -10,7 +10,7 @@ control 'consul-1' do
     end
 
     describe bash('consul members | grep server | grep alive | wc -l') do
-        its('stdout') { should be >= 3 }
+        its('stdout.strip') { should cmp >= 3 }
         its('exit_status') { should eq 0 }
     end
 
