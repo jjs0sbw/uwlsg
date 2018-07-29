@@ -27,7 +27,7 @@
       "inline": [
         "gpg --import /tmp/hashicorp.asc",
         "apt update -yq",
-        "apt install -y unzip jq dnsmasq apt-transport-https ca-certificates curl software-properties-common ruby ruby-dev",
+        "apt install -y unzip jq dnsmasq apt-transport-https ca-certificates curl software-properties-common build-essentials ruby ruby-dev",
         "gem install --no-rdoc --no-ri inspec",
         "DEBIAN_FRONTEND=noninteractive apt upgrade -yq",
         "curl -Os https://releases.hashicorp.com/consul/{{ user `consul_version` }}/consul_{{ user `consul_version` }}_SHA256SUMS",
