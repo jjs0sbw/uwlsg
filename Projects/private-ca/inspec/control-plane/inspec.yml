@@ -1,0 +1,7 @@
+name: control-plane
+title: Functional and security test of control plane
+maintainer: Adrienne Cohea
+copyright: Adrienne Cohea
+license: GPL-3.0-or-later
+summary: Verify that control plane is working and configured correctly.
+version: 1.0.0
