@@ -58,6 +58,7 @@
     - {src: "consul-dnsmasq", dest: "/etc/dnsmasq.d/consul"}
     - {src: "resolved.conf", dest: "/etc/systemd/resolved.conf"}
     - {src: "control-plane-1.0.0.tar.gz", dest: "/etc/inspec/control-plane-1.0.0.tar.gz"}
+    - {src: "compute-instances-1.0.0.tar.gz", dest: "/etc/inspec/compute-instances-1.0.0.tar.gz"}
 
 - name: Stop dnsmasq
   systemd:
