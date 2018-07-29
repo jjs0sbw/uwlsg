@@ -5,14 +5,5 @@
     - name: Wait 600 seconds for target connection to become reachable/usable
       wait_for_connection:
 
-    - name: Enumerate Consul members.
-      shell: consul members || exit 1
-
-    - name: Enumerate Nomad server members.
-      shell: nomad server members || exit 1
-
-    - name: Enumerate Nomad client nodes.
-      shell: nomad node status || exit 1
-
-    - name: Check that Vault is running.
-      shell: vault status || exit 1
+    - name: Run InSpec tests.
+      shell: inspec exec /etc/inspec/control-plane-1.0.0.tar.gz
