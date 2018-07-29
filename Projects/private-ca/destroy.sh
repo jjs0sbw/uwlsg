@@ -3,4 +3,6 @@
 set -e
 
 cd terraform
-terraform destroy
+terraform destroy -auto-approve \
+    -var "username=$(whoami)" \
+    -var "hostname=$(hostname)"

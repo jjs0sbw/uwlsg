@@ -18,3 +18,7 @@ variable "control_size" {
 variable "compute_size" {
   default = "s-4vcpu-8gb"
 }
+
+variable "username" {}
+
+variable "hostname" {}

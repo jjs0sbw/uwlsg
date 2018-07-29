@@ -16,15 +16,9 @@ This project is a study on setting up a Nomad datacenter which is backed by a pr
 
 ## Directions (DigitalOcean)
 
-1. **Create an API access token** To run this datacenter in the public cloud, you will need a DigitalOcean account. The Terraform specification runs nine 2GB RAM hosts, so it costs $0.20 per hour, or $4.75 per day. From the DigitalOcean dashboard, you will need to create an API access token with read and write capabilities. You will need to copy that key to your clipboard and place it into a new Terraform file located at ```terraform/do_token.tf```. The contents of the file should be as follows:
+1. **Create an API access token** To run this datacenter in the public cloud, you will need a DigitalOcean account. The Terraform specification runs nine 2GB RAM hosts, so it costs $0.20 per hour, or $4.75 per day. From the DigitalOcean dashboard, you will need to create an API access token with read and write capabilities. You will need to copy that key to your clipboard and save it as an environment variable called ```DIGITALOCEAN_TOKEN```.
 
-```
-variable "do_token" {
-  default = "<YOUR API ACCESS TOKEN HERE>"
-}
-```
-
-:red_circle: This file is extremely sensitive, and its public disclosure would be catastrophic, resulting in anything from other people running expensive cryptocurrency mining workloads at your expense, or even destruction of your existing resources. A read/write API access token provides a user not only with the ability to create and destroy droplets but also to insert their own SSH keys into the authorized hosts file. The probability of these events is all but guaranteed. Open source offensive security tools such as [gitrob](https://github.com/michenriksen/gitrob) are used by low-sophistication users on a regular basis to carry out these kinds of attacks.
+:red_circle: Never commit your DigitalOcean API access token to version control. This secret is extremely sensitive, and its public disclosure would be catastrophic, resulting in anything from other people running expensive cryptocurrency mining workloads at your expense, or even destruction of your existing resources. A read/write API access token provides a user not only with the ability to create and destroy droplets but also to insert their own SSH keys into the authorized hosts file. The probability of these events is all but guaranteed. Open source offensive security tools such as [gitrob](https://github.com/michenriksen/gitrob) are used by low-sophistication users on a regular basis to carry out these kinds of attacks.
 
 2. **Set the domain variable in Terraform**
 

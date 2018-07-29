@@ -1,27 +1,31 @@
 ---
-- name: Allow incoming from the loopback address
+- name: Allow incoming traffic from interfaces
   iptables:
     chain: INPUT
-    in_interface: lo
+    in_interface: "{{ item }}"
+    jump: ACCEPT
+  loop:
+    - "lo"
+    - "{{ private_network_interface }}"
+
+- name: Allow incoming ICMP traffic
+  iptables:
+    chain: INPUT
+    protocol: icmp
     jump: ACCEPT
 
-- name: Allow incoming SSH connections
+- name: Allow incoming traffic on standard ports
   iptables:
     chain: INPUT
     protocol: tcp
-    destination_port: 22
+    destination_port: "{{ item }}"
     ctstate: NEW
     syn: match
     jump: ACCEPT
     comment: Accept new SSH connections.
-
-- name: Allow incoming HTTP over TLS
-  iptables:
-    chain: INPUT
-    protocol: tcp
-    destination_port: 443
-    jump: ACCEPT
-    comment: Accept HTTP/TLS connections
+  loop:
+    - 22
+    - 443
 
 - name: Allow incoming related and established connections
   iptables:

@@ -1,0 +1,32 @@
+{
+  "builders": [
+    {
+      "snapshot_name": "compute",
+      "type": "digitalocean",
+      "image": 36674475,
+      "size": "s-2vcpu-2gb",
+      "region": "sfo1",
+      "ssh_username": "root"
+    }
+  ],
+  
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "pre-destroy.sh",
+      "destination": "/usr/bin/pre-destroy.sh"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "chmod +x /usr/bin/pre-destroy.sh",
+        "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -",
+        "add-apt-repository \"deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic edge\"",
+        "apt update -yq",
+        "apt install -y docker-ce",
+        "DEBIAN_FRONTEND=noninteractive apt upgrade -yq",
+        "sync"
+      ]
+    }
+  ]
+}
