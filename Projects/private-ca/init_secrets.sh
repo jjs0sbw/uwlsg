@@ -2,6 +2,7 @@
 
 # Cleanup any existing secret files for Ansible and regenerate them
 echo "[+] Creating Ansible password file"
+rm -f pwd.txt
 echo $(openssl rand -base64 32) >> pwd.txt
 
 echo "[+] Regenerating group_vars/all/secrets.yml"

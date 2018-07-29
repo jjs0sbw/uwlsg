@@ -1,6 +1,6 @@
 resource "digitalocean_droplet" "control" {
   count              = "${var.counts["control"]}"
-  image              = 36674475
+  image              = 36698854
   size               = "${var.control_size}"
   region             = "sfo1"
   name               = "control${count.index + 1}"
