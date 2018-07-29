@@ -12,4 +12,3 @@ control 'consul-server-1' do
         its(['ports', 'https']) { should eq 8500 }
     end
 end
-
