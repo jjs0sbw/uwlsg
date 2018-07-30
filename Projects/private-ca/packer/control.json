@@ -9,7 +9,7 @@
     {
       "snapshot_name": "control",
       "type": "digitalocean",
-      "image": "ubuntu-18-04-x64",
+      "image": 36719599,
       "size": "s-2vcpu-2gb",
       "region": "sfo1",
       "ssh_username": "root"
@@ -27,8 +27,6 @@
       "inline": [
         "gpg --import /tmp/hashicorp.asc",
         "apt update -yq",
-        "apt install -y unzip jq dnsmasq apt-transport-https ca-certificates curl software-properties-common build-essential ruby ruby-dev",
-        "gem install --no-rdoc --no-ri inspec",
         "DEBIAN_FRONTEND=noninteractive apt upgrade -yq",
         "curl -Os https://releases.hashicorp.com/consul/{{ user `consul_version` }}/consul_{{ user `consul_version` }}_SHA256SUMS",
         "curl -Os https://releases.hashicorp.com/consul/{{ user `consul_version` }}/consul_{{ user `consul_version` }}_SHA256SUMS.sig",

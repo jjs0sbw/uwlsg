@@ -1,5 +1,5 @@
 resource "digitalocean_droplet" "loadbalancer" {
-  image              = 36706803
+  image              = 36719757
   size               = "s-2vcpu-2gb"
   region             = "sfo1"
   name               = "loadbalancer"

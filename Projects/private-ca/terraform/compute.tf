@@ -1,6 +1,6 @@
 resource "digitalocean_droplet" "compute" {
   count              = "${var.counts["compute"]}"
-  image              = 36699057
+  image              = 36720126
   size               = "${var.compute_size}"
   region             = "sfo1"
   name               = "compute${count.index + 1}"

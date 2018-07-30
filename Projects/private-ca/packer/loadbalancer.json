@@ -7,7 +7,7 @@
       {
         "snapshot_name": "loadbalancer",
         "type": "digitalocean",
-        "image": "ubuntu-18-04-x64",
+        "image": 36719599,
         "size": "s-2vcpu-2gb",
         "region": "sfo1",
         "ssh_username": "root"

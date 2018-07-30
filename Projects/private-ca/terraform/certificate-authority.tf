@@ -1,6 +1,6 @@
 resource "digitalocean_droplet" "ca" {
   count              = 1
-  image              = "ubuntu-18-04-x64"
+  image              = 36719599
   size               = "s-1vcpu-1gb"
   region             = "sfo1"
   name               = "ca"
