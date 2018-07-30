@@ -16,3 +16,12 @@
 
     - name: Run InSpec tests.
       shell: inspec exec /etc/inspec/compute-instances-1.0.0.tar.gz
+
+- hosts: loadbalancer
+  gather_facts: False
+  tasks:
+    - name: Wait 600 seconds for target connection to become reachable/usable
+      wait_for_connection:
+
+    - name: Run InSpec tests.
+      shell: inspec exec /etc/inspec/loadbalancer-1.0.0.tar.gz
