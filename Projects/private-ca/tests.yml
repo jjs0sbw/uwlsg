@@ -24,4 +24,4 @@
       wait_for_connection:
 
     - name: Run InSpec tests.
-      shell: inspec exec /etc/inspec/loadbalancer-1.0.0.tar.gz
+      shell: inspec exec /etc/inspec/loadbalancers-1.0.0.tar.gz
