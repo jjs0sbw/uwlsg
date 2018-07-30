@@ -1,0 +1,7 @@
+name: loadbalancers
+title: Functional and security test of load balancers
+maintainer: Adrienne Cohea
+copyright: Adrienne Cohea
+license: GPL-3.0
+summary: Verify that load balancers are working and configured correctly.
+version: 1.0.0

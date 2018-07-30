@@ -12,11 +12,6 @@
     - { port: 80, protocol: "tcp", comment: "Allow HTTP over plaintext" }
     - { port: 443, protocol: "tcp", comment: "Allow HTTP over TLS" }
 
-- name: Install HAProxy
-  apt:
-    name: haproxy
-    state: present
-
 - name: Download Consul Template
   get_url:
     url: https://releases.hashicorp.com/consul-template/0.19.5/consul-template_0.19.5_linux_amd64.tgz
@@ -39,6 +34,7 @@
     - { src: "consul-template.service", dest: "/lib/systemd/system/consul-template.service" }
     - { src: "consul-template.hcl", dest: "/etc/consul-template.hcl" }
     - { src: "haproxy.cfg.ctmpl", dest: "/etc/haproxy/haproxy.cfg.ctmpl" }
+    - { src: "loadbalancers-1.0.0.tar.gz", dest: "/etc/inspec/loadbalancers-1.0.0.tar.gz" }
 
 - name: Start services
   systemd:

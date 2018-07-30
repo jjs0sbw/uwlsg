@@ -1,5 +1,5 @@
 resource "digitalocean_droplet" "loadbalancer" {
-  image              = "ubuntu-18-04-x64"
+  image              = 36706803
   size               = "s-2vcpu-2gb"
   region             = "sfo1"
   name               = "loadbalancer"

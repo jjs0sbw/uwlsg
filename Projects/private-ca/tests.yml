@@ -1,5 +1,5 @@
 ---
-- hosts: hashicorp
+- hosts: control
   gather_facts: False
   tasks:
     - name: Wait 600 seconds for target connection to become reachable/usable
@@ -7,3 +7,21 @@
 
     - name: Run InSpec tests.
       shell: inspec exec /etc/inspec/control-plane-1.0.0.tar.gz
+
+- hosts: compute
+  gather_facts: False
+  tasks:
+    - name: Wait 600 seconds for target connection to become reachable/usable
+      wait_for_connection:
+
+    - name: Run InSpec tests.
+      shell: inspec exec /etc/inspec/compute-instances-1.0.0.tar.gz
+
+- hosts: loadbalancer
+  gather_facts: False
+  tasks:
+    - name: Wait 600 seconds for target connection to become reachable/usable
+      wait_for_connection:
+
+    - name: Run InSpec tests.
+      shell: inspec exec /etc/inspec/loadbalancers-1.0.0.tar.gz
