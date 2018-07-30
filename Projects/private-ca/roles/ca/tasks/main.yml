@@ -5,6 +5,11 @@
     system: yes
     state: present
 
+- name: Ensure /etc/inspec exists
+  file:
+    path: /etc/inspec
+    state: directory
+
 - name: Ensure /etc/cfssl exists
   file:
     path: /etc/cfssl
@@ -41,6 +46,11 @@
     dest: /lib/systemd/system/cfssl.service
     owner: root
     group: root
+
+- name: Copy InSpec profile
+  copy:
+    src: certificate-authority-1.0.0.tar.gz
+    dest: /etc/inspec/certificate-authority-1.0.0.tar.gz
 
 - name: Start cfssl server
   systemd:

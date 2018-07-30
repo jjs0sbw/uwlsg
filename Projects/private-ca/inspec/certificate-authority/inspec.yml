@@ -1,0 +1,7 @@
+name: certificate-authority
+title: Functional and security test of certificate authority
+maintainer: Adrienne Cohea
+copyright: Adrienne Cohea
+license: GPL-3.0
+summary: Verify that the certificate authority is working and configured correctly.
+version: 1.0.0
