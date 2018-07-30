@@ -1,7 +1,7 @@
 resource "digitalocean_droplet" "ca" {
   count              = 1
   image              = 36719599
-  size               = "s-1vcpu-1gb"
+  size               = "s-2vcpu-2gb"
   region             = "sfo1"
   name               = "ca"
   ssh_keys           = ["${digitalocean_ssh_key.ssh.id}"]
