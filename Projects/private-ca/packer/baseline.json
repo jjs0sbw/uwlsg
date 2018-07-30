@@ -1,0 +1,26 @@
+{
+    "builders": [
+      {
+        "snapshot_name": "baseline",
+        "type": "digitalocean",
+        "image": "ubuntu-18-04-x64",
+        "size": "s-2vcpu-2gb",
+        "region": "sfo1",
+        "ssh_username": "root"
+      }
+    ],
+  
+    "provisioners": [
+      {
+        "type": "shell",
+        "inline": [
+          "apt update -yq",
+          "apt install -y golang-cfssl unzip apt-transport-https ca-certificates curl software-properties-common build-essential ruby ruby-dev",
+          "gem install --no-rdoc --no-ri inspec",
+          "mkdir -p /etc/inspec",
+          "sync"
+        ]
+      }
+    ]
+  }
+  
