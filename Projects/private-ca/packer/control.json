@@ -9,7 +9,7 @@
     {
       "snapshot_name": "control",
       "type": "digitalocean",
-      "image": 36719599,
+      "image": 36919892,
       "size": "s-2vcpu-2gb",
       "region": "sfo1",
       "ssh_username": "root"

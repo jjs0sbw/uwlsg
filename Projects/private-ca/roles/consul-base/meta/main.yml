@@ -1,5 +1,4 @@
 ---
 dependencies:
-  - { role: base-packages }
   - { role: trust-ca-root }
   - { role: get-cert-from-ca }

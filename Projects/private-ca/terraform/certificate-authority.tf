@@ -1,6 +1,6 @@
 resource "digitalocean_droplet" "ca" {
   count              = 1
-  image              = 36719599
+  image              = 36919902
   size               = "s-2vcpu-2gb"
   region             = "sfo1"
   name               = "ca"
