@@ -1,6 +1,6 @@
 resource "digitalocean_droplet" "ca" {
   count              = 1
-  image              = 36919902
+  image              = "${data.digitalocean_image.baseline.image}"
   size               = "s-2vcpu-2gb"
   region             = "sfo1"
   name               = "ca"
@@ -15,4 +15,8 @@ resource "digitalocean_record" "ca_fqdn" {
   ttl    = 60
   name   = "ca"
   value  = "${digitalocean_droplet.ca.ipv4_address}"
+}
+
+data "digitalocean_image" "baseline" {
+  name = "baseline"
 }
