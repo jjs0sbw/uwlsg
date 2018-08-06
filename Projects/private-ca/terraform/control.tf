@@ -1,6 +1,6 @@
 resource "digitalocean_droplet" "control" {
   count              = "${var.counts["control"]}"
-  image              = 36698854
+  image              = "${data.digitalocean_image.control.image}"
   size               = "${var.control_size}"
   region             = "sfo1"
   name               = "control${count.index + 1}"
@@ -16,4 +16,8 @@ resource "digitalocean_record" "control_fqdns" {
   ttl    = 60
   name   = "${element(digitalocean_droplet.control.*.name, count.index)}"
   value  = "${element(digitalocean_droplet.control.*.ipv4_address, count.index)}"
+}
+
+data "digitalocean_image" "control" {
+  name = "control"
 }

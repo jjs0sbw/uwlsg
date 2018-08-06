@@ -1,7 +1,7 @@
 resource "digitalocean_droplet" "ca" {
   count              = 1
-  image              = "ubuntu-18-04-x64"
-  size               = "s-1vcpu-1gb"
+  image              = "${data.digitalocean_image.baseline.image}"
+  size               = "s-2vcpu-2gb"
   region             = "sfo1"
   name               = "ca"
   ssh_keys           = ["${digitalocean_ssh_key.ssh.id}"]
@@ -15,4 +15,8 @@ resource "digitalocean_record" "ca_fqdn" {
   ttl    = 60
   name   = "ca"
   value  = "${digitalocean_droplet.ca.ipv4_address}"
+}
+
+data "digitalocean_image" "baseline" {
+  name = "baseline"
 }

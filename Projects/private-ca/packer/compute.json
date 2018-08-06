@@ -3,7 +3,7 @@
     {
       "snapshot_name": "compute",
       "type": "digitalocean",
-      "image": 36698854,
+      "image": 36919912,
       "size": "s-2vcpu-2gb",
       "region": "sfo1",
       "ssh_username": "root"

@@ -1,6 +1,6 @@
 resource "digitalocean_droplet" "compute" {
   count              = "${var.counts["compute"]}"
-  image              = 36699057
+  image              = "${data.digitalocean_image.compute.image}"
   size               = "${var.compute_size}"
   region             = "sfo1"
   name               = "compute${count.index + 1}"
@@ -28,4 +28,8 @@ resource "digitalocean_record" "compute_fqdns" {
   ttl    = 60
   name   = "${element(digitalocean_droplet.compute.*.name, count.index)}"
   value  = "${element(digitalocean_droplet.compute.*.ipv4_address, count.index)}"
+}
+
+data "digitalocean_image" "compute" {
+  name = "compute"
 }

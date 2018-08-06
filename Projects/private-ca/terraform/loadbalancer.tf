@@ -1,5 +1,5 @@
 resource "digitalocean_droplet" "loadbalancer" {
-  image              = 36706803
+  image              = "${data.digitalocean_image.loadbalancer.image}"
   size               = "s-2vcpu-2gb"
   region             = "sfo1"
   name               = "loadbalancer"
@@ -14,4 +14,8 @@ resource "digitalocean_record" "loadbalancer_fqdn" {
   ttl    = 60
   name   = "${digitalocean_droplet.loadbalancer.name}"
   value  = "${digitalocean_droplet.loadbalancer.ipv4_address}"
+}
+
+data "digitalocean_image" "loadbalancer" {
+  name = "loadbalancer"
 }

@@ -1,4 +1,13 @@
 ---
+- hosts: ca
+  gather_facts: False
+  tasks:
+    - name: Wait 600 seconds for target connection to become reachable/usable
+      wait_for_connection:
+
+    - name: Run InSpec tests.
+      shell: inspec exec /etc/inspec/certificate-authority-1.0.0.tar.gz
+
 - hosts: control
   gather_facts: False
   tasks:
