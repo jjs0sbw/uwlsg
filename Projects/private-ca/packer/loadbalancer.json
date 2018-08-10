@@ -1,13 +1,13 @@
 {
     "variables": {
-      "consul_version": "1.2.1"
+      "consul_version": "1.2.2"
     },
   
     "builders": [
       {
         "snapshot_name": "loadbalancer",
         "type": "digitalocean",
-        "image": 36919892,
+        "image": 37074929,
         "size": "s-2vcpu-2gb",
         "region": "sfo1",
         "ssh_username": "root"
@@ -24,8 +24,8 @@
         "type": "shell",
         "inline": [
           "gpg --import /tmp/hashicorp.asc",
-          "apt update -yq",
-          "apt install -y haproxy unzip jq build-essential ruby ruby-dev",
+          "DEBIAN_FRONTEND=noninteractive apt update -yq",
+          "DEBIAN_FRONTEND=noninteractive apt install -y haproxy unzip jq build-essential ruby ruby-dev",
           "gem install --no-rdoc --no-ri inspec",
           "DEBIAN_FRONTEND=noninteractive apt upgrade -yq",
           "curl -Os https://releases.hashicorp.com/consul/{{ user `consul_version` }}/consul_{{ user `consul_version` }}_SHA256SUMS",
