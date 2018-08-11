@@ -3,7 +3,7 @@
     {
       "snapshot_name": "compute",
       "type": "digitalocean",
-      "image": 36919912,
+      "image": "ubuntu-18-04-x64",
       "size": "s-2vcpu-2gb",
       "region": "sfo1",
       "ssh_username": "root"
@@ -13,19 +13,33 @@
   "provisioners": [
     {
       "type": "file",
+      "source": "hashicorp.asc",
+      "destination": "/tmp/hashicorp.asc"
+    },
+    {
+      "type": "file",
       "source": "pre-destroy.sh",
       "destination": "/usr/bin/pre-destroy.sh"
     },
     {
       "type": "shell",
       "inline": [
-        "chmod +x /usr/bin/pre-destroy.sh",
-        "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -",
-        "add-apt-repository \"deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic edge\"",
-        "apt update -yq",
-        "apt install -y docker-ce",
-        "DEBIAN_FRONTEND=noninteractive apt upgrade -yq",
-        "sync"
+        "chmod +x /usr/bin/pre-destroy.sh"
+      ]
+    },
+    {
+      "type": "shell",
+      "environment_vars": [
+        "CONSUL_VERSION=1.2.2",
+        "VAULT_VERSION=0.10.4",
+        "NOMAD_VERSION=0.8.4"
+      ],
+      "scripts": [
+        "install-basic-software.sh",
+        "install-consul.sh",
+        "install-vault.sh",
+        "install-nomad.sh",
+        "install-docker.sh"
       ]
     }
   ]

@@ -1,6 +1,6 @@
 {
   "variables": {
-    "consul_version": "1.2.1",
+    "consul_version": "1.2.2",
     "nomad_version": "0.8.4",
     "vault_version": "0.10.4"
   },
@@ -9,7 +9,7 @@
     {
       "snapshot_name": "control",
       "type": "digitalocean",
-      "image": 36919892,
+      "image": "ubuntu-18-04-x64",
       "size": "s-2vcpu-2gb",
       "region": "sfo1",
       "ssh_username": "root"
@@ -24,34 +24,16 @@
     },
     {
       "type": "shell",
-      "inline": [
-        "gpg --import /tmp/hashicorp.asc",
-        "apt update -yq",
-        "DEBIAN_FRONTEND=noninteractive apt upgrade -yq",
-        "curl -Os https://releases.hashicorp.com/consul/{{ user `consul_version` }}/consul_{{ user `consul_version` }}_SHA256SUMS",
-        "curl -Os https://releases.hashicorp.com/consul/{{ user `consul_version` }}/consul_{{ user `consul_version` }}_SHA256SUMS.sig",
-        "curl -Os https://releases.hashicorp.com/consul/{{ user `consul_version` }}/consul_{{ user `consul_version` }}_linux_amd64.zip",
-        "curl -Os https://releases.hashicorp.com/vault/{{ user `vault_version` }}/vault_{{ user `vault_version` }}_SHA256SUMS",
-        "curl -Os https://releases.hashicorp.com/vault/{{ user `vault_version` }}/vault_{{ user `vault_version` }}_SHA256SUMS.sig",
-        "curl -Os https://releases.hashicorp.com/vault/{{ user `vault_version` }}/vault_{{ user `vault_version` }}_linux_amd64.zip",
-        "curl -Os https://releases.hashicorp.com/nomad/{{ user `nomad_version` }}/nomad_{{ user `nomad_version` }}_SHA256SUMS",
-        "curl -Os https://releases.hashicorp.com/nomad/{{ user `nomad_version` }}/nomad_{{ user `nomad_version` }}_SHA256SUMS.sig",
-        "curl -Os https://releases.hashicorp.com/nomad/{{ user `nomad_version` }}/nomad_{{ user `nomad_version` }}_linux_amd64.zip",
-        "gpg --verify consul_{{ user `consul_version` }}_SHA256SUMS.sig consul_{{ user `consul_version` }}_SHA256SUMS",
-        "gpg --verify vault_{{ user `vault_version` }}_SHA256SUMS.sig vault_{{ user `vault_version` }}_SHA256SUMS",
-        "gpg --verify nomad_{{ user `nomad_version` }}_SHA256SUMS.sig nomad_{{ user `nomad_version` }}_SHA256SUMS",
-        "sha256sum --check --ignore-missing consul_{{ user `consul_version` }}_SHA256SUMS vault_{{ user `vault_version` }}_SHA256SUMS nomad_{{ user `nomad_version` }}_SHA256SUMS",
-        "unzip -qq consul_{{ user `consul_version` }}_linux_amd64.zip -d /usr/bin",
-        "unzip -qq vault_{{ user `vault_version` }}_linux_amd64.zip -d /usr/bin",
-        "unzip -qq nomad_{{ user `nomad_version` }}_linux_amd64.zip -d /usr/bin",
-        "mkdir -p /etc/consul",
-        "mkdir -p /etc/vault",
-        "mkdir -p /etc/nomad",
-        "consul version",
-        "vault version",
-        "nomad version",
-        "inspec version",
-        "sync"
+      "environment_vars": [
+        "CONSUL_VERSION=1.2.2",
+        "VAULT_VERSION=0.10.4",
+        "NOMAD_VERSION=0.8.4"
+      ],
+      "scripts": [
+        "install-basic-software.sh",
+        "install-consul.sh",
+        "install-vault.sh",
+        "install-nomad.sh"
       ]
     }
   ]

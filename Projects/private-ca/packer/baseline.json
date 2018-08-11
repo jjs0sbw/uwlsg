@@ -13,13 +13,8 @@
     "provisioners": [
       {
         "type": "shell",
-        "inline": [
-          "apt update -yq",
-          "apt install -y golang-cfssl unzip apt-transport-https ca-certificates curl software-properties-common build-essential ruby ruby-dev python3-pip jq",
-          "gem install --no-rdoc --no-ri inspec",
-          "mkdir -p /etc/inspec",
-          "pip3 install pexpect",
-          "sync"
+        "scripts": [
+          "install-basic-software.sh"
         ]
       }
     ]
