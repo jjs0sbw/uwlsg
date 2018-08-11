@@ -7,7 +7,7 @@
       {
         "snapshot_name": "loadbalancer",
         "type": "digitalocean",
-        "image": 37074929,
+        "image": "ubuntu-18-04-x64",
         "size": "s-2vcpu-2gb",
         "region": "sfo1",
         "ssh_username": "root"
@@ -22,22 +22,18 @@
       },
       {
         "type": "shell",
+        "environment_vars": [
+          "CONSUL_VERSION=1.2.2"
+        ],
+        "scripts": [
+          "install-basic-software.sh",
+          "install-consul.sh"
+        ]
+      },
+      {
+        "type": "shell",
         "inline": [
-          "gpg --import /tmp/hashicorp.asc",
-          "DEBIAN_FRONTEND=noninteractive apt update -yq",
-          "DEBIAN_FRONTEND=noninteractive apt install -y haproxy unzip jq build-essential ruby ruby-dev",
-          "gem install --no-rdoc --no-ri inspec",
-          "DEBIAN_FRONTEND=noninteractive apt upgrade -yq",
-          "curl -Os https://releases.hashicorp.com/consul/{{ user `consul_version` }}/consul_{{ user `consul_version` }}_SHA256SUMS",
-          "curl -Os https://releases.hashicorp.com/consul/{{ user `consul_version` }}/consul_{{ user `consul_version` }}_SHA256SUMS.sig",
-          "curl -Os https://releases.hashicorp.com/consul/{{ user `consul_version` }}/consul_{{ user `consul_version` }}_linux_amd64.zip",
-          "gpg --verify consul_{{ user `consul_version` }}_SHA256SUMS.sig consul_{{ user `consul_version` }}_SHA256SUMS",
-          "sha256sum --check --ignore-missing consul_{{ user `consul_version` }}_SHA256SUMS",
-          "unzip -qq consul_{{ user `consul_version` }}_linux_amd64.zip -d /usr/bin",
-          "mkdir -p /etc/consul",
-          "mkdir -p /etc/inspec",
-          "consul version",
-          "inspec version",
+          "apt install -y haproxy",
           "sync"
         ]
       }
